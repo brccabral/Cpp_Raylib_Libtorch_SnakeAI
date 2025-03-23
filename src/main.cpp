@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstdlib>
+#include <ctime>
 #include <vector>
 #include <raylib.h>
 
@@ -44,6 +45,7 @@ public:
         snake.push_back(head);
         snake.push_back({head.x - 1, head.y});
         snake.push_back({head.x - 2, head.y});
+        place_food();
     };
     std::vector<Vector2> snake;
     Vector2 food{};
@@ -52,6 +54,7 @@ public:
 
 int main()
 {
+    srand(time(NULL));
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 
