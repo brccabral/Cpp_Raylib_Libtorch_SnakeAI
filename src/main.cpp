@@ -1,56 +1,7 @@
-#include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include <vector>
-#include <raylib.h>
+#include "SnakeGameAI.h"
 
-typedef enum Direction
-{
-    RIGHT = 1,
-    LEFT,
-    UP,
-    DOWN
-} Direction;
-
-bool operator==(const Vector2 &lhs, const Vector2 &rhs)
-{
-    return lhs.x == rhs.x && lhs.y == rhs.y;
-}
-
-class SnakeGameAI
-{
-    int w = 32;
-    int h = 24;
-    Direction direction = RIGHT;
-    Vector2 head = Vector2(w / 2.0f, h / 2.0f);
-    void new_food()
-    {
-        const int x = rand() % w;
-        const int y = rand() % h;
-        food = Vector2(x, y);
-    }
-    void place_food()
-    {
-        new_food();
-        while (std::find(snake.begin(), snake.end(), food) != snake.end())
-        {
-            new_food();
-        }
-    };
-
-public:
-
-    SnakeGameAI()
-    {
-        snake.push_back(head);
-        snake.push_back({head.x - 1, head.y});
-        snake.push_back({head.x - 2, head.y});
-        place_food();
-    };
-    std::vector<Vector2> snake;
-    Vector2 food{};
-    int score = 0;
-};
 
 int main()
 {

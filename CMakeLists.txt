@@ -5,5 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(raylib REQUIRED)
 
-add_executable(SnakeAI src/main.cpp)
+file(GLOB CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+add_executable(SnakeAI ${CPP_FILES})
 target_link_libraries(SnakeAI PUBLIC raylib)
