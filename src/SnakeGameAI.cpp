@@ -40,7 +40,7 @@ bool SnakeGameAI::is_collision(const Vector2 pt)
         return true;
     }
     // hits itself
-    if (std::find(snake.begin(), snake.end(), pt) != snake.end())
+    if (std::find(snake.begin() + 1, snake.end(), pt) != snake.end())
     {
         return true;
     }
