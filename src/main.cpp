@@ -13,6 +13,8 @@ int main()
 
     while (!WindowShouldClose())
     {
+        auto state_old = game.get_state();
+
         BeginDrawing();
         ClearBackground(BLACK);
         for (auto [x, y]: game.snake)
