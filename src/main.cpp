@@ -1,11 +1,15 @@
 #include <cstdlib>
+#include <cstdio>
 #include <ctime>
 #include "SnakeGameAI.h"
+#include "Agent.h"
 
 
 int main()
 {
     srand(time(NULL));
+
+    Agent agent;
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 
@@ -14,6 +18,8 @@ int main()
     while (!WindowShouldClose())
     {
         auto state_old = game.get_state();
+        auto action = agent.get_action(state_old);
+        printf("action %u\n", action);
 
         BeginDrawing();
         ClearBackground(BLACK);
