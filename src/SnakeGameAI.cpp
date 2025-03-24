@@ -55,10 +55,15 @@ std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
     Vector2 point_up = Vector2(head.x, head.y - 1);
     Vector2 point_down = Vector2(head.x, head.y + 1);
 
-    bool is_direction_right = direction == SnakeGameAI::RIGHT;
-    bool is_direction_left = direction == SnakeGameAI::LEFT;
-    bool is_direction_up = direction == SnakeGameAI::UP;
-    bool is_direction_down = direction == SnakeGameAI::DOWN;
+    bool is_direction_right = direction == RIGHT;
+    bool is_direction_left = direction == LEFT;
+    bool is_direction_up = direction == UP;
+    bool is_direction_down = direction == DOWN;
+
+    bool is_food_left = food.x < head.x;
+    bool is_food_right = food.x > head.x;
+    bool is_food_up = food.y < head.y;
+    bool is_food_down = food.y > head.y;
 
     return std::array<int, INPUT_SIZE>{
             // Danger straight (same direction)
@@ -77,14 +82,15 @@ std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
                     (is_direction_up && is_collision(point_left)) ||
                     (is_direction_down && is_collision(point_right)),
             // current direction
-            is_direction_right, is_direction_left, is_direction_up, is_direction_down,
+            is_direction_right,
+            is_direction_left,
+            is_direction_up,
+            is_direction_down,
             // food location
-            food.x<head.x, // food left
-                   food.x>
-                    head.x, // food right
-            food.y<head.y, // food up
-                   food.y>
-                    head.y, // food down
+            is_food_left,
+            is_food_right,
+            is_food_up,
+            is_food_down,
     };
 }
 
