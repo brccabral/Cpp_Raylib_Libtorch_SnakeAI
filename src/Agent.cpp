@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include "Agent.h"
 
-Agent::Agent(Linear_QNet *model_)
+Agent::Agent(Linear_QNet *model_, QTrainer *trainer_)
 {
     model = model_;
     device = torch::kCPU;
@@ -17,6 +17,8 @@ Agent::Agent(Linear_QNet *model_)
     }
     (*model)->to(device);
     (*model)->train();
+
+    trainer = trainer_;
 }
 
 Agent::~Agent()
@@ -66,4 +68,11 @@ SnakeGameAI::action_t Agent::get_action(std::array<int, INPUT_SIZE> state)
     }
 
     return action;
+}
+
+void Agent::train_short_memory(
+        std::array<int, INPUT_SIZE> state, SnakeGameAI::action_t action, int reward,
+        std::array<int, INPUT_SIZE> next_state, bool game_over)
+{
+    trainer->train_step<INPUT_SIZE>({state}, {action}, {reward}, {next_state}, {game_over});
 }

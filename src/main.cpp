@@ -3,15 +3,20 @@
 #include <ctime>
 #include "SnakeGameAI.h"
 #include "Agent.h"
+#include "QTrainer.h"
 
+
+#define LR 0.001
+#define GAMMA 0.9
 
 int main()
 {
     srand(time(NULL));
 
     auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE);
+    auto trainer = QTrainer(&model, LR, GAMMA);
 
-    Agent agent(&model);
+    Agent agent(&model, &trainer);
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 
@@ -23,6 +28,10 @@ int main()
         auto action = agent.get_action(state_old);
 
         auto step_result = game.get_step(action);
+
+        auto state_new = game.get_state();
+        agent.train_short_memory(
+                state_old, action, step_result.reward, state_new, step_result.game_over);
 
         if (step_result.game_over)
         {
