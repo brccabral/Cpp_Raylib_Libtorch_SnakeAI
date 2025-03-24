@@ -9,7 +9,9 @@ int main()
 {
     srand(time(NULL));
 
-    Agent agent;
+    auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE);
+
+    Agent agent(&model);
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 

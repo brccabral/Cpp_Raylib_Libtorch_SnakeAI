@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include "Agent.h"
 
-Agent::Agent()
+Agent::Agent(Linear_QNet *model_)
 {
-    model = new Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE);
-    c10::DeviceType device;
+    model = model_;
+    device = torch::kCPU;
     if (torch::cuda::is_available())
     {
         printf("Using CUDA\n");
@@ -20,9 +20,7 @@ Agent::Agent()
 }
 
 Agent::~Agent()
-{
-    delete model;
-}
+{}
 
 void Agent::toggle_training()
 {
@@ -37,10 +35,9 @@ void Agent::toggle_training()
     }
 }
 
-
 SnakeGameAI::action_t Agent::get_play(std::array<int, INPUT_SIZE> state)
 {
-    auto state0 = torch::tensor(state.data());
+    auto state0 = torch::from_blob(state.begin(), {state.size()}).to(device);
     auto prediction = (*model)->forward(state0);
     SnakeGameAI::action_t action = (SnakeGameAI::action_t) torch::argmax(prediction).item().toInt();
     return action;
