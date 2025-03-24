@@ -7,14 +7,14 @@ Agent::Agent()
 Agent::~Agent()
 {}
 
-SnakeGameAI::action Agent::get_action(std::array<int, INPUT_SIZE> state)
+SnakeGameAI::action_t Agent::get_action(std::array<int, INPUT_SIZE> state)
 {
     epsilon = 80 - number_of_games;
-    SnakeGameAI::action action = SnakeGameAI::ACTION_STRAIGHT;
+    SnakeGameAI::action_t action = SnakeGameAI::ACTION_STRAIGHT;
 
     if (rand() % 200 < epsilon)
     {
-        action = (SnakeGameAI::action)(rand() % 3);
+        action = (SnakeGameAI::action_t) (rand() % 3);
     }
 
     return action;

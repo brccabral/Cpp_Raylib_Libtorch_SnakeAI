@@ -19,7 +19,13 @@ int main()
     {
         auto state_old = game.get_state();
         auto action = agent.get_action(state_old);
-        printf("action %u\n", action);
+
+        auto step_result = game.get_step(action);
+
+        if (step_result.game_over)
+        {
+            game.reset();
+        }
 
         BeginDrawing();
         ClearBackground(BLACK);

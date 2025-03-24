@@ -15,5 +15,5 @@ public:
     Agent();
     ~Agent();
 
-    SnakeGameAI::action get_action(std::array<int, INPUT_SIZE> state);
+    SnakeGameAI::action_t get_action(std::array<int, INPUT_SIZE> state);
 };

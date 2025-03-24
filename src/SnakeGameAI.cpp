@@ -10,10 +10,7 @@ inline bool operator==(const Vector2 &lhs, const Vector2 &rhs)
 
 SnakeGameAI::SnakeGameAI()
 {
-    snake.push_back(head);
-    snake.push_back({head.x - 1, head.y});
-    snake.push_back({head.x - 2, head.y});
-    place_food();
+    reset();
 };
 
 void SnakeGameAI::new_food()
@@ -89,4 +86,108 @@ std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
                    food.y>
                     head.y, // food down
     };
+}
+
+void SnakeGameAI::reset()
+{
+    direction = RIGHT;
+
+    head.x = w / 2;
+    head.y = h / 2;
+
+    snake.clear();
+    snake.push_back(head);
+    snake.push_back({head.x - 1, head.y});
+    snake.push_back({head.x - 2, head.y});
+
+    score = 0;
+    place_food();
+    frame_iteration = 0;
+}
+
+void SnakeGameAI::move(action_t action)
+{
+    int current_index = 0;
+    for (; current_index < 4; ++current_index)
+    {
+        if (direction == clock_wise_direction[current_index])
+        {
+            break;
+        }
+    }
+    int next_index = current_index;
+    switch (action)
+    {
+        case ACTION_STRAIGHT:
+        {
+            break;
+        }
+        case ACTION_LEFT:
+        {
+            next_index = ((current_index - 1) % 4 + 4) % 4;
+            break;
+        }
+        case ACTION_RIGHT:
+        {
+            next_index = (current_index + 1) % 4;
+        }
+    }
+
+    direction = clock_wise_direction[next_index];
+
+    float x = head.x;
+    float y = head.y;
+    switch (direction)
+    {
+        case RIGHT:
+        {
+            ++x;
+            break;
+        }
+        case LEFT:
+        {
+            --x;
+            break;
+        }
+        case UP:
+        {
+            --y;
+            break;
+        }
+        case DOWN:
+        {
+            ++y;
+            break;
+        }
+    }
+    head = Vector2{x, y};
+}
+
+StepResult SnakeGameAI::get_step(action_t action)
+{
+    StepResult result;
+    ++frame_iteration;
+
+    move(action);
+    snake.insert(snake.begin(), head);
+
+    if (is_collision(head) || frame_iteration > 100 * snake.size())
+    {
+        result.game_over = true;
+        result.reward = -10;
+        return result;
+    }
+
+    if (head == food)
+    {
+        ++result.score;
+        place_food();
+        result.reward = 10;
+    }
+    else
+    {
+        snake.pop_back();
+    }
+
+    return result;
 }
