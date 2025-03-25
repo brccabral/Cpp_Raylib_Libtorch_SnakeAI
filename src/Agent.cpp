@@ -78,18 +78,25 @@ void Agent::remember(
 
 void Agent::train_long_memory()
 {
-    size_t sample_size = memory_deque.size();
-    if (sample_size > BATCH_SIZE)
+    std::vector<MemoryData> samples;
+    size_t sample_size;
+
+    if (memory_deque.size() > BATCH_SIZE)
     {
         sample_size = BATCH_SIZE;
+        samples.reserve(BATCH_SIZE);
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::ranges::sample(
+                memory_deque.begin(), memory_deque.end(), samples.begin(), samples.size(), gen);
+    }
+    else
+    {
+        sample_size = memory_deque.size();
+        samples.reserve(memory_deque.size());
+        samples.insert(samples.begin(), memory_deque.begin(), memory_deque.end());
     }
 
-    std::vector<MemoryData> samples(sample_size);
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::ranges::sample(
-            memory_deque.begin(), memory_deque.end(), samples.begin(), samples.size(), gen);
 
     std::vector<std::array<int, INPUT_SIZE>> states;
     std::vector<std::array<int, OUTPUT_SIZE>> actions;
