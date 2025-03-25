@@ -73,7 +73,9 @@ int main()
                 save_model(&model);
             }
 
-            printf("Game %d Score %d Record %d\n", agent.number_of_games, game.score, best_score);
+            printf("Game %d Score %d Record %d time %.2f batch %d max memory %d\n",
+                   agent.number_of_games, game.score, best_score, GetTime(), BATCH_SIZE,
+                   MAX_MEMORY);
 
             // train long memory (also called replay memory, or experience replay)
             agent.train_long_memory();
@@ -93,6 +95,9 @@ int main()
                 game.food.x * BLOCK_SIZE, game.food.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, RED);
         DrawText(TextFormat("Score: %d", game.score), 0, 0, 20, WHITE);
         DrawText(TextFormat("Record: %d", best_score), 0, 20, 20, WHITE);
+        DrawText(TextFormat("Time: %.2f", GetTime()), 0, 40, 20, WHITE);
+        DrawText(TextFormat("Batch: %d", BATCH_SIZE), 0, 60, 20, WHITE);
+        DrawText(TextFormat("Max memory: %d", MAX_MEMORY), 0, 80, 20, WHITE);
         EndDrawing();
     }
 
