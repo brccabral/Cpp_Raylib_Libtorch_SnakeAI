@@ -70,8 +70,8 @@ void Agent::train_short_memory(
 }
 
 void Agent::remember(
-        std::array<int, INPUT_SIZE> state, std::array<int, OUTPUT_SIZE> action, int reward,
-        std::array<int, INPUT_SIZE> next_state, bool game_over)
+        const std::array<int, INPUT_SIZE> &state, const std::array<int, OUTPUT_SIZE> action,
+        const int reward, const std::array<int, INPUT_SIZE> &next_state, const bool game_over)
 {
     memory_deque.push_back({state, action, reward, next_state, game_over});
 }

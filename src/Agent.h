@@ -94,8 +94,8 @@ public:
     void train_long_memory();
 
     void remember(
-            std::array<int, INPUT_SIZE> state, std::array<int, OUTPUT_SIZE> action, int reward,
-            std::array<int, INPUT_SIZE> next_state, bool game_over);
+            const std::array<int, INPUT_SIZE> &state, std::array<int, OUTPUT_SIZE> action,
+            int reward, const std::array<int, INPUT_SIZE> &next_state, bool game_over);
 
     int number_of_games = 0;
 
