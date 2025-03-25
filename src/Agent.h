@@ -101,7 +101,6 @@ public:
 
 private:
 
-    float epsilon = 0;
     Linear_QNet *model;
     QTrainer *trainer;
     bool is_training = true;

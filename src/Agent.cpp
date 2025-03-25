@@ -47,7 +47,7 @@ std::array<int, OUTPUT_SIZE> Agent::get_action(std::array<int, INPUT_SIZE> state
         }
     }
 
-    epsilon = 80 - number_of_games;
+    const int epsilon = 80 - number_of_games;
 
     // epsilon = tradeoff between exploration vs exploitation
     // in the beginning this is true for some time, later self.number_of_games is larger
