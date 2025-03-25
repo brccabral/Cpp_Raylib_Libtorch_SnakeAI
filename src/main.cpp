@@ -20,6 +20,8 @@ int main()
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 
+    int best_score = 0;
+
     InitWindow(640, 480, "SnakeAI");
 
     while (!WindowShouldClose())
@@ -27,14 +29,36 @@ int main()
         auto state_old = game.get_state();
         auto action = agent.get_action(state_old);
 
-        auto step_result = game.get_step(action);
+        SnakeGameAI::action_t game_action{};
+        for (size_t i = 0; i < action.size(); ++i)
+        {
+            if (action[i] == 1)
+            {
+                game_action = (SnakeGameAI::action_t) i;
+            }
+        }
+
+        auto step_result = game.get_step(game_action);
 
         auto state_new = game.get_state();
         agent.train_short_memory(
                 state_old, action, step_result.reward, state_new, step_result.game_over);
 
+        agent.remember(state_old, action, step_result.reward, state_new, step_result.game_over);
+
         if (step_result.game_over)
         {
+            ++agent.number_of_games;
+            if (game.score > best_score)
+            {
+                best_score = game.score;
+                save_model(&model);
+            }
+
+            printf("Game %d Score %d Record %d\n", agent.number_of_games, game.score, best_score);
+
+            // train long memory (also called replay memory, or experience replay)
+            agent.train_long_memory();
             game.reset();
         }
 

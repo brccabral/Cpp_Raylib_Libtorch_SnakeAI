@@ -186,14 +186,11 @@ StepResult SnakeGameAI::get_step(action_t action)
 
     if (head == food)
     {
-        ++result.score;
+        ++score;
         place_food();
         result.reward = 10;
+        return result;
     }
-    else
-    {
-        snake.pop_back();
-    }
-
+    snake.pop_back();
     return result;
 }

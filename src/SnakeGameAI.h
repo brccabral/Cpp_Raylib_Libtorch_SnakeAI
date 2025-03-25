@@ -10,7 +10,6 @@ typedef struct StepResult
 {
     int reward = 0;
     bool game_over = false;
-    int score = 0;
 } StepResult;
 
 class SnakeGameAI

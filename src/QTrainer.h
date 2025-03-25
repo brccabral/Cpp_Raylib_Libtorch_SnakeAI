@@ -15,28 +15,31 @@ public:
 
     QTrainer(Linear_QNet *model_, float lr_, float gamma_);
     ~QTrainer();
-    template<int Nstates>
+    template<int N_states, int N_actions>
     void train_step(
-            std::vector<std::array<int, Nstates>> old_states_, std::vector<int> actions_,
-            std::vector<int> rewards_, std::vector<std::array<int, Nstates>> new_states_,
-            std::vector<bool> dones_);
+            const std::vector<std::array<int, N_states>> &old_states_,
+            const std::vector<std::array<int, N_actions>> &actions_,
+            const std::vector<int> &rewards_,
+            const std::vector<std::array<int, N_states>> &new_states_,
+            const std::vector<bool> &dones_);
 };
 
-template<int Nstates>
+template<int N_states, int N_actions>
 void QTrainer::train_step(
-        std::vector<std::array<int, Nstates>> old_states_, std::vector<int> actions_,
-        std::vector<int> rewards_, std::vector<std::array<int, Nstates>> new_states_,
-        std::vector<bool> dones_)
+        const std::vector<std::array<int, N_states>> &old_states_,
+        const std::vector<std::array<int, N_actions>> &actions_, const std::vector<int> &rewards_,
+        const std::vector<std::array<int, N_states>> &new_states_, const std::vector<bool> &dones_)
 {
     torch::Tensor old_states =
-            torch::from_blob(old_states_.data(), {(long) old_states_.size(), Nstates});
+            torch::from_blob((void *) old_states_.data(), {(long) old_states_.size(), N_states});
     old_states = old_states.to(device);
-    torch::Tensor actions = torch::tensor(actions_, torch::kInt32);
+    torch::Tensor actions =
+            torch::from_blob((void *) actions_.data(), {(long) actions_.size(), N_actions});
     actions = actions.to(device);
     torch::Tensor rewards = torch::tensor(rewards_);
     rewards = rewards.to(device);
     torch::Tensor new_states =
-            torch::from_blob(new_states_.data(), {(long) new_states_.size(), Nstates});
+            torch::from_blob((void *) new_states_.data(), {(long) new_states_.size(), N_states});
     new_states = new_states.to(device);
 
     // 1: predict Q values with current state
@@ -49,9 +52,9 @@ void QTrainer::train_step(
         auto q_new = rewards[index];
         if (!dones_[index])
         {
-            q_new = rewards[index] + gamma * torch::max((*model)->forward(new_states));
+            q_new = rewards[index] + gamma * torch::max((*model)->forward(new_states[index]));
         }
-        target[index][torch::argmax(actions).item()] = q_new;
+        target[index][torch::argmax(actions[index]).item().toInt()] = q_new;
     }
     optimizer->zero_grad();
     torch::Tensor loss = criterion(target, pred_action);
