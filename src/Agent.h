@@ -135,7 +135,8 @@ void Agent<N_states, N_actions>::toggle_training()
 template<int N_states, int N_actions>
 std::array<int, N_actions> Agent<N_states, N_actions>::get_play(std::array<int, N_states> state)
 {
-    auto state0 = torch::from_blob(state.begin(), {state.size()}).to(device);
+    auto state0 =
+            torch::from_blob(state.data(), {state.size()}, torch::kInt).to(device, torch::kFloat);
     auto prediction = (*model)->forward(state0);
     // std::cout << prediction << "\n";
     std::array<int, N_actions> action{};

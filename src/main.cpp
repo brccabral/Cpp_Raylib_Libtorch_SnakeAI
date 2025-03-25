@@ -15,16 +15,16 @@ int main()
     srand(time(NULL));
 
     c10::DeviceType device = torch::kCPU;
-    // if (torch::cuda::is_available())
-    // {
-    //     printf("Using CUDA\n");
-    //     device = torch::kCUDA;
-    // }
-    // else
-    // {
-    //     printf("Using CPU\n");
-    //     device = torch::kCPU;
-    // }
+    if (torch::cuda::is_available())
+    {
+        printf("Using CUDA\n");
+        device = torch::kCUDA;
+    }
+    else
+    {
+        printf("Using CPU\n");
+        device = torch::kCPU;
+    }
 
     auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, SnakeGameAI::ACTION_COUNT);
     model->to(device);

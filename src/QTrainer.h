@@ -62,17 +62,15 @@ void QTrainer<N_states, N_actions>::train_step(
     }
 
 
-    torch::Tensor old_states = torch::tensor(flatten_old_states, torch::kFloat)
-                                       .reshape({(long) old_states_.size(), N_states});
-    old_states = old_states.to(device);
-    torch::Tensor actions = torch::tensor(flatten_actions, torch::kLong)
-                                    .reshape({(long) actions_.size(), N_actions});
-    actions = actions.to(device);
-    torch::Tensor rewards = torch::tensor(rewards_, torch::kFloat);
-    rewards = rewards.to(device);
-    torch::Tensor new_states = torch::tensor(flatten_new_states, torch::kFloat)
-                                       .reshape({(long) new_states_.size(), N_states});
-    new_states = new_states.to(device);
+    torch::Tensor old_states = torch::tensor(flatten_old_states, torch::kInt)
+                                       .reshape({(long) old_states_.size(), N_states})
+                                       .to(device, torch::kFloat);
+    torch::Tensor actions = torch::tensor(flatten_actions, torch::kInt)
+                                    .reshape({(long) actions_.size(), N_actions})
+                                    .to(device, torch::kFloat);
+    torch::Tensor new_states = torch::tensor(flatten_new_states, torch::kInt)
+                                       .reshape({(long) new_states_.size(), N_states})
+                                       .to(device, torch::kFloat);
 
     // 1: predict Q values with current state
     torch::Tensor pred_action = (*model)->forward(old_states);
@@ -83,22 +81,18 @@ void QTrainer<N_states, N_actions>::train_step(
         torch::NoGradGuard no_grad;
         for (size_t index = 0; index < dones_.size(); ++index)
         {
-            auto q_new = rewards[index].item().toFloat();
+            auto q_new = rewards_[index];
             if (!dones_[index])
             {
-                const float a = torch::max((*model)->forward(new_states)).item().toFloat();
-                q_new = q_new + gamma * a;
+                q_new = q_new +
+                        gamma * torch::max((*model)->forward(new_states[index])).item().toFloat();
             }
             const long max_index = torch::argmax(actions[index]).item().toLong();
             target[index][max_index] = q_new;
         }
     }
     optimizer->zero_grad();
-    const torch::Tensor loss = criterion(target, pred_action);
-    if (dones_.size() > 1)
-    {
-        std::cout << loss << "\n";
-    }
+    const torch::Tensor loss = criterion(pred_action, target);
     loss.backward();
     optimizer->step();
 }
