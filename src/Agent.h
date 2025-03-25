@@ -82,7 +82,7 @@ class Agent
 {
 public:
 
-    Agent(Linear_QNet *model_, QTrainer *trainer_);
+    Agent(Linear_QNet *model_, QTrainer *trainer_, c10::DeviceType device_);
     ~Agent();
 
     std::array<int, OUTPUT_SIZE> get_action(std::array<int, INPUT_SIZE> state);

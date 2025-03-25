@@ -13,7 +13,7 @@ class QTrainer
 
 public:
 
-    QTrainer(Linear_QNet *model_, float lr_, float gamma_);
+    QTrainer(Linear_QNet *model_, float lr_, float gamma_, c10::DeviceType device_);
     ~QTrainer();
     template<int N_states, int N_actions>
     void train_step(

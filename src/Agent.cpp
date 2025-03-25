@@ -2,21 +2,11 @@
 #include <random>
 #include "Agent.h"
 
-Agent::Agent(Linear_QNet *model_, QTrainer *trainer_)
+Agent::Agent(Linear_QNet *model_, QTrainer *trainer_, c10::DeviceType device_)
 {
+    device = device_;
+
     model = model_;
-    device = torch::kCPU;
-    if (torch::cuda::is_available())
-    {
-        printf("Using CUDA\n");
-        device = torch::kCUDA;
-    }
-    else
-    {
-        printf("Using CPU\n");
-        device = torch::kCPU;
-    }
-    (*model)->to(device);
     (*model)->train();
 
     trainer = trainer_;

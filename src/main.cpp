@@ -13,10 +13,23 @@ int main()
 {
     srand(time(NULL));
 
-    auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE);
-    auto trainer = QTrainer(&model, LR, GAMMA);
+    c10::DeviceType device = torch::kCPU;
+    // if (torch::cuda::is_available())
+    // {
+    //     printf("Using CUDA\n");
+    //     device = torch::kCUDA;
+    // }
+    // else
+    // {
+    //     printf("Using CPU\n");
+    //     device = torch::kCPU;
+    // }
 
-    Agent agent(&model, &trainer);
+    auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE);
+    model->to(device);
+    auto trainer = QTrainer(&model, LR, GAMMA, device);
+
+    Agent agent(&model, &trainer, device);
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 
