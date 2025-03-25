@@ -30,7 +30,8 @@ public:
     {
         ACTION_STRAIGHT,
         ACTION_LEFT,
-        ACTION_RIGHT
+        ACTION_RIGHT,
+        ACTION_COUNT
     } action_t;
 
     std::vector<Vector2> snake;

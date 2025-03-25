@@ -3,11 +3,12 @@
 #include <ctime>
 #include "SnakeGameAI.h"
 #include "Agent.h"
+#include "Linear_QNet.h"
 #include "QTrainer.h"
 
 
-#define LR 0.001
-#define GAMMA 0.9
+#define LR (0.001)
+#define GAMMA (0.9)
 
 int main()
 {
@@ -25,11 +26,14 @@ int main()
     //     device = torch::kCPU;
     // }
 
-    auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE);
+    auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, SnakeGameAI::ACTION_COUNT);
     model->to(device);
-    auto trainer = QTrainer(&model, LR, GAMMA, device);
+    model->train();
+    auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
+    auto trainer =
+            QTrainer<INPUT_SIZE, SnakeGameAI::ACTION_COUNT>(&model, &optimizer, GAMMA, device);
 
-    Agent agent(&model, &trainer, device);
+    Agent<INPUT_SIZE, SnakeGameAI::ACTION_COUNT> agent(&model, &trainer, device);
     SnakeGameAI game;
     constexpr int BLOCK_SIZE = 20;
 
@@ -48,6 +52,7 @@ int main()
             if (action[i] == 1)
             {
                 game_action = (SnakeGameAI::action_t) i;
+                break;
             }
         }
 
