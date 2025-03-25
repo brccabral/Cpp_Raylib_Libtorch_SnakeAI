@@ -92,6 +92,7 @@ int main()
         DrawRectangle(
                 game.food.x * BLOCK_SIZE, game.food.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, RED);
         DrawText(TextFormat("Score: %d", game.score), 0, 0, 20, WHITE);
+        DrawText(TextFormat("Record: %d", best_score), 0, 20, 20, WHITE);
         EndDrawing();
     }
 
