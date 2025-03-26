@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.27)
 project(SnakeAI)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -10,6 +10,12 @@ file(GLOB CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_executable(SnakeAI ${CPP_FILES})
 target_link_libraries(SnakeAI PUBLIC raylib ${TORCH_LIBRARIES})
 
+if(MSVC)
+add_custom_command(TARGET SnakeAI POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/models
+)
+else()
 add_custom_command(TARGET SnakeAI POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/models
 )
+endif()
