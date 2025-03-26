@@ -82,12 +82,12 @@ void QTrainer<N_states, N_actions>::train_step(
         for (size_t index = 0; index < dones_.size(); ++index)
         {
             auto q_new = rewards_[index];
+            const long max_index = torch::argmax(actions[index]).item().toLong();
             if (!dones_[index])
             {
                 q_new = q_new +
-                        gamma * torch::max((*model)->forward(new_states[index])).item().toFloat();
+                        gamma * (*model)->forward(new_states[index])[max_index].item().toFloat();
             }
-            const long max_index = torch::argmax(actions[index]).item().toLong();
             target[index][max_index] = q_new;
         }
     }
