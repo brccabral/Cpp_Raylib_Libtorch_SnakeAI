@@ -2,10 +2,23 @@
 #include <cstdlib>
 #include "SnakeGameAI.h"
 
+#include <cstring>
+#include <list>
+
 
 inline bool operator==(const Vector2 &lhs, const Vector2 &rhs)
 {
     return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
+inline Vector2 operator+(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return {lhs.x + rhs.x, lhs.y + rhs.y};
+}
+
+inline Vector2 operator-(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return {lhs.x - rhs.x, lhs.y - rhs.y};
 }
 
 SnakeGameAI::SnakeGameAI()
@@ -44,9 +57,55 @@ bool SnakeGameAI::is_collision(const Vector2 pt)
     return false;
 }
 
+size_t SnakeGameAI::index_from_location(Vector2 pt)
+{
+    return pt.y * w + pt.x;
+}
+
+void SnakeGameAI::update_field()
+{
+    memset(distance_field, -1, sizeof(int) * w * h);
+    std::list<FieldLoc> nodes;
+    nodes.emplace_back(food, 1);
+    while (!nodes.empty())
+    {
+        std::list<FieldLoc> new_nodes;
+        for (auto &n: nodes)
+        {
+            distance_field[index_from_location(n.p)] = n.distance;
+            Vector2 right = n.p + p_right;
+            Vector2 left = n.p + p_left;
+            Vector2 up = n.p + p_up;
+            Vector2 down = n.p + p_down;
+            if (!is_collision(right) && distance_field[index_from_location(right)] == 0)
+            {
+                new_nodes.emplace_back(right, n.distance + 1);
+            }
+            if (!is_collision(left) && distance_field[index_from_location(left)] == 0)
+            {
+                new_nodes.emplace_back(left, n.distance + 1);
+            }
+            if (!is_collision(up) && distance_field[index_from_location(up)] == 0)
+            {
+                new_nodes.emplace_back(up, n.distance + 1);
+            }
+            if (!is_collision(down) && distance_field[index_from_location(down)] == 0)
+            {
+                new_nodes.emplace_back(down, n.distance + 1);
+            }
+        }
+
+        new_nodes.sort([&](const FieldLoc &a, const FieldLoc &b)
+                       { return index_from_location(a.p) < index_from_location(b.p); });
+        new_nodes.unique([&](const FieldLoc &a, const FieldLoc &b) { return a.p == b.p; });
+        nodes.clear();
+        nodes.insert(nodes.begin(), new_nodes.begin(), new_nodes.end());
+    }
+}
 
 std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
 {
+    update_field();
     Vector2 head = snake[0];
 
     // get points around the head
@@ -64,6 +123,11 @@ std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
     bool is_food_right = food.x > head.x;
     bool is_food_up = food.y < head.y;
     bool is_food_down = food.y > head.y;
+
+    bool right_reaches_food = distance_field[index_from_location(point_right)] > 0;
+    bool left_reaches_food = distance_field[index_from_location(point_left)] > 0;
+    bool up_reaches_food = distance_field[index_from_location(point_up)] > 0;
+    bool down_reaches_food = distance_field[index_from_location(point_down)] > 0;
 
     return std::array<int, INPUT_SIZE>{
             // Danger straight (same direction)
@@ -91,6 +155,11 @@ std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
             is_food_right,
             is_food_up,
             is_food_down,
+            // point reaches food
+            right_reaches_food,
+            left_reaches_food,
+            up_reaches_food,
+            down_reaches_food,
     };
 }
 

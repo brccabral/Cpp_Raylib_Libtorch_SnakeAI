@@ -4,7 +4,7 @@
 #include <array>
 #include <raylib.h>
 
-#define INPUT_SIZE 11
+#define INPUT_SIZE 15
 
 typedef struct StepResult
 {
@@ -45,13 +45,26 @@ public:
 
 private:
 
+    struct FieldLoc
+    {
+        Vector2 p;
+        int distance;
+    };
+
     int w = 32;
     int h = 24;
     int frame_iteration = 0;
     Vector2 head = Vector2(w / 2.0f, h / 2.0f);
     Direction clock_wise_direction[4] = {RIGHT, DOWN, LEFT, UP};
+    int distance_field[32 * 24]{-1};
+    Vector2 p_right = {1, 0};
+    Vector2 p_left = {-1, 0};
+    Vector2 p_up = {0, -1};
+    Vector2 p_down = {0, 1};
     void new_food();
     void place_food();
     bool is_collision(Vector2 pt);
     void move(action_t action);
+    void update_field();
+    size_t index_from_location(Vector2 pt);
 };
