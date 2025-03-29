@@ -85,7 +85,6 @@ public:
     Agent(Linear_QNet *model_, QTrainer<N_states, N_actions> *trainer_, c10::DeviceType device_);
 
     std::array<int, N_actions> get_action(std::array<int, N_states> state);
-    void toggle_training();
 
     void train_short_memory(
             std::array<int, N_states> state, std::array<int, N_actions> action, int reward,
@@ -102,7 +101,6 @@ private:
 
     Linear_QNet *model;
     QTrainer<N_states, N_actions> *trainer;
-    bool is_training = true;
     c10::DeviceType device;
     LimitedDeque<MemoryData<N_states, N_actions>> memory_deque{MAX_MEMORY};
 
@@ -121,25 +119,16 @@ Agent<N_states, N_actions>::Agent(
 }
 
 template<int N_states, int N_actions>
-void Agent<N_states, N_actions>::toggle_training()
-{
-    is_training = !is_training;
-    if (is_training)
-    {
-        (*model)->train();
-    }
-    else
-    {
-        (*model)->eval();
-    }
-}
-
-template<int N_states, int N_actions>
 std::array<int, N_actions> Agent<N_states, N_actions>::get_play(std::array<int, N_states> state)
 {
     auto state0 =
             torch::from_blob(state.data(), {state.size()}, torch::kInt).to(device, torch::kFloat);
-    auto prediction = (*model)->forward(state0);
+    (*model)->eval();
+    auto prediction = torch::Tensor();
+    {
+        torch::NoGradGuard no_grad;
+        prediction = (*model)->forward(state0);
+    }
     // std::cout << prediction << "\n";
     std::array<int, N_actions> action{};
     action[torch::argmax(prediction).item().toInt()] = 1;
@@ -149,14 +138,6 @@ std::array<int, N_actions> Agent<N_states, N_actions>::get_play(std::array<int, 
 template<int N_states, int N_actions>
 std::array<int, N_actions> Agent<N_states, N_actions>::get_action(std::array<int, N_states> state)
 {
-    if (!is_training)
-    {
-        {
-            torch::NoGradGuard no_grad;
-            return get_play(state);
-        }
-    }
-
     const int epsilon = 80 - number_of_games;
 
     // epsilon = tradeoff between exploration vs exploitation

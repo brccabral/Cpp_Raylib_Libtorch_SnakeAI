@@ -73,9 +73,11 @@ void QTrainer<N_states, N_actions>::train_step(
                                        .to(device, torch::kFloat);
 
     // 1: predict Q values with current state
+    (*model)->train();
     torch::Tensor pred_action = (*model)->forward(old_states);
 
     // 2: Q_new = r + y * max(next_predicted_Q_value) -> only do this if not done
+    (*model)->eval();
     torch::Tensor target = pred_action.detach().clone();
     {
         torch::NoGradGuard no_grad;
@@ -91,6 +93,8 @@ void QTrainer<N_states, N_actions>::train_step(
             target[index][max_index] = q_new;
         }
     }
+
+    (*model)->train();
     optimizer->zero_grad();
     const torch::Tensor loss = criterion(pred_action, target);
     loss.backward();
