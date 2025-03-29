@@ -10,7 +10,7 @@
 #define HIDDEN_SIZE 256
 
 // how many previous moves will be stored in memory_deque
-#define MAX_MEMORY 100000
+#define MAX_MEMORY 10000000
 
 // memory usage (if CPU -> RAM, if GPU -> GPU_MEM)
 #define BATCH_SIZE 1000
