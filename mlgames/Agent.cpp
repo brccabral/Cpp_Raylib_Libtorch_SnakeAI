@@ -40,8 +40,8 @@ std::vector<int> Agent::get_action(
     // in the beginning this is true for some time, later self.number_of_games is larger
     if (rand() % 200 < epsilon)
     {
-        std::vector<int> action(num_action, 0);
-        action[rand() % 3] = 1;
+        std::vector<int> action(num_action * count_samples, 0);
+        action[rand() % num_action] = 1;
         return action;
     }
 

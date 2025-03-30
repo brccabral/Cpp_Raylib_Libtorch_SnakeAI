@@ -135,6 +135,8 @@ int main(int argc, char *argv[])
     constexpr Vector2 peg_dimension = {peg_size, peg_size};
 
     bool is_manual = false;
+    int reward{};
+    bool game_over = false;
 
     while (!WindowShouldClose())
     {
@@ -145,16 +147,24 @@ int main(int argc, char *argv[])
 
         if (is_manual)
         {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            if (game_over)
             {
-                auto [mouse_x, mouse_y] = GetMousePosition();
-                int x = (int) mouse_x / peg_size;
-                int y = (int) mouse_y / peg_size;
-                int index = game.index_from_2d(x, y);
-                auto [reward, game_over] = game.get_step(index);
-                if (game_over)
+                if (IsKeyPressed(KEY_R))
                 {
                     game.reset();
+                }
+            }
+            else
+            {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                {
+                    auto [mouse_x, mouse_y] = GetMousePosition();
+                    int x = (int) mouse_x / peg_size;
+                    int y = (int) mouse_y / peg_size;
+                    int index = game.index_from_2d(x, y);
+                    auto [r, g] = game.get_step(index);
+                    reward = r;
+                    game_over = g;
                 }
             }
         }
@@ -162,27 +172,29 @@ int main(int argc, char *argv[])
         {
             auto state_old = game.get_state();
             auto action =
-                    agent.get_action(state_old, state_old.size(), PegSolitaire::PS_ACTION_COUNT, 1);
+                    agent.get_action(state_old, game.get_state_size(), game.get_action_count(), 1);
 
-            PegSolitaire::ps_actions_t game_action{};
+            int index{};
             for (size_t i = 0; i < action.size(); ++i)
             {
                 if (action[i] == 1)
                 {
-                    game_action = (PegSolitaire::ps_actions_t) i;
+                    index = i;
                     break;
                 }
             }
 
-            auto [reward, game_over] = game.get_step(game_action);
+            auto [r, g] = game.get_step(index);
+            reward = r;
+            game_over = g;
 
             auto state_new = game.get_state();
             agent.train_short_memory(
-                    state_old.size(), PegSolitaire::PS_ACTION_COUNT, state_old, action, reward,
+                    game.get_state_size(), game.get_action_count(), state_old, action, reward,
                     state_new, game_over);
 
             agent.remember(
-                    state_old.size(), PegSolitaire::PS_ACTION_COUNT, state_old, action, reward,
+                    game.get_state_size(), game.get_action_count(), state_old, action, reward,
                     state_new, game_over);
 
             if (game_over)
@@ -207,28 +219,27 @@ int main(int argc, char *argv[])
         BeginDrawing();
         ClearBackground(BLACK);
         draw_board(&game, peg_size, peg_dimension);
+        DrawText(TextFormat("Reward %d", reward), 500, 20, 20, WHITE);
         DrawText(TextFormat("Moves %lu", game.moves), 500, 40, 20, WHITE);
         DrawText(TextFormat("Selections %lu", game.selections), 500, 60, 20, WHITE);
-        Color status_color;
         switch (game.status)
         {
             case PegSolitaire::GAME_OVER_LOST:
             {
-                status_color = RED;
+                DrawText("Game Over - You Lost", 500, 80, 20, RED);
                 break;
             }
             case PegSolitaire::GAME_OVER_WON:
             {
-                status_color = GREEN;
+                DrawText("Game Over - You Win", 500, 80, 20, GREEN);
                 break;
             }
             default:
             {
-                status_color = WHITE;
+                DrawText("Playing", 500, 80, 20, WHITE);
                 break;
             }
         }
-        DrawText(TextFormat("Status %lu", game.status), 500, 80, 20, status_color);
         EndDrawing();
     }
 

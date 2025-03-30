@@ -23,18 +23,6 @@ public:
         PEG_STATUS_COUNT,
     } peg_status;
 
-    typedef enum ps_actions_t
-    {
-        PS_ACTION_NONE = 0,
-        PS_ACTION_LEFT,
-        PS_ACTION_RIGHT,
-        PS_ACTION_UP,
-        PS_ACTION_DOWN,
-        PS_ACTION_SPACE,
-        // PS_ACTION_COUNT must be last
-        PS_ACTION_COUNT
-    } ps_actions_t;
-
     typedef enum board_type
     {
         BOARD_TYPE_ENGLISH,
@@ -68,7 +56,6 @@ public:
 
     void init_game(board_type type);
     void change_board(board_type type);
-    int apply_action(ps_actions_t action);
     void move_cursor_right();
     void move_cursor_left();
     void move_cursor_up();

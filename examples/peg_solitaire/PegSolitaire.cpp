@@ -563,44 +563,6 @@ int PegSolitaire::get_selected() const
     return selected;
 }
 
-int PegSolitaire::apply_action(const ps_actions_t action)
-{
-    switch (action)
-    {
-        case PS_ACTION_UP:
-        {
-            move_cursor_up();
-            break;
-        }
-        case PS_ACTION_DOWN:
-        {
-            move_cursor_down();
-            break;
-        }
-        case PS_ACTION_LEFT:
-        {
-            move_cursor_left();
-            break;
-        }
-        case PS_ACTION_RIGHT:
-        {
-            move_cursor_right();
-            break;
-        }
-        case PS_ACTION_SPACE:
-        {
-            return update_selected();
-        }
-        default:
-        {
-            ++moves;
-            ++selections;
-            break;
-        }
-    }
-    return 0;
-}
-
 int PegSolitaire::get_score() const
 {
     int result = 0;
@@ -616,19 +578,18 @@ int PegSolitaire::get_score() const
 
 size_t PegSolitaire::get_state_size() const
 {
-    return board.size + 2; // cursor + selected
+    return board.size + 1; // + selected
 }
 
 std::vector<int> PegSolitaire::get_state() const
 {
-    std::vector<int> result(board.size + 2);
+    std::vector<int> result(get_state_size(), 0);
     // normalize inputs?
     for (size_t p = 0; p < board.size; ++p)
     {
         result[p] = (float) board.pegs[p] / (float) PEG_STATUS_COUNT;
     }
-    result[board.size] = (double) cursor / board.size;
-    result[board.size + 1] = (double) selected / board.size;
+    result[board.size] = (double) selected / board.size;
     return result;
 }
 
@@ -651,5 +612,5 @@ StepResult PegSolitaire::get_step(int index)
 
 size_t PegSolitaire::get_action_count() const
 {
-    return PS_ACTION_COUNT;
+    return board.size;
 }
