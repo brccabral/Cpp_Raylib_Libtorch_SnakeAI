@@ -598,7 +598,7 @@ StepResult PegSolitaire::get_step(int index)
     StepResult result;
 
     cursor = index;
-    update_selected();
+    result.reward = update_selected();
 
     const int status = check_game_status();
     if (status != 0)

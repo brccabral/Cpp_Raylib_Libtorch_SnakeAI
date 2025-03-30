@@ -61,7 +61,7 @@ public:
     void move_cursor_up();
     void move_cursor_down();
     int check_game_status();
-    int update_selected();
+    [[nodiscard]] int update_selected();
 
     void set_status(game_status status_);
     game_status get_status() const;
