@@ -84,7 +84,7 @@ public:
     size_t get_cursor() const;
     int get_selected() const;
 
-    static size_t index_from_2d(int col, int row, int cols);
+    size_t index_from_2d(int col, int row) const;
 
     size_t moves{};
     game_status status{};

@@ -8,9 +8,9 @@ PegSolitaire::Board::~Board()
 }
 
 
-size_t PegSolitaire::index_from_2d(const int col, const int row, const int cols)
+size_t PegSolitaire::index_from_2d(const int col, const int row) const
 {
-    return (row * cols) + col;
+    return (row * board.cols) + col;
 }
 
 void PegSolitaire::reset_board() const
@@ -102,7 +102,7 @@ void PegSolitaire::reset_board() const
     {
         for (size_t r = 0; r < board.rows; ++r)
         {
-            const size_t index = index_from_2d(c, r, board.cols);
+            const size_t index = index_from_2d(c, r);
             if (pegs[index] == 'X')
             {
                 board.pegs[index] = PEG_STATUS_FILLED;
@@ -110,15 +110,14 @@ void PegSolitaire::reset_board() const
         }
     }
 
-    const size_t init_index =
-            PegSolitaire::index_from_2d(board.init_col, board.init_row, board.cols);
-    board.pegs[init_index] = PegSolitaire::PEG_STATUS_EMPTY;
+    const size_t init_index = index_from_2d(board.init_col, board.init_row);
+    board.pegs[init_index] = PEG_STATUS_EMPTY;
 
-    if (board.type == PegSolitaire::BOARD_TYPE_EUROPEAN)
+    if (board.type == BOARD_TYPE_EUROPEAN)
     {
-        const size_t init_traced = PegSolitaire::index_from_2d(
-                board.cols - board.init_col - 1, board.rows - board.init_row - 1, board.cols);
-        board.pegs[init_traced] = PegSolitaire::PEG_STATUS_TRACED;
+        const size_t init_traced =
+                index_from_2d(board.cols - board.init_col - 1, board.rows - board.init_row - 1);
+        board.pegs[init_traced] = PEG_STATUS_TRACED;
     }
 }
 
@@ -372,7 +371,7 @@ void PegSolitaire::move_cursor_right()
     do
     {
         next_x = (next_x + 1) % board.cols;
-        index = index_from_2d(next_x, current_y, board.cols);
+        index = index_from_2d(next_x, current_y);
     }
     while (board.pegs[index] == PEG_STATUS_INVALID);
     cursor = index;
@@ -389,7 +388,7 @@ void PegSolitaire::move_cursor_left()
     do
     {
         next_x = ((next_x - 1) % (int) board.cols + board.cols) % board.cols;
-        index = index_from_2d(next_x, current_y, board.cols);
+        index = index_from_2d(next_x, current_y);
     }
     while (board.pegs[index] == PEG_STATUS_INVALID);
     cursor = index;
@@ -406,7 +405,7 @@ void PegSolitaire::move_cursor_up()
     do
     {
         next_y = ((next_y - 1) % (int) board.rows + board.rows) % board.rows;
-        index = index_from_2d(current_x, next_y, board.cols);
+        index = index_from_2d(current_x, next_y);
     }
     while (board.pegs[index] == PEG_STATUS_INVALID);
     cursor = index;
@@ -423,7 +422,7 @@ void PegSolitaire::move_cursor_down()
     do
     {
         next_y = (next_y + 1) % board.rows;
-        index = index_from_2d(current_x, next_y, board.cols);
+        index = index_from_2d(current_x, next_y);
     }
     while (board.pegs[index] == PEG_STATUS_INVALID);
     cursor = index;
@@ -441,19 +440,19 @@ int PegSolitaire::move_peg()
     int jumped = -1;
     if (cursor_x == selected_x + 2 && cursor_y == selected_y)
     {
-        jumped = index_from_2d(selected_x + 1, selected_y, board.cols);
+        jumped = index_from_2d(selected_x + 1, selected_y);
     }
     if (cursor_x + 2 == selected_x && cursor_y == selected_y)
     {
-        jumped = index_from_2d(cursor_x + 1, selected_y, board.cols);
+        jumped = index_from_2d(cursor_x + 1, selected_y);
     }
     if (cursor_x == selected_x && cursor_y == selected_y + 2)
     {
-        jumped = index_from_2d(selected_x, selected_y + 1, board.cols);
+        jumped = index_from_2d(selected_x, selected_y + 1);
     }
     if (cursor_x == selected_x && cursor_y + 2 == selected_y)
     {
-        jumped = index_from_2d(selected_x, cursor_y + 1, board.cols);
+        jumped = index_from_2d(selected_x, cursor_y + 1);
     }
     if (jumped == -1)
     {
@@ -515,7 +514,7 @@ PegSolitaire::game_status PegSolitaire::get_status() const
 void PegSolitaire::reset()
 {
     reset_board();
-    cursor = index_from_2d(board.init_col, board.init_row, board.cols);
+    cursor = index_from_2d(board.init_col, board.init_row);
     selected = -1;
     moves = 0;
     selections = 0;
@@ -534,7 +533,7 @@ void PegSolitaire::init_game(const board_type type)
     create_board(type);
 
     reset_board();
-    cursor = index_from_2d(board.init_col, board.init_row, board.cols);
+    cursor = index_from_2d(board.init_col, board.init_row);
     selected = -1;
     status = GAME_SELECTION;
 }

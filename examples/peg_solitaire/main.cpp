@@ -23,7 +23,7 @@
     while (0)
 
 
-void draw_board(PegSolitaire *game, const float peg_size, const Vector2 peg_dimension)
+void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 peg_dimension)
 {
     const PegSolitaire::peg_status *pegs = game->get_pegs();
     if (pegs == NULL)
@@ -42,7 +42,7 @@ void draw_board(PegSolitaire *game, const float peg_size, const Vector2 peg_dime
         for (size_t r = 0; r < rows; ++r)
         {
             const Vector2 position = {c * peg_size, r * peg_size};
-            const size_t index = PegSolitaire::index_from_2d(c, r, cols);
+            const size_t index = game->index_from_2d(c, r);
             switch (pegs[index])
             {
                 case PegSolitaire::PEG_STATUS_EMPTY:
@@ -134,49 +134,70 @@ int main(int argc, char *argv[])
     constexpr uint peg_size = 64;
     constexpr Vector2 peg_dimension = {peg_size, peg_size};
 
+    bool is_manual = false;
+
     while (!WindowShouldClose())
     {
-        auto state_old = game.get_state();
-        auto action =
-                agent.get_action(state_old, state_old.size(), PegSolitaire::PS_ACTION_COUNT, 1);
-
-        PegSolitaire::ps_actions_t game_action{};
-        for (size_t i = 0; i < action.size(); ++i)
+        if (IsKeyPressed(KEY_M))
         {
-            if (action[i] == 1)
-            {
-                game_action = (PegSolitaire::ps_actions_t) i;
-                break;
-            }
+            is_manual = !is_manual;
         }
 
-        auto [reward, game_over] = game.get_step(game_action);
-
-        auto state_new = game.get_state();
-        agent.train_short_memory(
-                state_old.size(), PegSolitaire::PS_ACTION_COUNT, state_old, action, reward,
-                state_new, game_over);
-
-        agent.remember(
-                state_old.size(), PegSolitaire::PS_ACTION_COUNT, state_old, action, reward,
-                state_new, game_over);
-
-        if (game_over)
+        if (is_manual)
         {
-            ++agent.number_of_games;
-            size_t score = game.get_score();
-            if (score < best_score)
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                best_score = score;
-                save_model(&model);
+                auto [mouse_x, mouse_y] = GetMousePosition();
+                int x = (int) mouse_x / peg_size;
+                int y = (int) mouse_y / peg_size;
+                int index = game.index_from_2d(x, y);
+                printf("mouse.x %f, mouse.y %f, index %d\n", mouse_x, mouse_y, index);
+            }
+        }
+        else
+        {
+            auto state_old = game.get_state();
+            auto action =
+                    agent.get_action(state_old, state_old.size(), PegSolitaire::PS_ACTION_COUNT, 1);
+
+            PegSolitaire::ps_actions_t game_action{};
+            for (size_t i = 0; i < action.size(); ++i)
+            {
+                if (action[i] == 1)
+                {
+                    game_action = (PegSolitaire::ps_actions_t) i;
+                    break;
+                }
             }
 
-            printf("Game %d Score %zu Record %d time %.2f batch %d max memory %d\n",
-                   agent.number_of_games, score, best_score, GetTime(), BATCH_SIZE, MAX_MEMORY);
+            auto [reward, game_over] = game.get_step(game_action);
 
-            // train long memory (also called replay memory, or experience replay)
-            agent.train_long_memory();
-            game.reset();
+            auto state_new = game.get_state();
+            agent.train_short_memory(
+                    state_old.size(), PegSolitaire::PS_ACTION_COUNT, state_old, action, reward,
+                    state_new, game_over);
+
+            agent.remember(
+                    state_old.size(), PegSolitaire::PS_ACTION_COUNT, state_old, action, reward,
+                    state_new, game_over);
+
+            if (game_over)
+            {
+                ++agent.number_of_games;
+                size_t score = game.get_score();
+                if (score < best_score)
+                {
+                    best_score = score;
+                    save_model(&model);
+                }
+
+                printf("Game %d Score %zu Record %d time %.2f batch %d max memory %d\n",
+                       agent.number_of_games, score, best_score, GetTime(), BATCH_SIZE, MAX_MEMORY);
+
+                // train long memory (also called replay memory, or experience replay)
+                agent.train_long_memory();
+                game.reset();
+            }
         }
 
         BeginDrawing();
