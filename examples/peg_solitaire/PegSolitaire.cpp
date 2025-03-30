@@ -589,13 +589,13 @@ size_t PegSolitaire::get_state_size() const
     return board.size + 1; // + selected
 }
 
-std::vector<int> PegSolitaire::get_state() const
+std::vector<double> PegSolitaire::get_state() const
 {
-    std::vector<int> result(get_state_size(), 0);
+    std::vector<double> result(get_state_size(), 0.0);
     // normalize inputs?
     for (size_t p = 0; p < board.size; ++p)
     {
-        result[p] = (float) board.pegs[p] / (float) PEG_STATUS_COUNT;
+        result[p] = (double) board.pegs[p] / (double) PEG_STATUS_COUNT;
     }
     result[board.size] = (double) selected / board.size;
     return result;

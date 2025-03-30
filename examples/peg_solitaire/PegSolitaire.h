@@ -10,7 +10,7 @@ public:
     size_t get_action_count() const override;
     int get_score() const override;
     StepResult get_step(int index) override;
-    std::vector<int> get_state() const override;
+    std::vector<double> get_state() const override;
     void reset() override;
 
     typedef enum peg_status

@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
     Agent agent(&model, &trainer, device);
 
-    int best_score = game.get_score();
+    size_t best_score = game.get_score();
 
     InitWindow(800, 600, "Peg Solitaire");
 
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
                     save_model(&model);
                 }
 
-                printf("Game %d Score %zu Record %d time %.2f batch %d max memory %d\n",
+                printf("Game %d Score %zu Record %zu time %.2f batch %d max memory %d\n",
                        agent.number_of_games, score, best_score, GetTime(), BATCH_SIZE, MAX_MEMORY);
 
                 // train long memory (also called replay memory, or experience replay)
