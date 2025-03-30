@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     game.init_game(PegSolitaire::BOARD_TYPE_ENGLISH);
     game.set_status(PegSolitaire::GAME_PLAYING);
 
-    auto model = Linear_QNet(game.get_state_size(), HIDDEN_SIZE, PegSolitaire::PS_ACTION_COUNT);
+    auto model = Linear_QNet(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
     Agent agent(&model, &trainer, device);
 
-    int best_score = game.count_pegs();
+    int best_score = game.get_score();
 
     InitWindow(800, 600, "Peg Solitaire");
 
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
         if (game_over)
         {
             ++agent.number_of_games;
-            size_t score = game.count_pegs();
+            size_t score = game.get_score();
             if (score < best_score)
             {
                 best_score = score;

@@ -1,16 +1,17 @@
 #pragma once
 
-#include <vector>
+#include <mlgames/AbstractGame.h>
 
-typedef struct StepResult
-{
-    int reward = 0;
-    bool game_over = false;
-} StepResult;
-
-class PegSolitaire
+class PegSolitaire : public AbstractGame
 {
 public:
+
+    size_t get_state_size() const override;
+    size_t get_action_count() const override;
+    int get_score() const override;
+    StepResult get_step(int action) override;
+    std::vector<int> get_state() const override;
+    void reset() override;
 
     typedef enum peg_status
     {
@@ -64,11 +65,9 @@ public:
         ~Board();
     } Board;
 
-    StepResult get_step(ps_actions_t action);
 
     void init_game(board_type type);
     void change_board(board_type type);
-    void reset();
     int apply_action(ps_actions_t action);
     void move_cursor_right();
     void move_cursor_left();
@@ -84,9 +83,6 @@ public:
     size_t get_rows() const;
     size_t get_cursor() const;
     int get_selected() const;
-    size_t count_pegs() const;
-    size_t get_state_size() const;
-    std::vector<int> get_state() const;
 
     static size_t index_from_2d(int col, int row, int cols);
 

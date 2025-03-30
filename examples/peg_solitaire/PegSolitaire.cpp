@@ -602,9 +602,9 @@ int PegSolitaire::apply_action(const ps_actions_t action)
     return 0;
 }
 
-size_t PegSolitaire::count_pegs() const
+int PegSolitaire::get_score() const
 {
-    size_t result = 0;
+    int result = 0;
     for (size_t i = 0; i < board.size; ++i)
     {
         if (board.pegs[i] == PEG_STATUS_FILLED || board.pegs[i] == PEG_STATUS_TRACED)
@@ -633,11 +633,11 @@ std::vector<int> PegSolitaire::get_state() const
     return result;
 }
 
-StepResult PegSolitaire::get_step(ps_actions_t action)
+StepResult PegSolitaire::get_step(int action)
 {
     StepResult result;
 
-    result.reward = apply_action(action);
+    result.reward = apply_action((ps_actions_t) action);
     const int status = check_game_status();
     if (status != 0)
     {
@@ -646,4 +646,9 @@ StepResult PegSolitaire::get_step(ps_actions_t action)
     }
 
     return result;
+}
+
+size_t PegSolitaire::get_action_count() const
+{
+    return PS_ACTION_COUNT;
 }

@@ -18,28 +18,6 @@ void QTrainer::train_step(
         size_t num_action, const std::vector<int> &actions_, const std::vector<int> &rewards_,
         const std::vector<int> &new_states_, const std::vector<bool> &dones_)
 {
-    // std::vector<int> flatten_old_states;
-    // flatten_old_states.reserve(old_states_.size() * num_state);
-    // std::vector<int> flatten_actions;
-    // flatten_actions.reserve(actions_.size() * num_action);
-    // std::vector<int> flatten_new_states;
-    // flatten_new_states.reserve(new_states_.size() * num_state);
-    //
-    // // all inputs have same size()
-    // for (size_t i = 0; i < count_samples; ++i)
-    // {
-    //     flatten_old_states.insert(
-    //             flatten_old_states.end(), old_states_[i * num_state],
-    //             old_states_[i * num_state + num_state - 1]);
-    //     flatten_actions.insert(
-    //             flatten_actions.end(), actions_[i * num_action],
-    //             actions_[i * num_action + num_action - 1]);
-    //     flatten_new_states.insert(
-    //             flatten_new_states.end(), new_states_[i * num_state],
-    //             new_states_[i * num_state + num_state - 1]);
-    // }
-
-
     const torch::Tensor old_states = torch::tensor(old_states_, torch::kInt)
                                              .reshape({(long) count_samples, (long) num_state})
                                              .to(device, torch::kFloat);

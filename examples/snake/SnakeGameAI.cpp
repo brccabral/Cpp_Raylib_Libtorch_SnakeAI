@@ -44,7 +44,7 @@ void SnakeGameAI::place_food()
     }
 };
 
-bool SnakeGameAI::is_collision(const Vector2 pt)
+bool SnakeGameAI::is_collision(const Vector2 pt) const
 {
     // hits boundary
     if (pt.x > w - 1 || pt.x < 0 || pt.y > h - 1 || pt.y < 0)
@@ -105,9 +105,8 @@ void SnakeGameAI::update_field()
     }
 }
 
-std::vector<int> SnakeGameAI::get_state()
+std::vector<int> SnakeGameAI::get_state() const
 {
-    update_field();
     auto [head_x, head_y] = snake[0];
 
     // get points around the head
@@ -238,13 +237,14 @@ void SnakeGameAI::move(action_t action)
     head = Vector2{x, y};
 }
 
-StepResult SnakeGameAI::get_step(action_t action)
+StepResult SnakeGameAI::get_step(int action)
 {
     StepResult result;
     ++frame_iteration;
 
-    move(action);
+    move((action_t) action);
     snake.insert(snake.begin(), head);
+    update_field();
 
     if (is_collision(head) || frame_iteration > 100 * snake.size())
     {
@@ -262,4 +262,19 @@ StepResult SnakeGameAI::get_step(action_t action)
     }
     snake.pop_back();
     return result;
+}
+
+size_t SnakeGameAI::get_state_size() const
+{
+    return 15;
+}
+
+size_t SnakeGameAI::get_action_count() const
+{
+    return ACTION_COUNT;
+}
+
+int SnakeGameAI::get_score() const
+{
+    return score;
 }

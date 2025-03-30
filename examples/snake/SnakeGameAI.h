@@ -1,20 +1,21 @@
 #pragma once
 
-#include <vector>
+#include <mlgames/AbstractGame.h>
 #include <raylib.h>
 
 
-typedef struct StepResult
-{
-    int reward = 0;
-    bool game_over = false;
-} StepResult;
-
-class SnakeGameAI
+class SnakeGameAI : public AbstractGame
 {
 public:
 
     SnakeGameAI();
+
+    size_t get_state_size() const override;
+    size_t get_action_count() const override;
+    int get_score() const override;
+    StepResult get_step(int action) override;
+    std::vector<int> get_state() const override;
+    void reset() override;
 
     typedef enum Direction
     {
@@ -34,13 +35,8 @@ public:
 
     std::vector<Vector2> snake;
     Vector2 food{};
-    int score = 0;
     Direction direction = RIGHT;
 
-    size_t state_size = 15;
-    std::vector<int> get_state();
-    StepResult get_step(action_t action);
-    void reset();
 
 private:
 
@@ -52,6 +48,8 @@ private:
 
     int w = 32;
     int h = 24;
+    int score = 0;
+    size_t state_size = 15;
     int frame_iteration = 0;
     Vector2 head = Vector2(w / 2.0f, h / 2.0f);
     Direction clock_wise_direction[4] = {RIGHT, DOWN, LEFT, UP};
@@ -62,7 +60,7 @@ private:
     Vector2 p_down = {0, 1};
     void new_food();
     void place_food();
-    bool is_collision(Vector2 pt);
+    bool is_collision(Vector2 pt) const;
     void move(action_t action);
     void update_field();
     size_t index_from_location(Vector2 pt) const;

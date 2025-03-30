@@ -28,7 +28,7 @@ int main()
 
     SnakeGameAI game;
 
-    auto model = Linear_QNet(game.state_size, HIDDEN_SIZE, SnakeGameAI::ACTION_COUNT);
+    auto model = Linear_QNet(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
@@ -70,15 +70,15 @@ int main()
         if (game_over)
         {
             ++agent.number_of_games;
-            if (game.score > best_score)
+            int score = game.get_score();
+            if (score > best_score)
             {
-                best_score = game.score;
+                best_score = score;
                 save_model(&model);
             }
 
             printf("Game %d Score %d Record %d time %.2f batch %d max memory %d\n",
-                   agent.number_of_games, game.score, best_score, GetTime(), BATCH_SIZE,
-                   MAX_MEMORY);
+                   agent.number_of_games, score, best_score, GetTime(), BATCH_SIZE, MAX_MEMORY);
 
             // train long memory (also called replay memory, or experience replay)
             agent.train_long_memory();
@@ -96,7 +96,7 @@ int main()
         }
         DrawRectangle(
                 game.food.x * BLOCK_SIZE, game.food.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, RED);
-        DrawText(TextFormat("Score: %d", game.score), 0, 0, 20, WHITE);
+        DrawText(TextFormat("Score: %d", game.get_score()), 0, 0, 20, WHITE);
         DrawText(TextFormat("Record: %d", best_score), 0, 20, 20, WHITE);
         DrawText(TextFormat("Time: %.2f", GetTime()), 0, 40, 20, WHITE);
         DrawText(TextFormat("Batch: %d", BATCH_SIZE), 0, 60, 20, WHITE);
