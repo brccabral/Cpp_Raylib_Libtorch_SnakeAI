@@ -430,31 +430,39 @@ void PegSolitaire::move_cursor_down()
 
 int PegSolitaire::move_peg()
 {
-
+    // current
     const int cursor_x = cursor % board.cols;
     const int cursor_y = cursor / board.cols;
-
+    // previous
     const int selected_x = selected % board.cols;
     const int selected_y = selected / board.cols;
 
     int jumped = -1;
+    // right
     if (cursor_x == selected_x + 2 && cursor_y == selected_y)
     {
         jumped = index_from_2d(selected_x + 1, selected_y);
     }
+    // left
     if (cursor_x + 2 == selected_x && cursor_y == selected_y)
     {
         jumped = index_from_2d(cursor_x + 1, selected_y);
     }
+    // down
     if (cursor_x == selected_x && cursor_y == selected_y + 2)
     {
         jumped = index_from_2d(selected_x, selected_y + 1);
     }
+    // up
     if (cursor_x == selected_x && cursor_y + 2 == selected_y)
     {
         jumped = index_from_2d(selected_x, cursor_y + 1);
     }
     if (jumped == -1)
+    {
+        return -1;
+    }
+    if (board.pegs[jumped] == PEG_STATUS_INVALID || board.pegs[jumped] == PEG_STATUS_EMPTY)
     {
         return -1;
     }
