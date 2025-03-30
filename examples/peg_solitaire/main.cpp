@@ -147,18 +147,15 @@ int main(int argc, char *argv[])
 
         if (is_manual)
         {
-            if (game_over)
+            if (IsKeyPressed(KEY_R))
             {
-                if (IsKeyPressed(KEY_R))
-                {
-                    game.reset();
-                }
+                game.reset();
             }
-            else
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                auto [mouse_x, mouse_y] = GetMousePosition();
+                if (mouse_x < game.get_cols() * peg_size && mouse_y < game.get_rows() * peg_size)
                 {
-                    auto [mouse_x, mouse_y] = GetMousePosition();
                     int x = (int) mouse_x / peg_size;
                     int y = (int) mouse_y / peg_size;
                     int index = game.index_from_2d(x, y);
