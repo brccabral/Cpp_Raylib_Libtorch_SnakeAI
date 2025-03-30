@@ -26,15 +26,15 @@ int main()
         device = torch::kCPU;
     }
 
-    auto model = Linear_QNet(INPUT_SIZE, HIDDEN_SIZE, SnakeGameAI::ACTION_COUNT);
+    SnakeGameAI game;
+
+    auto model = Linear_QNet(game.state_size, HIDDEN_SIZE, SnakeGameAI::ACTION_COUNT);
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
-    auto trainer =
-            QTrainer<INPUT_SIZE, SnakeGameAI::ACTION_COUNT>(&model, &optimizer, GAMMA, device);
+    auto trainer = QTrainer(&model, &optimizer, GAMMA, device);
 
-    Agent<INPUT_SIZE, SnakeGameAI::ACTION_COUNT> agent(&model, &trainer, device);
-    SnakeGameAI game;
+    Agent agent(&model, &trainer, device);
     constexpr int BLOCK_SIZE = 20;
 
     int best_score = 0;
@@ -44,7 +44,7 @@ int main()
     while (!WindowShouldClose())
     {
         auto state_old = game.get_state();
-        auto action = agent.get_action(state_old);
+        auto action = agent.get_action(state_old, state_old.size(), SnakeGameAI::ACTION_COUNT, 1);
 
         SnakeGameAI::action_t game_action{};
         for (size_t i = 0; i < action.size(); ++i)
@@ -56,15 +56,18 @@ int main()
             }
         }
 
-        auto step_result = game.get_step(game_action);
+        auto [reward, game_over] = game.get_step(game_action);
 
         auto state_new = game.get_state();
         agent.train_short_memory(
-                state_old, action, step_result.reward, state_new, step_result.game_over);
+                state_old.size(), SnakeGameAI::ACTION_COUNT, state_old, action, reward, state_new,
+                game_over);
 
-        agent.remember(state_old, action, step_result.reward, state_new, step_result.game_over);
+        agent.remember(
+                state_old.size(), SnakeGameAI::ACTION_COUNT, state_old, action, reward, state_new,
+                game_over);
 
-        if (step_result.game_over)
+        if (game_over)
         {
             ++agent.number_of_games;
             if (game.score > best_score)

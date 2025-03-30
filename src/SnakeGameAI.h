@@ -1,10 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <array>
 #include <raylib.h>
 
-#define INPUT_SIZE 15
 
 typedef struct StepResult
 {
@@ -39,7 +37,8 @@ public:
     int score = 0;
     Direction direction = RIGHT;
 
-    std::array<int, INPUT_SIZE> get_state();
+    size_t state_size = 15;
+    std::vector<int> get_state();
     StepResult get_step(action_t action);
     void reset();
 
@@ -66,5 +65,5 @@ private:
     bool is_collision(Vector2 pt);
     void move(action_t action);
     void update_field();
-    size_t index_from_location(Vector2 pt);
+    size_t index_from_location(Vector2 pt) const;
 };

@@ -28,7 +28,9 @@ SnakeGameAI::SnakeGameAI()
 
 void SnakeGameAI::new_food()
 {
+    // NOLINTNEXTLINE
     const int x = rand() % w;
+    // NOLINTNEXTLINE
     const int y = rand() % h;
     food = Vector2(x, y);
 }
@@ -36,7 +38,7 @@ void SnakeGameAI::new_food()
 void SnakeGameAI::place_food()
 {
     new_food();
-    while (std::find(snake.begin(), snake.end(), food) != snake.end())
+    while (std::ranges::find(snake.begin(), snake.end(), food) != snake.end())
     {
         new_food();
     }
@@ -57,7 +59,7 @@ bool SnakeGameAI::is_collision(const Vector2 pt)
     return false;
 }
 
-size_t SnakeGameAI::index_from_location(Vector2 pt)
+size_t SnakeGameAI::index_from_location(Vector2 pt) const
 {
     return pt.y * w + pt.x;
 }
@@ -70,28 +72,28 @@ void SnakeGameAI::update_field()
     while (!nodes.empty())
     {
         std::list<FieldLoc> new_nodes;
-        for (auto &n: nodes)
+        for (auto &[pt, distance]: nodes)
         {
-            distance_field[index_from_location(n.p)] = n.distance;
-            Vector2 right = n.p + p_right;
-            Vector2 left = n.p + p_left;
-            Vector2 up = n.p + p_up;
-            Vector2 down = n.p + p_down;
+            distance_field[index_from_location(pt)] = distance;
+            Vector2 right = pt + p_right;
+            Vector2 left = pt + p_left;
+            Vector2 up = pt + p_up;
+            Vector2 down = pt + p_down;
             if (!is_collision(right) && distance_field[index_from_location(right)] == 0)
             {
-                new_nodes.emplace_back(right, n.distance + 1);
+                new_nodes.emplace_back(right, distance + 1);
             }
             if (!is_collision(left) && distance_field[index_from_location(left)] == 0)
             {
-                new_nodes.emplace_back(left, n.distance + 1);
+                new_nodes.emplace_back(left, distance + 1);
             }
             if (!is_collision(up) && distance_field[index_from_location(up)] == 0)
             {
-                new_nodes.emplace_back(up, n.distance + 1);
+                new_nodes.emplace_back(up, distance + 1);
             }
             if (!is_collision(down) && distance_field[index_from_location(down)] == 0)
             {
-                new_nodes.emplace_back(down, n.distance + 1);
+                new_nodes.emplace_back(down, distance + 1);
             }
         }
 
@@ -103,33 +105,33 @@ void SnakeGameAI::update_field()
     }
 }
 
-std::array<int, INPUT_SIZE> SnakeGameAI::get_state()
+std::vector<int> SnakeGameAI::get_state()
 {
     update_field();
-    Vector2 head = snake[0];
+    auto [head_x, head_y] = snake[0];
 
     // get points around the head
-    Vector2 point_left = Vector2(head.x - 1, head.y);
-    Vector2 point_right = Vector2(head.x + 1, head.y);
-    Vector2 point_up = Vector2(head.x, head.y - 1);
-    Vector2 point_down = Vector2(head.x, head.y + 1);
+    const auto point_left = Vector2(head_x - 1, head_y);
+    const auto point_right = Vector2(head_x + 1, head_y);
+    const auto point_up = Vector2(head_x, head_y - 1);
+    const auto point_down = Vector2(head_x, head_y + 1);
 
-    bool is_direction_right = direction == RIGHT;
-    bool is_direction_left = direction == LEFT;
-    bool is_direction_up = direction == UP;
-    bool is_direction_down = direction == DOWN;
+    const bool is_direction_right = direction == RIGHT;
+    const bool is_direction_left = direction == LEFT;
+    const bool is_direction_up = direction == UP;
+    const bool is_direction_down = direction == DOWN;
 
-    bool is_food_left = food.x < head.x;
-    bool is_food_right = food.x > head.x;
-    bool is_food_up = food.y < head.y;
-    bool is_food_down = food.y > head.y;
+    const bool is_food_left = food.x < head_x;
+    const bool is_food_right = food.x > head_x;
+    const bool is_food_up = food.y < head_y;
+    const bool is_food_down = food.y > head_y;
 
-    bool right_reaches_food = distance_field[index_from_location(point_right)] > 0;
-    bool left_reaches_food = distance_field[index_from_location(point_left)] > 0;
-    bool up_reaches_food = distance_field[index_from_location(point_up)] > 0;
-    bool down_reaches_food = distance_field[index_from_location(point_down)] > 0;
+    const bool right_reaches_food = distance_field[index_from_location(point_right)] > 0;
+    const bool left_reaches_food = distance_field[index_from_location(point_left)] > 0;
+    const bool up_reaches_food = distance_field[index_from_location(point_up)] > 0;
+    const bool down_reaches_food = distance_field[index_from_location(point_down)] > 0;
 
-    return std::array<int, INPUT_SIZE>{
+    return std::vector<int>{
             // Danger straight (same direction)
             (is_direction_right && is_collision(point_right) ||
              (is_direction_left && is_collision(point_left)) ||
@@ -193,10 +195,6 @@ void SnakeGameAI::move(action_t action)
     int next_index = current_index;
     switch (action)
     {
-        case ACTION_STRAIGHT:
-        {
-            break;
-        }
         case ACTION_LEFT:
         {
             next_index = ((current_index - 1) % 4 + 4) % 4;
@@ -206,6 +204,8 @@ void SnakeGameAI::move(action_t action)
         {
             next_index = (current_index + 1) % 4;
         }
+        default:
+            break;
     }
 
     direction = clock_wise_direction[next_index];
