@@ -632,11 +632,13 @@ std::vector<int> PegSolitaire::get_state() const
     return result;
 }
 
-StepResult PegSolitaire::get_step(int action)
+StepResult PegSolitaire::get_step(int index)
 {
     StepResult result;
 
-    result.reward = apply_action((ps_actions_t) action);
+    cursor = index;
+    update_selected();
+
     const int status = check_game_status();
     if (status != 0)
     {

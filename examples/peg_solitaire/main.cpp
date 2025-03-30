@@ -151,7 +151,11 @@ int main(int argc, char *argv[])
                 int x = (int) mouse_x / peg_size;
                 int y = (int) mouse_y / peg_size;
                 int index = game.index_from_2d(x, y);
-                printf("mouse.x %f, mouse.y %f, index %d\n", mouse_x, mouse_y, index);
+                auto [reward, game_over] = game.get_step(index);
+                if (game_over)
+                {
+                    game.reset();
+                }
             }
         }
         else

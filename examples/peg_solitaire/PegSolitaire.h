@@ -9,7 +9,7 @@ public:
     size_t get_state_size() const override;
     size_t get_action_count() const override;
     int get_score() const override;
-    StepResult get_step(int action) override;
+    StepResult get_step(int index) override;
     std::vector<int> get_state() const override;
     void reset() override;
 
