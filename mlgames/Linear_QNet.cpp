@@ -1,4 +1,4 @@
-#include "Linear_QNet.h"
+#include <mlgames/Linear_QNet.h>
 
 Linear_QNetImpl::Linear_QNetImpl(int input_size, int hidden_size, int output_size)
 {

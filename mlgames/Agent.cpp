@@ -1,4 +1,4 @@
-#include "Agent.h"
+#include <mlgames/Agent.h>
 
 
 Agent::Agent(Linear_QNet *model_, QTrainer *trainer_, const c10::DeviceType device_)

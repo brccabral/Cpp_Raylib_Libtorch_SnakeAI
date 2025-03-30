@@ -1,4 +1,4 @@
-#include "QTrainer.h"
+#include <mlgames/QTrainer.h>
 
 
 QTrainer::QTrainer(

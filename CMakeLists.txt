@@ -1,21 +1,10 @@
 cmake_minimum_required(VERSION 3.27)
-project(SnakeAI)
+project(MLGames)
 
-set(CMAKE_CXX_STANDARD 20)
+add_subdirectory(mlgames)
 
-find_package(raylib REQUIRED)
-find_package(Torch REQUIRED)
+option(BUILD_EXAMPLES "Build examples" ON)
 
-file(GLOB CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-add_executable(SnakeAI ${CPP_FILES})
-target_link_libraries(SnakeAI PUBLIC raylib ${TORCH_LIBRARIES})
-
-if(MSVC)
-add_custom_command(TARGET SnakeAI POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/models
-)
-else()
-add_custom_command(TARGET SnakeAI POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/models
-)
-endif()
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif ()

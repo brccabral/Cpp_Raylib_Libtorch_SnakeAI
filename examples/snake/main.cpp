@@ -2,9 +2,9 @@
 #include <cstdio>
 #include <ctime>
 #include "SnakeGameAI.h"
-#include "Agent.h"
-#include "Linear_QNet.h"
-#include "QTrainer.h"
+#include <mlgames/Agent.h>
+#include <mlgames/Linear_QNet.h>
+#include <mlgames/QTrainer.h>
 
 
 #define LR (0.001)
