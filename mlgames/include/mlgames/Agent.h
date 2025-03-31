@@ -6,7 +6,7 @@
 
 
 // how many previous moves will be stored in memory_deque
-#define MAX_MEMORY 10000000
+#define MAX_MEMORY 100000000
 
 
 template<typename T>

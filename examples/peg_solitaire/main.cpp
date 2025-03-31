@@ -12,7 +12,7 @@
 #define GAMMA (0.9)
 #define HIDDEN_SIZE (256)
 // memory usage (if CPU -> RAM, if GPU -> GPU_MEM)
-#define BATCH_SIZE (10000)
+#define BATCH_SIZE (100000)
 
 #define do_shift(argc, argv)                                                                       \
     do                                                                                             \
