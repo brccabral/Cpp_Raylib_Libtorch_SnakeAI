@@ -93,4 +93,6 @@ private:
     [[nodiscard]] int can_receive_up(int index_x, int index_y) const;
     [[nodiscard]] int can_receive_down(int index_x, int index_y) const;
     [[nodiscard]] int count_peg_moves(int index) const;
+    [[nodiscard]] int count_movables() const;
+    [[nodiscard]] int find_traced() const;
 };

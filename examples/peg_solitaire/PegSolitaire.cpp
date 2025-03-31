@@ -293,19 +293,11 @@ void PegSolitaire::set_status(const game_status status_)
     status = status_;
 }
 
-int PegSolitaire::check_game_status()
+int PegSolitaire::count_movables() const
 {
-    // too many wrong selections
-    if (selections > 3 * board.size)
-    {
-        set_status(GAME_OVER_LOST);
-        return -1;
-    }
-
+    int count_moveable = 0;
     int count_filled = 0;
     int count_traced = 0;
-    int count_moveable = 0;
-    int index_traced = -1;
     for (size_t i = 0; i < board.size; ++i)
     {
         if (board.pegs[i] == PEG_STATUS_FILLED)
@@ -315,44 +307,63 @@ int PegSolitaire::check_game_status()
         if (board.pegs[i] == PEG_STATUS_TRACED)
         {
             ++count_traced;
-            index_traced = i;
         }
         count_moveable += count_peg_moves(i);
+    }
+    return count_moveable;
+}
+
+int PegSolitaire::find_traced() const
+{
+    for (size_t i = 0; i < board.size; ++i)
+    {
+        if (board.pegs[i] == PEG_STATUS_TRACED)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int PegSolitaire::check_game_status()
+{
+    // too many wrong selections
+    if (selections > 5 * board.size)
+    {
+        set_status(GAME_OVER_LOST);
+        return -1;
+    }
+
+    const int count_moveable = count_movables();
+    const int score = get_score();
+
+    if (count_moveable == 0 && score > 1)
+    {
+        set_status(GAME_OVER_LOST);
+        return -1;
     }
 
     if (board.type == BOARD_TYPE_EUROPEAN)
     {
-        if (count_traced == 0)
+        const int index_traced = find_traced();
+        if (index_traced == -1)
         {
             set_status(GAME_OVER_LOST);
             return -1;
         }
-    }
-    if ((count_filled + count_traced) == 1)
-    {
-        if (board.type != BOARD_TYPE_EUROPEAN)
+        size_t traced_x;
+        size_t traced_y;
+        xy_from_index(index_traced, traced_x, traced_y);
+        if (count_moveable == 0 && traced_x == board.init_col && traced_y == board.init_row)
         {
             set_status(GAME_OVER_WON);
             return 1;
         }
-
-        if (index_traced != -1)
-        {
-            size_t traced_x;
-            size_t traced_y;
-            xy_from_index(index_traced, traced_x, traced_y);
-            if (traced_x == board.init_col && traced_y == board.init_row)
-            {
-                set_status(GAME_OVER_WON);
-                return 1;
-            }
-        }
     }
-
-    if (count_moveable == 0)
+    else if (count_moveable == 0 && score == 1)
     {
-        set_status(GAME_OVER_LOST);
-        return -1;
+        set_status(GAME_OVER_WON);
+        return 1;
     }
 
     set_status(GAME_PLAYING);
@@ -561,7 +572,10 @@ StepResult PegSolitaire::get_step(int index)
     if (status != 0)
     {
         result.game_over = true;
-        result.reward = status * 10;
+        if (count_movables() == 0)
+        {
+            result.reward = status * 10;
+        }
     }
 
     return result;
