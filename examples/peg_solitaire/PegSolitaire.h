@@ -6,11 +6,11 @@ class PegSolitaire : public AbstractGame
 {
 public:
 
-    size_t get_state_size() const override;
-    size_t get_action_count() const override;
-    int get_score() const override;
+    [[nodiscard]] size_t get_state_size() const override;
+    [[nodiscard]] size_t get_action_count() const override;
+    [[nodiscard]] int get_score() const override;
     StepResult get_step(int index) override;
-    std::vector<double> get_state() const override;
+    [[nodiscard]] std::vector<double> get_state() const override;
     void reset() override;
 
     typedef enum peg_status
@@ -64,14 +64,14 @@ public:
     [[nodiscard]] int update_selected();
 
     void set_status(game_status status_);
-    game_status get_status() const;
-    peg_status *get_pegs() const;
-    size_t get_cols() const;
-    size_t get_rows() const;
-    size_t get_cursor() const;
-    int get_selected() const;
+    [[nodiscard]] game_status get_status() const;
+    [[nodiscard]] peg_status *get_pegs() const;
+    [[nodiscard]] size_t get_cols() const;
+    [[nodiscard]] size_t get_rows() const;
+    [[nodiscard]] size_t get_cursor() const;
+    [[nodiscard]] int get_selected() const;
 
-    size_t index_from_2d(int col, int row) const;
+    [[nodiscard]] size_t index_from_2d(int col, int row) const;
 
     size_t moves{};
     game_status status{};
@@ -86,9 +86,9 @@ private:
     int move_peg();
     void reset_board() const;
     void create_board(board_type type);
-    int can_move_right(int index_x, int index_y) const;
-    int can_move_left(int index_x, int index_y) const;
-    int can_move_up(int index_x, int index_y) const;
-    int can_move_down(int index_x, int index_y) const;
-    int count_peg_moves(int index) const;
+    [[nodiscard]] int can_move_right(int index_x, int index_y) const;
+    [[nodiscard]] int can_move_left(int index_x, int index_y) const;
+    [[nodiscard]] int can_move_up(int index_x, int index_y) const;
+    [[nodiscard]] int can_move_down(int index_x, int index_y) const;
+    [[nodiscard]] int count_peg_moves(int index) const;
 };

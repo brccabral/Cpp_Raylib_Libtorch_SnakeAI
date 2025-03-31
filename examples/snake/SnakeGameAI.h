@@ -10,11 +10,11 @@ public:
 
     SnakeGameAI();
 
-    size_t get_state_size() const override;
-    size_t get_action_count() const override;
-    int get_score() const override;
+    [[nodiscard]] size_t get_state_size() const override;
+    [[nodiscard]] size_t get_action_count() const override;
+    [[nodiscard]] int get_score() const override;
     StepResult get_step(int action) override;
-    std::vector<double> get_state() const override;
+    [[nodiscard]] std::vector<double> get_state() const override;
     void reset() override;
 
     typedef enum Direction
@@ -60,8 +60,8 @@ private:
     Vector2 p_down = {0, 1};
     void new_food();
     void place_food();
-    bool is_collision(Vector2 pt) const;
+    [[nodiscard]] bool is_collision(Vector2 pt) const;
     void move(action_t action);
     void update_field();
-    size_t index_from_location(Vector2 pt) const;
+    [[nodiscard]] size_t index_from_location(Vector2 pt) const;
 };
