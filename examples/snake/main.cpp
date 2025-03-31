@@ -31,7 +31,8 @@ int main()
 
     SnakeGameAI game;
 
-    auto model = LinearNN(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
+    auto model = LinearNN(
+            game.get_state_size(), game.get_action_count(), std::vector<size_t>{HIDDEN_SIZE});
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
