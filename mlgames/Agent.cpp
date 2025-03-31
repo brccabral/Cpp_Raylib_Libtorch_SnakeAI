@@ -2,7 +2,7 @@
 
 
 Agent::Agent(
-        Linear_QNet *model_, QTrainer *trainer_, const c10::DeviceType device_, size_t batch_size_)
+        LinearNN *model_, QTrainer *trainer_, const c10::DeviceType device_, size_t batch_size_)
 {
     device = device_;
     model = model_;

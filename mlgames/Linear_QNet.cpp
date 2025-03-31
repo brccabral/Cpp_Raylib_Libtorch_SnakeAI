@@ -1,6 +1,6 @@
 #include <mlgames/Linear_QNet.h>
 
-Linear_QNetImpl::Linear_QNetImpl(size_t input_size_, size_t hidden_size_, size_t output_size_)
+LinearNNImpl::LinearNNImpl(size_t input_size_, size_t hidden_size_, size_t output_size_)
 {
     input_size = input_size_;
     hidden_size = hidden_size_;
@@ -12,19 +12,19 @@ Linear_QNetImpl::Linear_QNetImpl(size_t input_size_, size_t hidden_size_, size_t
     linear2->to(torch::kDouble);
 }
 
-torch::Tensor Linear_QNetImpl::forward(const torch::Tensor &x)
+torch::Tensor LinearNNImpl::forward(const torch::Tensor &x)
 {
     torch::Tensor output = relu(linear1->forward(x));
     output = linear2->forward(output);
     return output;
 }
 
-void save_model(const Linear_QNet *model, const char *filename)
+void save_model(const LinearNN *model, const char *filename)
 {
     torch::save(*model, filename);
 }
 
-void load_model(Linear_QNet *model, const char *filename)
+void load_model(LinearNN *model, const char *filename)
 {
     torch::load(*model, filename);
 }

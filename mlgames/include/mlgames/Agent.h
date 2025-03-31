@@ -77,7 +77,7 @@ class Agent
 {
 public:
 
-    Agent(Linear_QNet *model_, QTrainer *trainer_, c10::DeviceType device_, size_t batch_size_);
+    Agent(LinearNN *model_, QTrainer *trainer_, c10::DeviceType device_, size_t batch_size_);
 
     std::vector<int> get_action(const std::vector<double> &state, size_t count_samples) const;
 
@@ -94,7 +94,7 @@ public:
 
 private:
 
-    Linear_QNet *model;
+    LinearNN *model;
     QTrainer *trainer;
     c10::DeviceType device;
     LimitedDeque<MemoryData> memory_deque{MAX_MEMORY};

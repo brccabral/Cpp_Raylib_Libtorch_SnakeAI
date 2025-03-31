@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     game.init_game(PegSolitaire::BOARD_TYPE_ENGLISH);
     game.set_status(PegSolitaire::GAME_PLAYING);
 
-    auto model = Linear_QNet(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
+    auto model = LinearNN(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});

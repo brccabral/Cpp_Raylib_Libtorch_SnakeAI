@@ -2,7 +2,7 @@
 
 
 QTrainer::QTrainer(
-        Linear_QNet *model_, torch::optim::Optimizer *optimizer_, const double gamma_,
+        LinearNN *model_, torch::optim::Optimizer *optimizer_, const double gamma_,
         const c10::DeviceType device_)
 {
     model = model_;

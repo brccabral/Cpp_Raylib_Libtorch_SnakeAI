@@ -15,6 +15,7 @@
 
 int main()
 {
+    // NOLINTNEXTLINE
     srand(time(NULL));
 
     c10::DeviceType device = torch::kCPU;
@@ -31,7 +32,7 @@ int main()
 
     SnakeGameAI game;
 
-    auto model = Linear_QNet(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
+    auto model = LinearNN(game.get_state_size(), HIDDEN_SIZE, game.get_action_count());
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
