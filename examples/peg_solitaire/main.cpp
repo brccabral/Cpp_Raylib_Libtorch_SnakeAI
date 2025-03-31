@@ -109,7 +109,8 @@ void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 pe
 }
 
 void draw_game(
-        PegSolitaire *game, size_t peg_size, Vector2 peg_dimension, int reward, int best_score)
+        const PegSolitaire *game, size_t peg_size, Vector2 peg_dimension, int reward,
+        int best_score)
 {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -134,7 +135,8 @@ void draw_game(
     }
     DrawText(TextFormat("Reward %d", reward), 500, 40, 20, WHITE);
     DrawText(TextFormat("Selections %lu", game->selections), 500, 60, 20, WHITE);
-    DrawText(TextFormat("Best %lu", best_score), 500, 80, 20, WHITE);
+    DrawText(TextFormat("Score %lu", game->get_score()), 500, 80, 20, WHITE);
+    DrawText(TextFormat("Best %lu", best_score), 500, 100, 20, WHITE);
     EndDrawing();
 }
 
