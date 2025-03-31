@@ -13,7 +13,7 @@ Agent::Agent(Linear_QNet *model_, QTrainer *trainer_, const c10::DeviceType devi
 
 std::vector<int> Agent::get_play(const std::vector<double> &state, size_t count_samples) const
 {
-    const auto state0 = torch::tensor(state, torch::kFloat)
+    const auto state0 = torch::tensor(state, torch::kDouble)
                                 .reshape({(long) count_samples, (long) (*model)->input_size})
                                 .to(device);
     (*model)->eval();

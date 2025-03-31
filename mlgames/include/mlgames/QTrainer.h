@@ -5,7 +5,7 @@
 class QTrainer
 {
     Linear_QNet *model;
-    float gamma;
+    double gamma;
 
     torch::optim::Optimizer *optimizer;
     torch::nn::MSELoss criterion{};
@@ -14,7 +14,7 @@ class QTrainer
 public:
 
     QTrainer(
-            Linear_QNet *model_, torch::optim::Optimizer *optimizer_, float gamma_,
+            Linear_QNet *model_, torch::optim::Optimizer *optimizer_, double gamma_,
             c10::DeviceType device_);
     void train_step(
             size_t count_samples, const std::vector<double> &old_states_,

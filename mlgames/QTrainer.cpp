@@ -2,7 +2,7 @@
 
 
 QTrainer::QTrainer(
-        Linear_QNet *model_, torch::optim::Optimizer *optimizer_, const float gamma_,
+        Linear_QNet *model_, torch::optim::Optimizer *optimizer_, const double gamma_,
         const c10::DeviceType device_)
 {
     model = model_;
@@ -19,17 +19,17 @@ void QTrainer::train_step(
         const std::vector<double> &new_states_, const std::vector<bool> &dones_)
 {
     const torch::Tensor old_states =
-            torch::tensor(old_states_, torch::kInt)
+            torch::tensor(old_states_, torch::kDouble)
                     .reshape({(long) count_samples, (long) (*model)->input_size})
-                    .to(device, torch::kFloat);
+                    .to(device);
     const torch::Tensor actions =
             torch::tensor(actions_, torch::kInt)
                     .reshape({(long) count_samples, (long) (*model)->output_size})
-                    .to(device, torch::kFloat);
+                    .to(device, torch::kDouble);
     const torch::Tensor new_states =
-            torch::tensor(new_states_, torch::kInt)
+            torch::tensor(new_states_, torch::kDouble)
                     .reshape({(long) count_samples, (long) (*model)->input_size})
-                    .to(device, torch::kFloat);
+                    .to(device);
 
     // 1: predict Q values with current state
     (*model)->train();
@@ -47,7 +47,7 @@ void QTrainer::train_step(
             if (!dones_[index])
             {
                 q_new = q_new +
-                        gamma * (*model)->forward(new_states[index])[max_index].item().toFloat();
+                        gamma * (*model)->forward(new_states[index])[max_index].item().toDouble();
             }
             target[index][max_index] = q_new;
         }
