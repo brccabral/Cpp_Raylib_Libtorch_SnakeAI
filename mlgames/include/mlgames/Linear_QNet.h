@@ -8,8 +8,12 @@ class Linear_QNetImpl : public torch::nn::Module
 {
 public:
 
-    Linear_QNetImpl(int input_size, int hidden_size, int output_size);
+    Linear_QNetImpl(size_t input_size_, size_t hidden_size_, size_t output_size_);
     torch::Tensor forward(const torch::Tensor &x);
+
+    size_t input_size;
+    size_t hidden_size;
+    size_t output_size;
 
 private:
 

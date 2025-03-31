@@ -11,11 +11,10 @@ Agent::Agent(Linear_QNet *model_, QTrainer *trainer_, const c10::DeviceType devi
 }
 
 
-std::vector<int>
-Agent::get_play(const std::vector<double> &state, size_t num_state, size_t count_samples) const
+std::vector<int> Agent::get_play(const std::vector<double> &state, size_t count_samples) const
 {
     const auto state0 = torch::tensor(state, torch::kFloat)
-                                .reshape({(long) count_samples, (long) num_state})
+                                .reshape({(long) count_samples, (long) (*model)->input_size})
                                 .to(device);
     (*model)->eval();
     auto prediction = torch::Tensor();
@@ -23,16 +22,13 @@ Agent::get_play(const std::vector<double> &state, size_t num_state, size_t count
         torch::NoGradGuard no_grad;
         prediction = (*model)->forward(state0);
     }
-    // std::cout << prediction << "\n";
     std::vector<int> action(prediction.size(1), 0);
     action[torch::argmax(prediction).item().toInt()] = 1;
     return action;
 }
 
 
-std::vector<int> Agent::get_action(
-        const std::vector<double> &state, size_t num_state, size_t num_action,
-        size_t count_samples) const
+std::vector<int> Agent::get_action(const std::vector<double> &state, size_t count_samples) const
 {
     const int epsilon = 80 - number_of_games;
 
@@ -40,30 +36,30 @@ std::vector<int> Agent::get_action(
     // in the beginning this is true for some time, later self.number_of_games is larger
     if (rand() % 200 < epsilon)
     {
-        std::vector<int> action(num_action * count_samples, 0);
-        action[rand() % num_action] = 1;
+        std::vector<int> action((*model)->output_size * count_samples, 0);
+        action[rand() % (*model)->output_size] = 1;
         return action;
     }
 
-    return get_play(state, num_state, count_samples);
+    return get_play(state, count_samples);
 }
 
 
 void Agent::train_short_memory(
-        size_t num_state, size_t num_action, const std::vector<double> &state,
-        const std::vector<int> &action, int reward, const std::vector<double> &next_state,
-        bool game_over) const
+        const std::vector<double> &state, const std::vector<int> &action, int reward,
+        const std::vector<double> &next_state, bool game_over) const
 {
-    trainer->train_step(1, num_state, state, num_action, action, {reward}, next_state, {game_over});
+    trainer->train_step(1, state, action, {reward}, next_state, {game_over});
 }
 
 
 void Agent::remember(
-        size_t num_state, size_t num_action, const std::vector<double> &state,
-        const std::vector<int> &action, const int reward, const std::vector<double> &next_state,
-        const bool game_over)
+        const std::vector<double> &state, const std::vector<int> &action, const int reward,
+        const std::vector<double> &next_state, const bool game_over)
 {
-    memory_deque.push_back({num_state, num_action, state, action, reward, next_state, game_over});
+    memory_deque.push_back(
+            {(*model)->input_size, (*model)->output_size, state, action, reward, next_state,
+             game_over});
 }
 
 
@@ -113,6 +109,5 @@ void Agent::train_long_memory()
         game_overs.push_back(samples[i].game_over);
     }
 
-    trainer->train_step(
-            sample_size, num_state, states, num_action, actions, rewards, next_states, game_overs);
+    trainer->train_step(sample_size, states, actions, rewards, next_states, game_overs);
 }

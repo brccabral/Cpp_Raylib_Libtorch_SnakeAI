@@ -83,20 +83,16 @@ public:
 
     Agent(Linear_QNet *model_, QTrainer *trainer_, c10::DeviceType device_);
 
-    std::vector<int> get_action(
-            const std::vector<double> &state, size_t num_state, size_t num_action,
-            size_t count_samples) const;
+    std::vector<int> get_action(const std::vector<double> &state, size_t count_samples) const;
 
     void train_short_memory(
-            size_t num_state, size_t num_action, const std::vector<double> &state,
-            const std::vector<int> &action, int reward, const std::vector<double> &next_state,
-            bool game_over) const;
+            const std::vector<double> &state, const std::vector<int> &action, int reward,
+            const std::vector<double> &next_state, bool game_over) const;
     void train_long_memory();
 
     void remember(
-            size_t num_state, size_t num_action, const std::vector<double> &state,
-            const std::vector<int> &action, int reward, const std::vector<double> &next_state,
-            bool game_over);
+            const std::vector<double> &state, const std::vector<int> &action, int reward,
+            const std::vector<double> &next_state, bool game_over);
 
     int number_of_games = 0;
 
@@ -107,6 +103,5 @@ private:
     c10::DeviceType device;
     LimitedDeque<MemoryData> memory_deque{MAX_MEMORY};
 
-    std::vector<int>
-    get_play(const std::vector<double> &state, size_t num_state, size_t count_samples) const;
+    std::vector<int> get_play(const std::vector<double> &state, size_t count_samples) const;
 };

@@ -1,9 +1,13 @@
 #include <mlgames/Linear_QNet.h>
 
-Linear_QNetImpl::Linear_QNetImpl(int input_size, int hidden_size, int output_size)
+Linear_QNetImpl::Linear_QNetImpl(size_t input_size_, size_t hidden_size_, size_t output_size_)
 {
-    linear1 = register_module("linear1", torch::nn::Linear(input_size, hidden_size));
-    linear2 = register_module("linear2", torch::nn::Linear(hidden_size, output_size));
+    input_size = input_size_;
+    hidden_size = hidden_size_;
+    output_size = output_size_;
+
+    linear1 = register_module("linear1", torch::nn::Linear(input_size_, hidden_size_));
+    linear2 = register_module("linear2", torch::nn::Linear(hidden_size_, output_size_));
 }
 
 torch::Tensor Linear_QNetImpl::forward(const torch::Tensor &x)

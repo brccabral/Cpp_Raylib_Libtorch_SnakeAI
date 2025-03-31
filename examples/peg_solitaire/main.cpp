@@ -168,8 +168,7 @@ int main(int argc, char *argv[])
         else
         {
             auto state_old = game.get_state();
-            auto action =
-                    agent.get_action(state_old, game.get_state_size(), game.get_action_count(), 1);
+            auto action = agent.get_action(state_old, 1);
 
             int index{};
             for (size_t i = 0; i < action.size(); ++i)
@@ -186,13 +185,9 @@ int main(int argc, char *argv[])
             game_over = g;
 
             auto state_new = game.get_state();
-            agent.train_short_memory(
-                    game.get_state_size(), game.get_action_count(), state_old, action, reward,
-                    state_new, game_over);
+            agent.train_short_memory(state_old, action, reward, state_new, game_over);
 
-            agent.remember(
-                    game.get_state_size(), game.get_action_count(), state_old, action, reward,
-                    state_new, game_over);
+            agent.remember(state_old, action, reward, state_new, game_over);
 
             if (game_over)
             {

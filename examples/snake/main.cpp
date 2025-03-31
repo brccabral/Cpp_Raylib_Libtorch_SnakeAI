@@ -44,7 +44,7 @@ int main()
     while (!WindowShouldClose())
     {
         auto state_old = game.get_state();
-        auto action = agent.get_action(state_old, state_old.size(), SnakeGameAI::ACTION_COUNT, 1);
+        auto action = agent.get_action(state_old, 1);
 
         SnakeGameAI::action_t game_action{};
         for (size_t i = 0; i < action.size(); ++i)
@@ -59,13 +59,9 @@ int main()
         auto [reward, game_over] = game.get_step(game_action);
 
         auto state_new = game.get_state();
-        agent.train_short_memory(
-                state_old.size(), SnakeGameAI::ACTION_COUNT, state_old, action, reward, state_new,
-                game_over);
+        agent.train_short_memory(state_old, action, reward, state_new, game_over);
 
-        agent.remember(
-                state_old.size(), SnakeGameAI::ACTION_COUNT, state_old, action, reward, state_new,
-                game_over);
+        agent.remember(state_old, action, reward, state_new, game_over);
 
         if (game_over)
         {
