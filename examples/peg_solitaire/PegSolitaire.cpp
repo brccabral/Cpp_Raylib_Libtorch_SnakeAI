@@ -416,7 +416,7 @@ int PegSolitaire::move_peg()
     board.pegs[jumped] = PEG_STATUS_EMPTY;
     selections = 0;
     selected = -1;
-    return 1;
+    return 2;
 }
 
 int PegSolitaire::update_selected()
