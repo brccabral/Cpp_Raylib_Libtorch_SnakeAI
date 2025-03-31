@@ -105,6 +105,36 @@ void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 pe
     }
 }
 
+void draw_game(
+        PegSolitaire *game, size_t peg_size, Vector2 peg_dimension, int reward, int best_score)
+{
+    BeginDrawing();
+    ClearBackground(BLACK);
+    draw_board(game, peg_size, peg_dimension);
+    switch (game->status)
+    {
+        case PegSolitaire::GAME_OVER_LOST:
+        {
+            DrawText("Game Over - You Lost", 500, 20, 20, RED);
+            break;
+        }
+        case PegSolitaire::GAME_OVER_WON:
+        {
+            DrawText("Game Over - You Win", 500, 20, 20, GREEN);
+            break;
+        }
+        default:
+        {
+            DrawText("Playing", 500, 20, 20, WHITE);
+            break;
+        }
+    }
+    DrawText(TextFormat("Reward %d", reward), 500, 40, 20, WHITE);
+    DrawText(TextFormat("Selections %lu", game->selections), 500, 60, 20, WHITE);
+    DrawText(TextFormat("Best %lu", best_score), 500, 80, 20, WHITE);
+    EndDrawing();
+}
+
 int main(int argc, char *argv[])
 {
     // NOLINTNEXTLINE
@@ -183,6 +213,7 @@ int main(int argc, char *argv[])
                     game_over = g;
                 }
             }
+            draw_game(&game, peg_size, peg_dimension, reward, best_score);
         }
         else
         {
@@ -202,6 +233,8 @@ int main(int argc, char *argv[])
             auto [r, g] = game.get_step(index);
             reward = r;
             game_over = g;
+
+            draw_game(&game, peg_size, peg_dimension, reward, best_score);
 
             auto state_new = game.get_state();
             agent.train_short_memory(state_old, action, reward, state_new, game_over);
