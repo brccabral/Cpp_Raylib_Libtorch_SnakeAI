@@ -72,12 +72,13 @@ public:
 };
 
 
-class Agent
+class AgentQTrainer
 {
 public:
 
-    Agent(LinearNN *model_, torch::optim::Optimizer *optimizer_, c10::DeviceType device_,
-          size_t batch_size_, double gamma_);
+    AgentQTrainer(
+            LinearNN *model_, torch::optim::Optimizer *optimizer_, c10::DeviceType device_,
+            size_t batch_size_, double gamma_);
 
     [[nodiscard]] std::vector<int>
     get_action(const std::vector<double> &state, size_t count_samples) const;

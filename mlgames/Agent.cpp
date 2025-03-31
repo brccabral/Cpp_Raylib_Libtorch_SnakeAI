@@ -1,7 +1,7 @@
 #include <mlgames/Agent.h>
 
 
-Agent::Agent(
+AgentQTrainer::AgentQTrainer(
         LinearNN *model_, torch::optim::Optimizer *optimizer_, const c10::DeviceType device_,
         size_t batch_size_, double gamma_)
 {
@@ -13,7 +13,8 @@ Agent::Agent(
 }
 
 
-std::vector<int> Agent::get_play(const std::vector<double> &state, size_t count_samples) const
+std::vector<int>
+AgentQTrainer::get_play(const std::vector<double> &state, size_t count_samples) const
 {
     const auto state0 = torch::tensor(state, torch::kDouble)
                                 .reshape({(long) count_samples, (long) (*model)->input_size})
@@ -37,7 +38,8 @@ std::vector<int> Agent::get_play(const std::vector<double> &state, size_t count_
 }
 
 
-std::vector<int> Agent::get_action(const std::vector<double> &state, size_t count_samples) const
+std::vector<int>
+AgentQTrainer::get_action(const std::vector<double> &state, size_t count_samples) const
 {
     const int epsilon = 80 - number_of_games;
 
@@ -54,7 +56,7 @@ std::vector<int> Agent::get_action(const std::vector<double> &state, size_t coun
 }
 
 
-void Agent::train_short_memory(
+void AgentQTrainer::train_short_memory(
         const std::vector<double> &state, const std::vector<int> &action, int reward,
         const std::vector<double> &next_state, bool game_over)
 {
@@ -62,7 +64,7 @@ void Agent::train_short_memory(
 }
 
 
-void Agent::remember(
+void AgentQTrainer::remember(
         const std::vector<double> &state, const std::vector<int> &action, const int reward,
         const std::vector<double> &next_state, const bool game_over)
 {
@@ -72,7 +74,7 @@ void Agent::remember(
 }
 
 
-void Agent::train_long_memory()
+void AgentQTrainer::train_long_memory()
 {
     std::vector<MemoryData> samples;
     size_t sample_size;
@@ -121,7 +123,7 @@ void Agent::train_long_memory()
     train_step(sample_size, states, actions, rewards, next_states, game_overs);
 }
 
-void Agent::train_step(
+void AgentQTrainer::train_step(
         size_t count_samples, const std::vector<double> &old_states_,
         const std::vector<int> &actions_, const std::vector<int> &rewards_,
         const std::vector<double> &new_states_, const std::vector<bool> &dones_)

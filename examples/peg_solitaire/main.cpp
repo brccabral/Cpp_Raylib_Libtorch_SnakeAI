@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
 
-    Agent agent(&model, &optimizer, device, BATCH_SIZE, GAMMA);
+    AgentQTrainer agent(&model, &optimizer, device, BATCH_SIZE, GAMMA);
 
     size_t best_score = game.get_score();
 

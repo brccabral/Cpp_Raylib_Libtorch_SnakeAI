@@ -37,7 +37,7 @@ int main()
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
 
-    Agent agent(&model, &optimizer, device, BATCH_SIZE, GAMMA);
+    AgentQTrainer agent(&model, &optimizer, device, BATCH_SIZE, GAMMA);
     constexpr int BLOCK_SIZE = 20;
 
     int best_score = 0;
