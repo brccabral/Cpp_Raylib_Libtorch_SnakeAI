@@ -2,12 +2,14 @@
 
 
 Agent::Agent(
-        LinearNN *model_, QTrainer *trainer_, const c10::DeviceType device_, size_t batch_size_)
+        LinearNN *model_, torch::optim::Optimizer *optimizer_, const c10::DeviceType device_,
+        size_t batch_size_, double gamma_)
 {
     device = device_;
     model = model_;
-    trainer = trainer_;
+    optimizer = optimizer_;
     batch_size = batch_size_;
+    gamma = gamma_;
 }
 
 
@@ -54,9 +56,9 @@ std::vector<int> Agent::get_action(const std::vector<double> &state, size_t coun
 
 void Agent::train_short_memory(
         const std::vector<double> &state, const std::vector<int> &action, int reward,
-        const std::vector<double> &next_state, bool game_over) const
+        const std::vector<double> &next_state, bool game_over)
 {
-    trainer->train_step(1, state, action, {reward}, next_state, {game_over});
+    train_step(1, state, action, {reward}, next_state, {game_over});
 }
 
 
@@ -116,5 +118,52 @@ void Agent::train_long_memory()
         game_overs.push_back(samples[i].game_over);
     }
 
-    trainer->train_step(sample_size, states, actions, rewards, next_states, game_overs);
+    train_step(sample_size, states, actions, rewards, next_states, game_overs);
+}
+
+void Agent::train_step(
+        size_t count_samples, const std::vector<double> &old_states_,
+        const std::vector<int> &actions_, const std::vector<int> &rewards_,
+        const std::vector<double> &new_states_, const std::vector<bool> &dones_)
+{
+    const torch::Tensor old_states =
+            torch::tensor(old_states_, torch::kDouble)
+                    .reshape({(long) count_samples, (long) (*model)->input_size})
+                    .to(device);
+    const torch::Tensor actions =
+            torch::tensor(actions_, torch::kInt)
+                    .reshape({(long) count_samples, (long) (*model)->output_size})
+                    .to(device, torch::kDouble);
+    const torch::Tensor new_states =
+            torch::tensor(new_states_, torch::kDouble)
+                    .reshape({(long) count_samples, (long) (*model)->input_size})
+                    .to(device);
+
+    // 1: predict Q values with current state
+    (*model)->train();
+    torch::Tensor pred_action = (*model)->forward(old_states);
+
+    // 2: Q_new = r + y * max(next_predicted_Q_value) -> only do this if not done
+    (*model)->eval();
+    torch::Tensor target = pred_action.detach().clone();
+    {
+        torch::NoGradGuard no_grad;
+        for (size_t index = 0; index < dones_.size(); ++index)
+        {
+            auto q_new = rewards_[index];
+            const long max_index = torch::argmax(actions[index]).item().toLong();
+            if (!dones_[index])
+            {
+                q_new = q_new +
+                        gamma * (*model)->forward(new_states[index])[max_index].item().toDouble();
+            }
+            target[index][max_index] = q_new;
+        }
+    }
+
+    (*model)->train();
+    optimizer->zero_grad();
+    const torch::Tensor loss = criterion(pred_action, target);
+    loss.backward();
+    optimizer->step();
 }

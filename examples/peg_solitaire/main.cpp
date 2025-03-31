@@ -5,7 +5,6 @@
 #include "PegSolitaire.h"
 #include <mlgames/Agent.h>
 #include <mlgames/LinearNN.h>
-#include <mlgames/QTrainer.h>
 
 
 #define LR (0.001)
@@ -177,9 +176,8 @@ int main(int argc, char *argv[])
     model->to(device);
     model->train();
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
-    auto trainer = QTrainer(&model, &optimizer, GAMMA, device);
 
-    Agent agent(&model, &trainer, device, BATCH_SIZE);
+    Agent agent(&model, &optimizer, device, BATCH_SIZE, GAMMA);
 
     size_t best_score = game.get_score();
 
