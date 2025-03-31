@@ -37,9 +37,9 @@ void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 pe
     const int selected = game->get_selected();
 
 
-    for (size_t c = 0; c < cols; ++c)
+    for (size_t r = 0; r < rows; ++r)
     {
-        for (size_t r = 0; r < rows; ++r)
+        for (size_t c = 0; c < cols; ++c)
         {
             const Vector2 position = {c * peg_size, r * peg_size};
             const size_t index = game->index_from_2d(c, r);
@@ -75,6 +75,24 @@ void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 pe
                     (Rectangle) {(cursor % cols) * peg_size, (cursor / cols) * peg_size,
                                  peg_dimension.y, peg_dimension.y},
                     3, YELLOW);
+            if (selected == -1)
+            {
+                if (game->can_move(c, r))
+                {
+                    DrawRectangle(
+                            c * peg_size + peg_size / 2, r * peg_size + peg_size / 2, peg_size / 4,
+                            peg_size / 4, RED);
+                }
+            }
+            else
+            {
+                if (game->can_receive(c, r))
+                {
+                    DrawRectangle(
+                            c * peg_size + peg_size / 2, r * peg_size + peg_size / 2, peg_size / 4,
+                            peg_size / 4, RED);
+                }
+            }
         }
     }
 
@@ -89,6 +107,7 @@ void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 pe
 
 int main(int argc, char *argv[])
 {
+    // NOLINTNEXTLINE
     srand(time(NULL));
 
     c10::DeviceType device = torch::kCPU;
@@ -212,8 +231,7 @@ int main(int argc, char *argv[])
         ClearBackground(BLACK);
         draw_board(&game, peg_size, peg_dimension);
         DrawText(TextFormat("Reward %d", reward), 500, 20, 20, WHITE);
-        DrawText(TextFormat("Moves %lu", game.moves), 500, 40, 20, WHITE);
-        DrawText(TextFormat("Selections %lu", game.selections), 500, 60, 20, WHITE);
+        DrawText(TextFormat("Selections %lu", game.selections), 500, 40, 20, WHITE);
         switch (game.status)
         {
             case PegSolitaire::GAME_OVER_LOST:

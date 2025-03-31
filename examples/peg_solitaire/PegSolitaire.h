@@ -56,10 +56,6 @@ public:
 
     void init_game(board_type type);
     void change_board(board_type type);
-    void move_cursor_right();
-    void move_cursor_left();
-    void move_cursor_up();
-    void move_cursor_down();
     int check_game_status();
     [[nodiscard]] int update_selected();
 
@@ -72,8 +68,10 @@ public:
     [[nodiscard]] int get_selected() const;
 
     [[nodiscard]] size_t index_from_2d(int col, int row) const;
+    void xy_from_index(size_t index, size_t &col, size_t &row) const;
+    [[nodiscard]] int can_move(int index_x, int index_y) const;
+    [[nodiscard]] int can_receive(int index_x, int index_y) const;
 
-    size_t moves{};
     game_status status{};
     size_t selections{};
 
@@ -90,5 +88,9 @@ private:
     [[nodiscard]] int can_move_left(int index_x, int index_y) const;
     [[nodiscard]] int can_move_up(int index_x, int index_y) const;
     [[nodiscard]] int can_move_down(int index_x, int index_y) const;
+    [[nodiscard]] int can_receive_right(int index_x, int index_y) const;
+    [[nodiscard]] int can_receive_left(int index_x, int index_y) const;
+    [[nodiscard]] int can_receive_up(int index_x, int index_y) const;
+    [[nodiscard]] int can_receive_down(int index_x, int index_y) const;
     [[nodiscard]] int count_peg_moves(int index) const;
 };

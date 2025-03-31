@@ -107,6 +107,10 @@ void PegSolitaire::reset_board() const
             {
                 board.pegs[index] = PEG_STATUS_FILLED;
             }
+            else
+            {
+                board.pegs[index] = PEG_STATUS_INVALID;
+            }
         }
     }
 
@@ -272,9 +276,9 @@ int PegSolitaire::count_peg_moves(const int index) const
     }
 
     int result = 0;
-
-    const int index_x = index % board.cols;
-    const int index_y = index / board.cols;
+    size_t index_x;
+    size_t index_y;
+    xy_from_index(index, index_x, index_y);
 
     result += can_move_right(index_x, index_y);
     result += can_move_left(index_x, index_y);
@@ -291,13 +295,7 @@ void PegSolitaire::set_status(const game_status status_)
 
 int PegSolitaire::check_game_status()
 {
-
-    // too many moves without select
-    if (moves > 3 * board.size)
-    {
-        set_status(GAME_OVER_LOST);
-        return -1;
-    }
+    // too many wrong selections
     if (selections > 3 * board.size)
     {
         set_status(GAME_OVER_LOST);
@@ -340,8 +338,9 @@ int PegSolitaire::check_game_status()
 
         if (index_traced != -1)
         {
-            const size_t traced_x = index_traced % board.cols;
-            const size_t traced_y = index_traced / board.cols;
+            size_t traced_x;
+            size_t traced_y;
+            xy_from_index(index_traced, traced_x, traced_y);
             if (traced_x == board.init_col && traced_y == board.init_row)
             {
                 set_status(GAME_OVER_WON);
@@ -360,82 +359,16 @@ int PegSolitaire::check_game_status()
     return 0;
 }
 
-void PegSolitaire::move_cursor_right()
-{
-    ++moves;
-
-    const int current_x = cursor % board.cols;
-    int next_x = current_x;
-    const int current_y = cursor / board.cols;
-    size_t index;
-    do
-    {
-        next_x = (next_x + 1) % board.cols;
-        index = index_from_2d(next_x, current_y);
-    }
-    while (board.pegs[index] == PEG_STATUS_INVALID);
-    cursor = index;
-}
-
-void PegSolitaire::move_cursor_left()
-{
-    ++moves;
-
-    const int current_x = cursor % board.cols;
-    int next_x = current_x;
-    const int current_y = cursor / board.cols;
-    size_t index;
-    do
-    {
-        next_x = ((next_x - 1) % (int) board.cols + board.cols) % board.cols;
-        index = index_from_2d(next_x, current_y);
-    }
-    while (board.pegs[index] == PEG_STATUS_INVALID);
-    cursor = index;
-}
-
-void PegSolitaire::move_cursor_up()
-{
-    ++moves;
-
-    const int current_x = cursor % board.cols;
-    const int current_y = cursor / board.cols;
-    int next_y = current_y;
-    size_t index;
-    do
-    {
-        next_y = ((next_y - 1) % (int) board.rows + board.rows) % board.rows;
-        index = index_from_2d(current_x, next_y);
-    }
-    while (board.pegs[index] == PEG_STATUS_INVALID);
-    cursor = index;
-}
-
-void PegSolitaire::move_cursor_down()
-{
-    ++moves;
-
-    const int current_x = cursor % board.cols;
-    const int current_y = cursor / board.cols;
-    int next_y = current_y;
-    size_t index;
-    do
-    {
-        next_y = (next_y + 1) % board.rows;
-        index = index_from_2d(current_x, next_y);
-    }
-    while (board.pegs[index] == PEG_STATUS_INVALID);
-    cursor = index;
-}
-
 int PegSolitaire::move_peg()
 {
     // current
-    const int cursor_x = cursor % board.cols;
-    const int cursor_y = cursor / board.cols;
+    size_t cursor_x;
+    size_t cursor_y;
     // previous
-    const int selected_x = selected % board.cols;
-    const int selected_y = selected / board.cols;
+    xy_from_index(cursor, cursor_x, cursor_y);
+    size_t selected_x;
+    size_t selected_y;
+    xy_from_index(selected, selected_x, selected_y);
 
     int jumped = -1;
     // right
@@ -471,7 +404,6 @@ int PegSolitaire::move_peg()
     board.pegs[selected] = PEG_STATUS_EMPTY;
     board.pegs[jumped] = PEG_STATUS_EMPTY;
     selections = 0;
-    moves = 0;
     selected = -1;
     return 1;
 }
@@ -479,39 +411,26 @@ int PegSolitaire::move_peg()
 int PegSolitaire::update_selected()
 {
     ++selections;
-    const peg_status cursor_status = board.pegs[cursor];
-    if (cursor_status == PEG_STATUS_FILLED || cursor_status == PEG_STATUS_TRACED)
-    {
-        if (selected == (int) cursor)
-        {
-            selected = -1;
-            return -1;
-        }
-        selected = cursor;
-        moves = 0;
-        return 1;
-    }
-    if (cursor_status == PEG_STATUS_INVALID)
-    {
-        selected = -1;
-        return -1;
-    }
-
-    // cursor is on EMPTY peg
-
+    size_t cursor_x;
+    size_t cursor_y;
+    xy_from_index(cursor, cursor_x, cursor_y);
     if (selected == -1)
     {
-        return -1;
-    }
-    // there is one selected
-    const peg_status selected_status = board.pegs[selected];
-    if (selected_status == PEG_STATUS_INVALID || selected_status == PEG_STATUS_EMPTY)
-    {
-        selected = -1;
+        if (can_move(cursor_x, cursor_y))
+        {
+            selected = cursor;
+            return 1;
+        }
         return -1;
     }
 
-    return move_peg();
+    if (can_receive(cursor_x, cursor_y))
+    {
+        return move_peg();
+    }
+
+    selected = -1;
+    return -1;
 }
 
 PegSolitaire::game_status PegSolitaire::get_status() const
@@ -524,7 +443,6 @@ void PegSolitaire::reset()
     reset_board();
     cursor = index_from_2d(board.init_col, board.init_row);
     selected = -1;
-    moves = 0;
     selections = 0;
     status = GAME_PLAYING;
 }
@@ -589,15 +507,47 @@ size_t PegSolitaire::get_state_size() const
     return board.size + 1; // + selected
 }
 
+int PegSolitaire::can_move(int index_x, int index_y) const
+{
+    const int index = (index_y * board.cols) + index_x;
+    if (board.pegs[index] == PEG_STATUS_INVALID || board.pegs[index] == PEG_STATUS_EMPTY)
+    {
+        return 0;
+    }
+    if (selected != -1)
+    {
+        return 0;
+    }
+
+    return can_move_right(index_x, index_y) || can_move_left(index_x, index_y) ||
+           can_move_down(index_x, index_y) || can_move_up(index_x, index_y);
+}
+
 std::vector<double> PegSolitaire::get_state() const
 {
     std::vector<double> result(get_state_size(), 0.0);
-    // normalize inputs?
-    for (size_t p = 0; p < board.size; ++p)
+
+    if (selected >= 0)
     {
-        result[p] = (double) board.pegs[p] / (double) PEG_STATUS_COUNT;
+        for (size_t r = 0; r < board.rows; ++r)
+        {
+            for (size_t c = 0; c < board.cols; ++c)
+            {
+                result[index_from_2d(c, r)] = can_receive(c, r);
+            }
+        }
     }
-    result[board.size] = (double) selected / board.size;
+    else
+    {
+        for (size_t r = 0; r < board.rows; ++r)
+        {
+            for (size_t c = 0; c < board.cols; ++c)
+            {
+                result[index_from_2d(c, r)] = can_move(c, r);
+            }
+        }
+    }
+    result[board.size] = selected != -1;
     return result;
 }
 
@@ -621,4 +571,151 @@ StepResult PegSolitaire::get_step(int index)
 size_t PegSolitaire::get_action_count() const
 {
     return board.size;
+}
+
+void PegSolitaire::xy_from_index(size_t index, size_t &col, size_t &row) const
+{
+    col = index % board.cols;
+    row = index / board.cols;
+}
+
+int PegSolitaire::can_receive(int index_x, int index_y) const
+{
+    const auto index = index_from_2d(index_x, index_y);
+    const auto status = board.pegs[index];
+    if (status == PEG_STATUS_INVALID)
+    {
+        return 0;
+    }
+    if (status != PEG_STATUS_EMPTY)
+    {
+        return 0;
+    }
+    if (selected == -1)
+    {
+        return 0;
+    }
+
+    return can_receive_right(index_x, index_y) || can_receive_left(index_x, index_y) ||
+           can_receive_down(index_x, index_y) || can_receive_up(index_x, index_y);
+}
+
+int PegSolitaire::can_receive_right(int index_x, int index_y) const
+{
+    const int right2_x = index_x + 2;
+    if (right2_x >= (int) board.cols)
+    {
+        return 0;
+    }
+    const int right2_y = index_y;
+    const auto right2_index = index_from_2d(right2_x, right2_y);
+
+    if (right2_index != selected)
+    {
+        return 0;
+    }
+
+    const auto status2 = board.pegs[right2_index];
+
+    const int right1_x = index_x + 1;
+    const int right1_y = index_y;
+    const auto right1_index = index_from_2d(right1_x, right1_y);
+    const auto status1 = board.pegs[right1_index];
+
+    if ((status1 == PEG_STATUS_FILLED || status1 == PEG_STATUS_TRACED) &&
+        (status2 == PEG_STATUS_FILLED || status2 == PEG_STATUS_TRACED))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int PegSolitaire::can_receive_left(int index_x, int index_y) const
+{
+    const int left2_x = index_x - 2;
+    if (left2_x < 0)
+    {
+        return 0;
+    }
+    const int left2_y = index_y;
+    const auto left2_index = index_from_2d(left2_x, left2_y);
+
+    if (left2_index != selected)
+    {
+        return 0;
+    }
+
+    const auto status2 = board.pegs[left2_index];
+
+    const int left1_x = index_x - 1;
+    const int left1_y = index_y;
+    const auto left1_index = index_from_2d(left1_x, left1_y);
+    const auto status1 = board.pegs[left1_index];
+
+    if ((status1 == PEG_STATUS_FILLED || status1 == PEG_STATUS_TRACED) &&
+        (status2 == PEG_STATUS_FILLED || status2 == PEG_STATUS_TRACED))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int PegSolitaire::can_receive_down(int index_x, int index_y) const
+{
+    const int down2_x = index_x;
+    const int down2_y = index_y + 2;
+    if (down2_y >= (int) board.rows)
+    {
+        return 0;
+    }
+    const auto down2_index = index_from_2d(down2_x, down2_y);
+
+    if (down2_index != selected)
+    {
+        return 0;
+    }
+
+    const auto status2 = board.pegs[down2_index];
+
+    const int down1_x = index_x;
+    const int down1_y = index_y + 1;
+    const auto down1_index = index_from_2d(down1_x, down1_y);
+    const auto status1 = board.pegs[down1_index];
+
+    if ((status1 == PEG_STATUS_FILLED || status1 == PEG_STATUS_TRACED) &&
+        (status2 == PEG_STATUS_FILLED || status2 == PEG_STATUS_TRACED))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int PegSolitaire::can_receive_up(int index_x, int index_y) const
+{
+    const int up2_x = index_x;
+    const int up2_y = index_y - 2;
+    if (up2_y < 0)
+    {
+        return 0;
+    }
+    const auto up2_index = index_from_2d(up2_x, up2_y);
+
+    if (up2_index != selected)
+    {
+        return 0;
+    }
+
+    const auto status2 = board.pegs[up2_index];
+
+    const int up1_x = index_x;
+    const int up1_y = index_y - 1;
+    const auto up1_index = index_from_2d(up1_x, up1_y);
+    const auto status1 = board.pegs[up1_index];
+
+    if ((status1 == PEG_STATUS_FILLED || status1 == PEG_STATUS_TRACED) &&
+        (status2 == PEG_STATUS_FILLED || status2 == PEG_STATUS_TRACED))
+    {
+        return 1;
+    }
+    return 0;
 }
