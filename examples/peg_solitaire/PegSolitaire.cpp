@@ -422,22 +422,29 @@ int PegSolitaire::move_peg()
 int PegSolitaire::update_selected()
 {
     ++selections;
+    // allow select the same, but no points
+    if (selected == (int) cursor)
+    {
+        selections = 0;
+        return 0;
+    }
     size_t cursor_x;
     size_t cursor_y;
     xy_from_index(cursor, cursor_x, cursor_y);
-    if (selected == -1)
+    // allow select a valid peg, but no points
+    if (can_move(cursor_x, cursor_y))
     {
-        if (can_move(cursor_x, cursor_y))
-        {
-            selected = cursor;
-            return 1;
-        }
-        return -1;
+        selected = cursor;
+        selections = 0;
+        return 0;
     }
 
-    if (can_receive(cursor_x, cursor_y))
+    if (selected != -1)
     {
-        return move_peg();
+        if (can_receive(cursor_x, cursor_y))
+        {
+            return move_peg();
+        }
     }
 
     selected = -1;
@@ -522,10 +529,6 @@ int PegSolitaire::can_move(int index_x, int index_y) const
 {
     const int index = (index_y * board.cols) + index_x;
     if (board.pegs[index] == PEG_STATUS_INVALID || board.pegs[index] == PEG_STATUS_EMPTY)
-    {
-        return 0;
-    }
-    if (selected != -1)
     {
         return 0;
     }
