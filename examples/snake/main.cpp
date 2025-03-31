@@ -2,8 +2,7 @@
 #include <cstdio>
 #include <ctime>
 #include "SnakeGameAI.h"
-#include <mlgames/Agent.h>
-#include <mlgames/LinearNN.h>
+#include <mlgames/AgentQTrainer.h>
 
 
 #define LR (0.001)

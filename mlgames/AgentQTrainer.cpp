@@ -1,4 +1,4 @@
-#include <mlgames/Agent.h>
+#include <mlgames/AgentQTrainer.h>
 
 
 AgentQTrainer::AgentQTrainer(

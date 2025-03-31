@@ -3,8 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include "PegSolitaire.h"
-#include <mlgames/Agent.h>
-#include <mlgames/LinearNN.h>
+#include <mlgames/AgentQTrainer.h>
 
 
 #define LR (0.001)
