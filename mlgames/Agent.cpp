@@ -22,8 +22,15 @@ std::vector<int> Agent::get_play(const std::vector<double> &state, size_t count_
         torch::NoGradGuard no_grad;
         prediction = (*model)->forward(state0);
     }
-    std::vector<int> action(prediction.size(1), 0);
-    action[torch::argmax(prediction).item().toInt()] = 1;
+    // std::cout << prediction.sizes() << "\n";
+    // prediction.size(0) -> count_samples
+    // prediction.size(1) -> (*model)->output_size
+    std::vector<int> action(prediction.size(0) * prediction.size(1), 0);
+    for (int r = 0; r < prediction.size(0); ++r)
+    {
+        const int index = torch::argmax(prediction[r]).item().toInt();
+        action[r * prediction.size(1) + index] = 1;
+    }
     return action;
 }
 
