@@ -328,7 +328,7 @@ int PegSolitaire::find_traced() const
 int PegSolitaire::check_game_status()
 {
     // too many wrong selections
-    if (selections > 5)
+    if (selections > 5 * board.size)
     {
         set_status(GAME_OVER_LOST);
         return -1;
