@@ -230,26 +230,27 @@ int main(int argc, char *argv[])
         BeginDrawing();
         ClearBackground(BLACK);
         draw_board(&game, peg_size, peg_dimension);
-        DrawText(TextFormat("Reward %d", reward), 500, 20, 20, WHITE);
-        DrawText(TextFormat("Selections %lu", game.selections), 500, 40, 20, WHITE);
         switch (game.status)
         {
             case PegSolitaire::GAME_OVER_LOST:
             {
-                DrawText("Game Over - You Lost", 500, 80, 20, RED);
+                DrawText("Game Over - You Lost", 500, 20, 20, RED);
                 break;
             }
             case PegSolitaire::GAME_OVER_WON:
             {
-                DrawText("Game Over - You Win", 500, 80, 20, GREEN);
+                DrawText("Game Over - You Win", 500, 20, 20, GREEN);
                 break;
             }
             default:
             {
-                DrawText("Playing", 500, 80, 20, WHITE);
+                DrawText("Playing", 500, 20, 20, WHITE);
                 break;
             }
         }
+        DrawText(TextFormat("Reward %d", reward), 500, 40, 20, WHITE);
+        DrawText(TextFormat("Selections %lu", game.selections), 500, 60, 20, WHITE);
+        DrawText(TextFormat("Best %lu", best_score), 500, 80, 20, WHITE);
         EndDrawing();
     }
 
