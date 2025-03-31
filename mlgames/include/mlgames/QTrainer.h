@@ -1,5 +1,5 @@
 #pragma once
-#include "Linear_QNet.h"
+#include "LinearNN.h"
 
 
 class QTrainer

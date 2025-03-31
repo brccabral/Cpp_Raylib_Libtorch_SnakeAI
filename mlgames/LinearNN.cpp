@@ -1,4 +1,4 @@
-#include <mlgames/Linear_QNet.h>
+#include <mlgames/LinearNN.h>
 
 LinearNNImpl::LinearNNImpl(size_t input_size_, size_t hidden_size_, size_t output_size_)
 {

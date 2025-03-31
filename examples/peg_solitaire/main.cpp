@@ -4,7 +4,7 @@
 #include <cstring>
 #include "PegSolitaire.h"
 #include <mlgames/Agent.h>
-#include <mlgames/Linear_QNet.h>
+#include <mlgames/LinearNN.h>
 #include <mlgames/QTrainer.h>
 
 
