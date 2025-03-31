@@ -1,13 +1,13 @@
 #include <mlgames/Agent.h>
 
 
-Agent::Agent(Linear_QNet *model_, QTrainer *trainer_, const c10::DeviceType device_)
+Agent::Agent(
+        Linear_QNet *model_, QTrainer *trainer_, const c10::DeviceType device_, size_t batch_size_)
 {
     device = device_;
-
     model = model_;
-
     trainer = trainer_;
+    batch_size = batch_size_;
 }
 
 
@@ -75,9 +75,9 @@ void Agent::train_long_memory()
     std::vector<MemoryData> samples;
     size_t sample_size;
 
-    if (memory_deque.size() > BATCH_SIZE)
+    if (memory_deque.size() > batch_size)
     {
-        sample_size = BATCH_SIZE;
+        sample_size = batch_size;
         samples.resize(sample_size);
         std::random_device rd;
         std::mt19937 gen(rd());

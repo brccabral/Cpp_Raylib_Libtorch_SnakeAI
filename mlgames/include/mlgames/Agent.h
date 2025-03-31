@@ -5,13 +5,9 @@
 #include "QTrainer.h"
 
 
-#define HIDDEN_SIZE 256
-
 // how many previous moves will be stored in memory_deque
 #define MAX_MEMORY 10000000
 
-// memory usage (if CPU -> RAM, if GPU -> GPU_MEM)
-#define BATCH_SIZE 1000
 
 template<typename T>
 class LimitedDeque
@@ -81,7 +77,7 @@ class Agent
 {
 public:
 
-    Agent(Linear_QNet *model_, QTrainer *trainer_, c10::DeviceType device_);
+    Agent(Linear_QNet *model_, QTrainer *trainer_, c10::DeviceType device_, size_t batch_size_);
 
     std::vector<int> get_action(const std::vector<double> &state, size_t count_samples) const;
 
@@ -102,6 +98,8 @@ private:
     QTrainer *trainer;
     c10::DeviceType device;
     LimitedDeque<MemoryData> memory_deque{MAX_MEMORY};
+
+    size_t batch_size{};
 
     std::vector<int> get_play(const std::vector<double> &state, size_t count_samples) const;
 };

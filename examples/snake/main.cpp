@@ -9,6 +9,9 @@
 
 #define LR (0.001)
 #define GAMMA (0.9)
+#define HIDDEN_SIZE (256)
+// memory usage (if CPU -> RAM, if GPU -> GPU_MEM)
+#define BATCH_SIZE (1000)
 
 int main()
 {
@@ -34,7 +37,7 @@ int main()
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
     auto trainer = QTrainer(&model, &optimizer, GAMMA, device);
 
-    Agent agent(&model, &trainer, device);
+    Agent agent(&model, &trainer, device, BATCH_SIZE);
     constexpr int BLOCK_SIZE = 20;
 
     int best_score = 0;

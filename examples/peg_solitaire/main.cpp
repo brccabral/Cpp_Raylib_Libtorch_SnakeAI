@@ -10,6 +10,9 @@
 
 #define LR (0.001)
 #define GAMMA (0.9)
+#define HIDDEN_SIZE (256)
+// memory usage (if CPU -> RAM, if GPU -> GPU_MEM)
+#define BATCH_SIZE (10000)
 
 #define do_shift(argc, argv)                                                                       \
     do                                                                                             \
@@ -174,7 +177,7 @@ int main(int argc, char *argv[])
     auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions{LR});
     auto trainer = QTrainer(&model, &optimizer, GAMMA, device);
 
-    Agent agent(&model, &trainer, device);
+    Agent agent(&model, &trainer, device, BATCH_SIZE);
 
     size_t best_score = game.get_score();
 
@@ -259,32 +262,6 @@ int main(int argc, char *argv[])
                 game.reset();
             }
         }
-
-        BeginDrawing();
-        ClearBackground(BLACK);
-        draw_board(&game, peg_size, peg_dimension);
-        switch (game.status)
-        {
-            case PegSolitaire::GAME_OVER_LOST:
-            {
-                DrawText("Game Over - You Lost", 500, 20, 20, RED);
-                break;
-            }
-            case PegSolitaire::GAME_OVER_WON:
-            {
-                DrawText("Game Over - You Win", 500, 20, 20, GREEN);
-                break;
-            }
-            default:
-            {
-                DrawText("Playing", 500, 20, 20, WHITE);
-                break;
-            }
-        }
-        DrawText(TextFormat("Reward %d", reward), 500, 40, 20, WHITE);
-        DrawText(TextFormat("Selections %lu", game.selections), 500, 60, 20, WHITE);
-        DrawText(TextFormat("Best %lu", best_score), 500, 80, 20, WHITE);
-        EndDrawing();
     }
 
     CloseWindow();
