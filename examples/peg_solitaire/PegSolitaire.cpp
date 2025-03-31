@@ -504,7 +504,7 @@ int PegSolitaire::get_score() const
 
 size_t PegSolitaire::get_state_size() const
 {
-    return board.size + 1; // + selected
+    return board.size;
 }
 
 int PegSolitaire::can_move(int index_x, int index_y) const
@@ -547,7 +547,6 @@ std::vector<double> PegSolitaire::get_state() const
             }
         }
     }
-    result[board.size] = selected != -1;
     return result;
 }
 
