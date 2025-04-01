@@ -428,12 +428,15 @@ void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
             {
                 break;
             }
+            if (dino->state != DINO_STATE_CROUCH)
+            {
+                dino->sprite.frame = 2;
+            }
             dino->state = DINO_STATE_CROUCH;
             dino->width = DINO_WIDTH_CROUCH;
             dino->height = DINO_HEIGHT_CROUCH;
             dino->direction = 0;
             dino->y = 0;
-            dino->sprite.frame = 2;
             break;
         }
         case DINO_ACTION_FLY:
@@ -442,13 +445,16 @@ void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
             {
                 break;
             }
+            if (dino->state != DINO_ACTION_FLY)
+            {
+                dino->sprite.frame = 10;
+            }
             dino->state = DINO_STATE_FLYING;
             dino->width = DINO_WIDTH_PLANE;
             dino->height = DINO_HEIGHT_PLANE;
             dino->direction = 0;
             dino->y = DINO_PLANE_Y;
             dino->plane_cooldown = plane_cooldown;
-            dino->sprite.frame = 10;
             break;
         }
         case DINO_ACTION_NONE:
@@ -461,12 +467,15 @@ void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
             {
                 break;
             }
+            if (dino->state != DINO_STATE_STANDUP)
+            {
+                dino->sprite.frame = 0;
+            }
             dino->state = DINO_STATE_STANDUP;
             dino->width = DINO_WIDTH_STANDUP;
             dino->height = DINO_HEIGHT_STANDUP;
             dino->direction = 0;
             dino->y = 0;
-            dino->sprite.frame = 0;
             break;
         }
         default:
