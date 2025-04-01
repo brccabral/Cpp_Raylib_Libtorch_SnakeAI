@@ -53,7 +53,7 @@ public:
 
     void reset();
     void update();
-    std::vector<double> get_state(size_t dino_index) const;
+    std::vector<float> get_state(size_t dino_index) const;
     void apply_action(size_t dino_index, dino_actions_t action);
     static size_t get_state_size();
     bool check_end_game() const;
@@ -135,7 +135,7 @@ private:
     static void get_random_cactus(Obstacle *obstacle);
     static void get_random_bird(Obstacle *obstacle);
     static void get_spikes(Obstacle *obstacle);
-    static double get_obstacle_distance(const Dino *dino, const Obstacle *obstacle);
+    static float get_obstacle_distance(const Dino *dino, const Obstacle *obstacle);
     static bool check_collision(const Dino *dino, const Obstacle *obstacle);
 
     void load_textures();

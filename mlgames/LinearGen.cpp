@@ -7,8 +7,6 @@ LinearGenImpl::LinearGenImpl(
     hidden_sizes = hidden_sizes_;
     output_size = output_size_;
 
-    hidden_layers.reserve(hidden_sizes.size());
-
     size_t previous = input_size_;
     size_t current{};
     const char *prefix = "linear";
@@ -16,14 +14,14 @@ LinearGenImpl::LinearGenImpl(
     for (size_t h = 0; h < hidden_sizes_.size(); ++h)
     {
         current = hidden_sizes_[h];
-        hidden_layers[h] = register_module(
-                std::string(prefix) + std::to_string(h), torch::nn::Linear(previous, current));
-        hidden_layers[h]->to(torch::kDouble);
+        hidden_layers.push_back(register_module(
+                std::string(prefix) + std::to_string(h), torch::nn::Linear(previous, current)));
+        hidden_layers[h]->to(torch::kFloat);
         previous = current;
     }
 
     output = register_module("output", torch::nn::Linear(previous, output_size_));
-    output->to(torch::kDouble);
+    output->to(torch::kFloat);
 }
 
 torch::Tensor LinearGenImpl::forward(const torch::Tensor &x)

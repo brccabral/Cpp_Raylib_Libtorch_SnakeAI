@@ -45,8 +45,8 @@ int main()
         {
             for (size_t d = 0; d < count_dinos; ++d)
             {
-                std::vector<double> inputs = game.get_state(d);
-                torch::Tensor x = torch::tensor(inputs, torch::kDouble)
+                std::vector<float> inputs = game.get_state(d);
+                torch::Tensor x = torch::tensor(inputs, torch::kFloat)
                                           .reshape({1, (long) DinoGame::get_state_size()});
                 auto actions = population.members[d].forward(x);
                 auto action = torch::argmax(actions).item().toInt();

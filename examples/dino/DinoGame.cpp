@@ -383,9 +383,9 @@ size_t DinoGame::get_state_size()
 }
 
 
-std::vector<double> DinoGame::get_state(size_t dino_index) const
+std::vector<float> DinoGame::get_state(size_t dino_index) const
 {
-    std::vector<double> result;
+    std::vector<float> result;
     result.resize(get_state_size());
 
     result[0] = get_obstacle_distance(&dinos[dino_index], &obstacles[collision_index]);
@@ -398,7 +398,7 @@ std::vector<double> DinoGame::get_state(size_t dino_index) const
     return result;
 }
 
-double DinoGame::get_obstacle_distance(const Dino *dino, const Obstacle *obstacle)
+float DinoGame::get_obstacle_distance(const Dino *dino, const Obstacle *obstacle)
 {
     return obstacle->x - dino->x;
 }
