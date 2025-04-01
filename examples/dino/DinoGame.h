@@ -135,6 +135,7 @@ private:
     static void get_random_bird(Obstacle *obstacle);
     static void get_spikes(Obstacle *obstacle);
     static double get_obstacle_distance(const Dino *dino, const Obstacle *obstacle);
+    static bool check_collision(const Dino *dino, const Obstacle *obstacle);
 
     void load_textures();
     void unload_textures();

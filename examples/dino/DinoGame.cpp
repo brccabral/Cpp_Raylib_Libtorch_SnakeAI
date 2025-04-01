@@ -339,12 +339,42 @@ void DinoGame::update()
         }
 
         dino->sprite.frame_index = dino->sprite.frame;
+
+        if (check_collision(dino, &obstacles[collision_index]))
+        {
+            dino->state = DINO_STATE_DEAD;
+            dino->width = DINO_WIDTH_STANDUP;
+            dino->height = DINO_HEIGHT_STANDUP;
+            dino->sprite.frame = 6;
+            ++num_dead;
+        }
     }
 
     if (DINO_X > collision_obstacle->x + collision_obstacle->width)
     {
         collision_index = (collision_index + 1) % num_obstacles;
     }
+}
+
+bool DinoGame::check_collision(const Dino *dino, const Obstacle *obstacle)
+{
+    if (dino->x + dino->width < obstacle->x)
+    {
+        return false;
+    }
+    if (dino->x > obstacle->x + obstacle->width)
+    {
+        return false;
+    }
+    if (dino->y + dino->height < obstacle->y)
+    {
+        return false;
+    }
+    if (dino->y > obstacle->y + obstacle->height)
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t DinoGame::get_state_size()
