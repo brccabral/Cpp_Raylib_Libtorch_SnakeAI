@@ -346,3 +346,103 @@ void DinoGame::update()
         collision_index = (collision_index + 1) % num_obstacles;
     }
 }
+
+size_t DinoGame::get_state_size()
+{
+    return 6;
+}
+
+
+std::vector<double> DinoGame::get_state(size_t dino_index) const
+{
+    std::vector<double> result;
+    result.resize(get_state_size());
+
+    result[0] = get_obstacle_distance(&dinos[dino_index], &obstacles[collision_index]);
+    result[1] = obstacles[collision_index].width;
+    result[2] = obstacles[collision_index].height;
+    result[3] = obstacles[collision_index].y;
+    result[4] = speedX;
+    result[5] = dinos[dino_index].y;
+
+    return result;
+}
+
+double DinoGame::get_obstacle_distance(const Dino *dino, const Obstacle *obstacle)
+{
+    return obstacle->x - dino->x;
+}
+
+void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
+{
+    auto *dino = &dinos[dino_index];
+    switch (action)
+    {
+        case DINO_ACTION_JUMP:
+        {
+            if (dino->y > 0)
+            {
+                break;
+            }
+            dino->state = DINO_STATE_JUMP;
+            dino->height = DINO_HEIGHT_STANDUP;
+            dino->width = DINO_WIDTH_STANDUP;
+            dino->direction = jump_force;
+            dino->y = 0;
+            dino->sprite.frame = 4;
+            break;
+        }
+        case DINO_ACTION_CROUCH:
+        {
+            if (dino->y != 0)
+            {
+                break;
+            }
+            dino->state = DINO_STATE_CROUCH;
+            dino->width = DINO_WIDTH_CROUCH;
+            dino->height = DINO_HEIGHT_CROUCH;
+            dino->direction = 0;
+            dino->y = 0;
+            dino->sprite.frame = 2;
+            break;
+        }
+        case DINO_ACTION_FLY:
+        {
+            if (dino->y != 0)
+            {
+                break;
+            }
+            dino->state = DINO_STATE_FLYING;
+            dino->width = DINO_WIDTH_PLANE;
+            dino->height = DINO_HEIGHT_PLANE;
+            dino->direction = 0;
+            dino->y = DINO_PLANE_Y;
+            dino->plane_cooldown = plane_cooldown;
+            dino->sprite.frame = 10;
+            break;
+        }
+        case DINO_ACTION_NONE:
+        {
+            if (dino->plane_cooldown > 0)
+            {
+                break;
+            }
+            if (dino->y > 0)
+            {
+                break;
+            }
+            dino->state = DINO_STATE_STANDUP;
+            dino->width = DINO_WIDTH_STANDUP;
+            dino->height = DINO_HEIGHT_STANDUP;
+            dino->direction = 0;
+            dino->y = 0;
+            dino->sprite.frame = 0;
+            break;
+        }
+        default:
+        {
+            (void) fprintf(stderr, "ERROR: Invalid action\n");
+            break;
+        }
+    }
+};

@@ -2,6 +2,9 @@
 #include <raylib.h>
 #include "DinoGame.h"
 
+#include <mlgames/GenPopulation.h>
+#include <mlgames/LinearGen.h>
+
 
 void draw_dinos(const DinoGame *game, const size_t screen_height)
 {
@@ -26,13 +29,30 @@ int main()
 {
     constexpr size_t screen_width = 1366;
     constexpr size_t screen_height = 768;
+    constexpr size_t count_dinos = 200;
+
     InitWindow(screen_width, screen_height, "Dino");
 
     {
-        auto game = DinoGame(2000, 2000);
+        auto game = DinoGame(count_dinos, 2000);
+
+        const auto net = LinearGen(
+                DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
+        const torch::nn::AnyModule module(net);
+        auto population = GenPopulation(count_dinos, 0.1, module);
 
         while (!WindowShouldClose())
         {
+            for (size_t d = 0; d < count_dinos; ++d)
+            {
+                std::vector<double> inputs = game.get_state(d);
+                torch::Tensor x = torch::tensor(inputs, torch::kDouble)
+                                          .reshape({1, (long) DinoGame::get_state_size()});
+                auto actions = population.members[d].forward(x);
+                auto action = torch::argmax(actions).item().toInt();
+                game.apply_action(d, (DinoGame::dino_actions_t) action);
+            }
+
             game.update();
 
             BeginDrawing();

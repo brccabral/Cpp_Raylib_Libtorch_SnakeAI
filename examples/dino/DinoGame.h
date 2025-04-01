@@ -41,8 +41,21 @@ public:
     DinoGame(size_t num_dinos_, size_t num_obstacles_);
     ~DinoGame();
 
+    typedef enum dino_actions_t
+    {
+        DINO_ACTION_NONE = 0,
+        DINO_ACTION_JUMP,
+        DINO_ACTION_CROUCH,
+        DINO_ACTION_FLY,
+        // DINO_ACTION_COUNT must be last
+        DINO_ACTION_COUNT
+    } dino_actions_t;
+
     void reset();
     void update();
+    std::vector<double> get_state(size_t dino_index) const;
+    void apply_action(size_t dino_index, dino_actions_t action);
+    static size_t get_state_size();
 
     typedef enum dino_state_t
     {
@@ -121,6 +134,7 @@ private:
     static void get_random_cactus(Obstacle *obstacle);
     static void get_random_bird(Obstacle *obstacle);
     static void get_spikes(Obstacle *obstacle);
+    static double get_obstacle_distance(const Dino *dino, const Obstacle *obstacle);
 
     void load_textures();
     void unload_textures();
