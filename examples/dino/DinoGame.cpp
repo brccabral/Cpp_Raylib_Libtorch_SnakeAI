@@ -484,4 +484,9 @@ void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
             break;
         }
     }
-};
+}
+
+bool DinoGame::check_end_game() const
+{
+    return num_dinos == num_dead || first_obstacle >= num_obstacles;
+}

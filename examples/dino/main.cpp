@@ -64,6 +64,13 @@ int main()
             draw_dinos(&game, screen_height);
             draw_obstacles(&game, screen_height);
             EndDrawing();
+
+            if (game.check_end_game())
+            {
+                printf("Distance: %.0f Dead: %lu Obstacles: %lu\n", game.distance, game.num_dead,
+                       game.first_obstacle);
+                game.reset();
+            }
         }
     }
 

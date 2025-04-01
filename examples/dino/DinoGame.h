@@ -56,6 +56,7 @@ public:
     std::vector<double> get_state(size_t dino_index) const;
     void apply_action(size_t dino_index, dino_actions_t action);
     static size_t get_state_size();
+    bool check_end_game() const;
 
     typedef enum dino_state_t
     {
