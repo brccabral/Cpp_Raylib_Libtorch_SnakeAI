@@ -240,3 +240,109 @@ void DinoGame::unload_textures()
         UnloadTexture(obstacle_sprite);
     }
 }
+
+void DinoGame::update()
+{
+    for (size_t i = first_obstacle; i < num_obstacles; ++i)
+    {
+        auto *obstacle = &obstacles[i];
+        if (obstacle->x + obstacle->width < 0)
+        {
+            first_obstacle = i + 1;
+            ++last_obstacle;
+            continue;
+        }
+        obstacle->x -= speedX;
+        if (obstacle->type == OBSTACLE_TYPE_BIRD)
+        {
+            obstacle->sprite.frame += ANIMATION_SPEED;
+            if (obstacle->sprite.frame >= 7)
+            {
+                obstacle->sprite.frame = 5;
+            }
+            obstacle->sprite.frame_index = obstacle->sprite.frame;
+        }
+    }
+
+    distance += speedX;
+
+    const Obstacle *collision_obstacle = &obstacles[collision_index];
+
+    for (size_t i = 0; i < num_dinos; ++i)
+    {
+        Dino *dino = &dinos[i];
+        if (dino->x < -dino->width)
+        {
+            continue;
+        }
+        if (dino->state == DINO_STATE_DEAD)
+        {
+            dino->x -= speedX;
+            dino->sprite.frame = 4;
+            dino->sprite.frame_index = 4;
+            continue;
+        }
+
+        dino->distance += speedX;
+        dino->sprite.frame += ANIMATION_SPEED;
+
+        best_dino_index = i;
+        if (dino->state == DINO_STATE_STANDUP)
+        {
+            if (dino->sprite.frame >= 2)
+            {
+                dino->sprite.frame = 0;
+            }
+        }
+        else if (dino->state == DINO_STATE_CROUCH)
+        {
+            if (dino->sprite.frame >= 4)
+            {
+                dino->sprite.frame = 2;
+            }
+        }
+        else if (dino->state == DINO_STATE_JUMP)
+        {
+            dino->direction += gravity;
+            dino->y += dino->direction;
+            if (dino->sprite.frame >= 6)
+            {
+                dino->sprite.frame = 4;
+            }
+            if (dino->y < 0)
+            {
+                dino->state = DINO_STATE_STANDUP;
+                dino->y = 0;
+                dino->direction = 0;
+                dino->height = DINO_HEIGHT_STANDUP;
+                dino->width = DINO_WIDTH_STANDUP;
+                dino->sprite.frame = 0;
+            }
+        }
+        else if (dino->state == DINO_STATE_FLYING)
+        {
+            dino->plane_cooldown -= 1;
+            if (dino->sprite.frame >= 12)
+            {
+                dino->sprite.frame = 10;
+            }
+            if (dino->plane_cooldown <= 0)
+            {
+                dino->state = DINO_STATE_STANDUP;
+                dino->y = 0;
+                dino->direction = 0;
+                dino->plane_cooldown = 0;
+                dino->height = DINO_HEIGHT_STANDUP;
+                dino->width = DINO_WIDTH_STANDUP;
+                dino->sprite.frame = 0;
+            }
+        }
+
+        dino->sprite.frame_index = dino->sprite.frame;
+    }
+
+    if (DINO_X > collision_obstacle->x + collision_obstacle->width)
+    {
+        collision_index = (collision_index + 1) % num_obstacles;
+    }
+}

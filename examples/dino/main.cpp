@@ -1,5 +1,7 @@
+#include <cstdio>
 #include <raylib.h>
 #include "DinoGame.h"
+
 
 void draw_dinos(const DinoGame *game, const size_t screen_height)
 {
@@ -31,6 +33,8 @@ int main()
 
         while (!WindowShouldClose())
         {
+            game.update();
+
             BeginDrawing();
             ClearBackground(WHITE);
             DrawFPS(10, 300);

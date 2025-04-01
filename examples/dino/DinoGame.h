@@ -22,7 +22,7 @@
 #define NUM_COLORS 8
 #define NUM_DINO_SPRITES 12
 #define NUM_OBSTACLE_SPRITES 8
-#define ANIMATION_SPEED 10
+#define ANIMATION_SPEED (0.03)
 
 typedef struct Sprite
 {
@@ -42,6 +42,7 @@ public:
     ~DinoGame();
 
     void reset();
+    void update();
 
     typedef enum dino_state_t
     {
@@ -78,8 +79,6 @@ public:
         double width{}, height{};
         double plane_cooldown{};
         double distance{};
-        double frame{};
-        size_t frame_index{};
         dino_state_t state{};
         Sprite sprite{};
     } Dino;
