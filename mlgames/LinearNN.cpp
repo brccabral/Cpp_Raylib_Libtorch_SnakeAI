@@ -11,6 +11,7 @@ LinearNNImpl::LinearNNImpl(
 
     size_t previous = input_size_;
     size_t current{};
+    // NOLINTNEXTLINE
     const char *prefix = "linear";
 
     for (size_t h = 0; h < hidden_sizes_.size(); ++h)
@@ -22,7 +23,7 @@ LinearNNImpl::LinearNNImpl(
         previous = current;
     }
 
-    output = register_module("linear2", torch::nn::Linear(previous, output_size_));
+    output = register_module("output", torch::nn::Linear(previous, output_size_));
     output->to(torch::kDouble);
 }
 
