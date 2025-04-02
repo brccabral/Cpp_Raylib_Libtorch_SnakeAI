@@ -81,6 +81,7 @@ int main()
                 }
                 printf("Distance: %.0f Dead: %zu Obstacles: %zu Record %zu\n", game.distance,
                        game.num_dead, game.first_obstacle, record);
+                save_model<>(population.members[game.best_dino_index]);
                 population.apply_mutations(game.select_best_dinos());
                 game.reset();
             }

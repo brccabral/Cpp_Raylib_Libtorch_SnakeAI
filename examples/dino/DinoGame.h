@@ -113,6 +113,7 @@ public:
     double distance{};
     size_t num_dead{};
     size_t first_obstacle{};
+    size_t best_dino_index{};
 
 private:
 
@@ -124,7 +125,6 @@ private:
     size_t num_obstacles{};
     size_t collision_index{};
     size_t last_obstacle{};
-    size_t best_dino_index{};
     bool running{};
 
     Color colors[NUM_COLORS] = {GRAY, YELLOW, GREEN, RED, BLUE, CYAN, ORANGE, PURPLE};

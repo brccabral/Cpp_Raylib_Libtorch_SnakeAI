@@ -19,5 +19,14 @@ public:
     torch::nn::Linear output{nullptr};
 };
 
-void save_model(std::shared_ptr<MultiLayer> model, const char *filename = "models/MultiLayer.pt");
-void load_model(std::shared_ptr<MultiLayer> model, const char *filename = "models/MultiLayer.pt");
+template<typename T>
+void save_model(const torch::nn::ModuleHolder<T> &model, const char *filename = "models/model.pt")
+{
+    torch::save(model, filename);
+}
+
+template<typename T>
+void load_model(const torch::nn::ModuleHolder<T> &model, const char *filename = "models/model.pt")
+{
+    torch::load(model, filename);
+}
