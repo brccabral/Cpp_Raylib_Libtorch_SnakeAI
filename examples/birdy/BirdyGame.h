@@ -5,8 +5,10 @@
 #include <raylib.h>
 
 #define GAME_INIT_SPEEDX 2
-#define BIRD_JUMP_FORCE 4
-#define BIRD_GRAVITY (-0.08)
+#define BIRD_JUMP_FORCE 7
+#define BIRD_JUMP_COOLDOWN 20
+#define BIRD_PARACHUTE_COOLDOWN 200
+#define BIRD_GRAVITY (-0.3)
 #define BIRD_X 50
 
 #define CYAN CLITERAL(Color){0, 255, 255, 255} // CYAN
@@ -30,10 +32,17 @@ public:
 
     explicit BirdyGame(size_t num_birds);
     ~BirdyGame();
+    typedef enum bird_action_t
+    {
+        BIRD_ACTION_NONE = 0,
+        BIRD_ACTION_JUMP,
+        BIRD_ACTION_PARACHUTE,
+    } bird_action_t;
 
     void reset();
     void draw();
     void update();
+    void apply_action(size_t bird_index, bird_action_t action);
 
     typedef enum bird_state_t
     {
@@ -49,6 +58,7 @@ public:
         double width{}, height{};
         double distance{};
         double angle{};
+        double action_cooldown{};
         bird_state_t state{};
         Sprite sprite{};
     } Bird;
@@ -73,6 +83,7 @@ private:
     double distance{};
     double gravity{};
     double speed_x{};
+    double jump_force{};
     size_t num_dead{};
     size_t best_bird_index{};
 

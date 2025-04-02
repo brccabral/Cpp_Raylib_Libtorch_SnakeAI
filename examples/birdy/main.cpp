@@ -1,3 +1,4 @@
+#include <random>
 #include "BirdyGame.h"
 
 int main()
@@ -11,6 +12,20 @@ int main()
 
         while (!WindowShouldClose())
         {
+            for (size_t i = 0; i < 200; ++i)
+            {
+                int action_prob = rand() % 100;
+                int action = BirdyGame::BIRD_ACTION_PARACHUTE;
+                if (action_prob < 90)
+                {
+                    action = BirdyGame::BIRD_ACTION_NONE;
+                }
+                else if (action_prob < 95)
+                {
+                    action = BirdyGame::BIRD_ACTION_JUMP;
+                }
+                game.apply_action(i, (BirdyGame::bird_action_t) action);
+            }
             game.update();
             game.draw();
         }

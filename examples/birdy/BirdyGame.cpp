@@ -7,6 +7,7 @@ BirdyGame::BirdyGame(size_t num_birds)
 {
     gravity = BIRD_GRAVITY;
     speed_x = GAME_INIT_SPEEDX;
+    jump_force = BIRD_JUMP_FORCE;
 
     birds.resize(num_birds);
     load_textures();
@@ -67,6 +68,12 @@ void BirdyGame::draw()
     for (size_t i = 0; i < birds.size(); ++i)
     {
         const auto *bird = &birds[i];
+        if (bird->state == BIRD_STATE_PARACHUTE)
+        {
+            DrawTexture(
+                    parachute_texture, bird->x,
+                    GetScreenHeight() - bird->y - bird->height - parachute_texture.height, WHITE);
+        }
         DrawTexturePro(
                 bird->sprite.textures[bird->sprite.frame_index],
                 Rectangle(0.0, 0.0, bird->width, bird->height),
@@ -124,13 +131,54 @@ void BirdyGame::update()
             bird->x -= speed_x;
             continue;
         }
-        bird->angle += 1.0;
-        bird->angle = std::min(std::max(bird->angle, 88.0), 0.0);
-        bird->direction += gravity;
-        bird->y += bird->direction;
-        if (bird->y < 75)
+        bird->action_cooldown -= 1.0;
+        if (bird->state == BIRD_STATE_FLYING)
         {
-            bird->state = BIRD_STATE_DEAD;
+            bird->angle += 1.0;
+            bird->angle = std::max(std::min(bird->angle, 88.0), 0.0);
+            bird->direction += gravity;
+            bird->y += bird->direction;
+            if (bird->y < 75)
+            {
+                bird->state = BIRD_STATE_DEAD;
+            }
         }
+        else if (bird->state == BIRD_STATE_PARACHUTE)
+        {
+            if (bird->action_cooldown < 0)
+            {
+                bird->state = BIRD_STATE_FLYING;
+            }
+        }
+    }
+}
+
+void BirdyGame::apply_action(size_t bird_index, bird_action_t action)
+{
+    auto *bird = &birds[bird_index];
+    if (bird->action_cooldown > 0)
+    {
+        return;
+    }
+    switch (action)
+    {
+        case BIRD_ACTION_JUMP:
+        {
+            bird->direction = jump_force;
+            bird->action_cooldown = BIRD_JUMP_COOLDOWN;
+            bird->angle = 0;
+            bird->state = BIRD_STATE_FLYING;
+            break;
+        }
+        case BIRD_ACTION_PARACHUTE:
+        {
+            bird->direction = 0;
+            bird->action_cooldown = BIRD_PARACHUTE_COOLDOWN;
+            bird->angle = 20;
+            bird->state = BIRD_STATE_PARACHUTE;
+            break;
+        }
+        default:
+            break;
     }
 }
