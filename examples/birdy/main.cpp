@@ -17,6 +17,10 @@ int main()
         {
             for (size_t i = 0; i < 200; ++i)
             {
+                if (game.birds[i].state == BirdyGame::BIRD_STATE_DEAD)
+                {
+                    continue;
+                }
                 int action_prob = rand() % 100;
                 int action = BirdyGame::BIRD_ACTION_PARACHUTE;
                 if (action_prob < 90)
