@@ -36,6 +36,8 @@ int main()
     {
         auto game = DinoGame(count_dinos, 2000);
 
+        size_t record = 0;
+
         const auto net = std::make_shared<LinearGen>(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
         auto population = GenPopulation(count_dinos, 0.1, net);
@@ -61,17 +63,22 @@ int main()
             BeginDrawing();
             ClearBackground(WHITE);
             DrawFPS(10, 300);
-            DrawText(TextFormat("Distance: %f", game.distance), 10, 320, 10, BLACK);
-            DrawText(TextFormat("Dead: %lu", game.num_dead), 10, 330, 10, BLACK);
-            DrawText(TextFormat("Obstacles: %lu", game.first_obstacle), 10, 340, 10, BLACK);
+            DrawText(TextFormat("Distance: %.0f", game.distance), 10, 320, 10, BLACK);
+            DrawText(TextFormat("Dead: %zu", game.num_dead), 10, 330, 10, BLACK);
+            DrawText(TextFormat("Obstacles: %zu", game.first_obstacle), 10, 340, 10, BLACK);
+            DrawText(TextFormat("Record: %zu", record), 10, 350, 10, BLACK);
             draw_dinos(&game, screen_height);
             draw_obstacles(&game, screen_height);
             EndDrawing();
 
             if (game.check_end_game())
             {
-                printf("Distance: %.0f Dead: %lu Obstacles: %lu\n", game.distance, game.num_dead,
-                       game.first_obstacle);
+                if (game.first_obstacle > record)
+                {
+                    record = game.first_obstacle;
+                }
+                printf("Distance: %.0f Dead: %zu Obstacles: %zu Record %zu\n", game.distance,
+                       game.num_dead, game.first_obstacle, record);
                 population.apply_mutations(game.select_best_dinos());
                 game.reset();
             }
