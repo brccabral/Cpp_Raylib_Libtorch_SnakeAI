@@ -32,6 +32,7 @@ void BirdyGame::reset()
         // NOLINTNEXTLINE
         bird->y = GetScreenHeight() / 2;
         bird->direction = 0;
+        bird->angle = 0;
         bird->distance = 0;
         bird->state = BIRD_STATE_FLYING;
         bird->sprite.color = colors[i % NUM_COLORS];
@@ -66,9 +67,10 @@ void BirdyGame::draw()
     for (size_t i = 0; i < birds.size(); ++i)
     {
         const auto *bird = &birds[i];
-        DrawTexture(
-                bird->sprite.textures[bird->sprite.frame_index], bird->x,
-                GetScreenHeight() - bird->y - bird->height, bird->sprite.color);
+        DrawTextureEx(
+                bird->sprite.textures[bird->sprite.frame_index],
+                Vector2{(float) bird->x, (float) (GetScreenHeight() - bird->y - bird->height)},
+                bird->angle, 1, bird->sprite.color);
     }
     EndDrawing();
 }
@@ -109,10 +111,17 @@ void BirdyGame::update()
     for (size_t i = 0; i < birds.size(); ++i)
     {
         auto *bird = &birds[i];
-        if (bird->state == BIRD_STATE_DEAD)
+        if (bird->x + bird->width < 0)
         {
             continue;
         }
+        if (bird->state == BIRD_STATE_DEAD)
+        {
+            bird->x -= speed_x;
+            continue;
+        }
+        bird->angle += 1.0;
+        bird->angle = std::min(std::max(bird->angle, 88.0), 0.0);
         bird->direction += gravity;
         bird->y += bird->direction;
         if (bird->y < 75)

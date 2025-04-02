@@ -48,6 +48,7 @@ public:
         double direction{};
         double width{}, height{};
         double distance{};
+        double angle{};
         bird_state_t state{};
         Sprite sprite{};
     } Bird;
