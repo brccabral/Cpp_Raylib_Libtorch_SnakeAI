@@ -1,8 +1,11 @@
+#include <ctime>
 #include <random>
 #include "BirdyGame.h"
 
 int main()
 {
+    srand(time(NULL));
+
     constexpr int screen_width = 1366;
     constexpr int screen_height = 768;
     InitWindow(screen_width, screen_height, "Birdy");

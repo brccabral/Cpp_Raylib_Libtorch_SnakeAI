@@ -10,7 +10,8 @@
 #define BIRD_PARACHUTE_COOLDOWN 200
 #define BIRD_GRAVITY (-0.3)
 #define BIRD_X 50
-#define PIPES_GAP 75
+#define PIPES_GAP 175
+#define PIPES_GAP_STEADY 75
 #define PIPES_DISTANCE 275
 
 #define CYAN CLITERAL(Color){0, 255, 255, 255} // CYAN
@@ -102,6 +103,8 @@ private:
     size_t best_bird_index{};
     size_t first_pipe{};
     size_t last_pipe{};
+
+    void pipe_status(size_t index);
 
     void load_textures();
     void unload_textures() const;

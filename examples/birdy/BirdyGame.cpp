@@ -60,20 +60,16 @@ void BirdyGame::reset()
     for (size_t i = 0; i < pipes.size(); i += 2)
     {
         pipes[i].x = prev_x;
-        pipes[i].color = WHITE;
         pipes[i].texture = &pipe_down_texture;
         pipes[i].width = pipe_down_texture.width;
         pipes[i].height = pipe_down_texture.height;
         pipes[i + 1].x = prev_x;
-        pipes[i + 1].color = WHITE;
         pipes[i + 1].texture = &pipe_up_texture;
         pipes[i + 1].width = pipe_up_texture.width;
         pipes[i + 1].height = pipe_up_texture.height;
 
-        double rand_y = PIPES_GAP + (rand() % (GetScreenHeight() - PIPES_GAP * 2));
+        pipe_status(i);
 
-        pipes[i].y = pipes[i].height + rand_y + PIPES_GAP / 2;
-        pipes[i + 1].y = rand_y - PIPES_GAP / 2;
         prev_x = pipes[i].x + PIPES_DISTANCE;
     }
 }
@@ -90,7 +86,7 @@ void BirdyGame::draw()
 
     for (auto &pipe: pipes)
     {
-        DrawTexture(*pipe.texture, pipe.x, GetScreenHeight() - pipe.y, WHITE);
+        DrawTexture(*pipe.texture, pipe.x, GetScreenHeight() - pipe.y, pipe.color);
     }
 
     for (size_t i = 0; i < birds.size(); ++i)
@@ -167,6 +163,7 @@ void BirdyGame::update()
             pipe_down->x = pipes[last_pipe].x + PIPES_DISTANCE;
             pipe_up->x = pipes[last_pipe].x + PIPES_DISTANCE;
             last_pipe = i;
+            pipe_status(i);
         }
     }
     for (size_t i = 0; i < birds.size(); ++i)
@@ -230,5 +227,30 @@ void BirdyGame::apply_action(size_t bird_index, bird_action_t action)
         }
         default:
             break;
+    }
+}
+
+void BirdyGame::pipe_status(size_t index)
+{
+    // NOLINTNEXTLINE
+    double prob = (rand() % 10000) / 100.0;
+    if (prob < 10)
+    {
+        pipes[index].color = RED;
+        pipes[index + 1].color = RED;
+
+        pipes[index].y = pipes[index].height + GetScreenHeight() / 2.0 + PIPES_GAP_STEADY / 2.0;
+        pipes[index + 1].y = GetScreenHeight() / 2.0 - PIPES_GAP_STEADY / 2.0;
+    }
+    else
+    {
+        pipes[index].color = WHITE;
+        pipes[index + 1].color = WHITE;
+
+        // NOLINTNEXTLINE
+        const double rand_y = 50 + PIPES_GAP + (rand() % (GetScreenHeight() - PIPES_GAP * 2 - 50));
+
+        pipes[index].y = pipes[index].height + rand_y + PIPES_GAP / 2.0;
+        pipes[index + 1].y = rand_y - PIPES_GAP / 2.0;
     }
 }
