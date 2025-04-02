@@ -34,7 +34,6 @@ void GenPopulation::crossover(
         const std::shared_ptr<MultiLayer> &child)
 {
     {
-        torch::NoGradGuard no_grad;
         for (size_t h = 0; h < parent1->hidden_sizes.size(); ++h)
         {
             const auto h1_weights = parent1->hidden_layers[h]->weight.clone();

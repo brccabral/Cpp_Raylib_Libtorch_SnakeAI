@@ -42,6 +42,8 @@ int main()
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
         auto population = GenPopulation(count_dinos, 0.1, net);
 
+        torch::NoGradGuard no_grad;
+
         while (!WindowShouldClose())
         {
             for (size_t d = 0; d < count_dinos; ++d)
