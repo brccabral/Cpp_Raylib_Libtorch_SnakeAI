@@ -26,7 +26,7 @@ void save_model(const torch::nn::ModuleHolder<T> &model, const char *filename = 
 }
 
 template<typename T>
-void load_model(const torch::nn::ModuleHolder<T> &model, const char *filename = "models/model.pt")
+void load_model(torch::nn::ModuleHolder<T> model, const char *filename = "models/model.pt")
 {
     torch::load(model, filename);
 }
