@@ -106,6 +106,7 @@ private:
     size_t last_pipe{};
 
     void pipe_status(size_t index);
+    bool collision(const Bird *bird) const;
 
     void load_textures();
     void unload_textures() const;

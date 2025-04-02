@@ -213,6 +213,12 @@ void BirdyGame::update()
                 bird->state = BIRD_STATE_FLYING;
             }
         }
+
+        if (collision(bird))
+        {
+            birds[i].state = BIRD_STATE_DEAD;
+            ++num_dead;
+        }
     }
 }
 
@@ -277,4 +283,19 @@ void BirdyGame::pipe_status(size_t index)
         pipes[index].speed_y = direction * speed_y;
         pipes[index + 1].speed_y = direction * speed_y;
     }
+}
+
+bool BirdyGame::collision(const Bird *bird) const
+{
+    for (const auto &pipe: pipes)
+    {
+        const auto rect_pipe = Rectangle(pipe.x, pipe.y - pipe.height, pipe.width, pipe.height);
+        const auto rect_bird =
+                Rectangle(bird->x, bird->y - bird->height, bird->width, bird->height);
+        if (CheckCollisionRecs(rect_pipe, rect_bird))
+        {
+            return true;
+        }
+    }
+    return false;
 }
