@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
             game.get_state_size(), game.get_action_count(), std::vector<size_t>{HIDDEN_SIZE});
     if (net_filename != NULL)
     {
-        load_model(&model, net_filename);
+        load_model<>(model, net_filename);
     }
     model->to(device);
     model->train();
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
                 if (score < best_score)
                 {
                     best_score = score;
-                    save_model(&model);
+                    save_model<>(model);
                 }
 
                 printf("Game %d Score %zu Record %zu time %.2f batch %d max memory %d\n",

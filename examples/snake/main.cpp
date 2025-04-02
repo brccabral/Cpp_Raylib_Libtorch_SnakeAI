@@ -72,7 +72,7 @@ int main()
             if (score > best_score)
             {
                 best_score = score;
-                save_model(&model);
+                save_model<>(model);
             }
 
             printf("Game %d Score %d Record %d time %.2f batch %d max memory %d\n",
