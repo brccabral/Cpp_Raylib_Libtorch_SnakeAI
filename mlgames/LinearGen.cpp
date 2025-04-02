@@ -1,6 +1,6 @@
 #include <mlgames/LinearGen.h>
 
-LinearGenImpl::LinearGenImpl(
+LinearGen::LinearGen(
         size_t input_size_, size_t output_size_, const std::vector<size_t> &hidden_sizes_)
 {
     input_size = input_size_;
@@ -24,7 +24,7 @@ LinearGenImpl::LinearGenImpl(
     output->to(torch::kFloat);
 }
 
-torch::Tensor LinearGenImpl::forward(const torch::Tensor &x)
+torch::Tensor LinearGen::forward(const torch::Tensor &x)
 {
     torch::Tensor result = x;
     for (size_t h = 0; h < hidden_sizes.size(); ++h)

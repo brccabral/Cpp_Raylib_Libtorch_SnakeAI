@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -489,4 +490,17 @@ void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
 bool DinoGame::check_end_game() const
 {
     return num_dinos == num_dead || first_obstacle >= num_obstacles;
+}
+
+std::array<size_t, 2> DinoGame::select_best_dinos() const
+{
+    std::vector<std::pair<double, size_t>> dinos_distances;
+    dinos_distances.reserve(num_dinos);
+    for (size_t i = 0; i < dinos.size(); ++i)
+    {
+        dinos_distances.emplace_back(dinos[i].distance, i);
+    }
+    std::ranges::sort(
+            dinos_distances, [](const auto &a, const auto &b) { return a.first > b.first; });
+    return {dinos_distances[0].second, dinos_distances[1].second};
 }

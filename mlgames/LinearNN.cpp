@@ -36,13 +36,3 @@ torch::Tensor LinearNNImpl::forward(const torch::Tensor &x)
     result = output->forward(result);
     return result;
 }
-
-void save_model(const LinearNN *model, const char *filename)
-{
-    torch::save(*model, filename);
-}
-
-void load_model(LinearNN *model, const char *filename)
-{
-    torch::load(*model, filename);
-}

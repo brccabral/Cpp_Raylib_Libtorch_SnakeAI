@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <raylib.h>
 
 
@@ -53,10 +54,11 @@ public:
 
     void reset();
     void update();
-    std::vector<float> get_state(size_t dino_index) const;
+    [[nodiscard]] std::vector<float> get_state(size_t dino_index) const;
     void apply_action(size_t dino_index, dino_actions_t action);
     static size_t get_state_size();
-    bool check_end_game() const;
+    [[nodiscard]] bool check_end_game() const;
+    [[nodiscard]] std::array<size_t, 2> select_best_dinos() const;
 
     typedef enum dino_state_t
     {

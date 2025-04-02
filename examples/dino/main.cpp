@@ -36,10 +36,9 @@ int main()
     {
         auto game = DinoGame(count_dinos, 2000);
 
-        const auto net = LinearGen(
+        const auto net = std::make_shared<LinearGen>(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
-        const torch::nn::AnyModule module(net);
-        auto population = GenPopulation(count_dinos, 0.1, module);
+        auto population = GenPopulation(count_dinos, 0.1, net);
 
         while (!WindowShouldClose())
         {
@@ -52,7 +51,7 @@ int main()
                 std::vector<float> inputs = game.get_state(d);
                 torch::Tensor x = torch::tensor(inputs, torch::kFloat)
                                           .reshape({1, (long) DinoGame::get_state_size()});
-                auto actions = population.members[d].forward(x);
+                auto actions = population.members[d]->forward(x);
                 auto action = torch::argmax(actions).item().toInt();
                 game.apply_action(d, (DinoGame::dino_actions_t) action);
             }
@@ -73,6 +72,7 @@ int main()
             {
                 printf("Distance: %.0f Dead: %lu Obstacles: %lu\n", game.distance, game.num_dead,
                        game.first_obstacle);
+                population.apply_mutations(game.select_best_dinos());
                 game.reset();
             }
         }
