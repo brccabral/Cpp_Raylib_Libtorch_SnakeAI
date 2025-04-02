@@ -31,6 +31,8 @@ int main()
     constexpr size_t screen_height = 768;
     constexpr size_t count_dinos = 200;
 
+    constexpr int hidden_layer_1 = 8;
+
     InitWindow(screen_width, screen_height, "Dino");
 
     {
@@ -39,7 +41,8 @@ int main()
         size_t record = 0;
 
         const auto net = LinearGen(
-                DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
+                DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT,
+                std::vector<size_t>{hidden_layer_1});
         auto population = GenPopulation(count_dinos, 0.9, net);
 
         torch::NoGradGuard no_grad;

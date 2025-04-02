@@ -40,13 +40,15 @@ public:
         BIRD_ACTION_NONE = 0,
         BIRD_ACTION_JUMP,
         BIRD_ACTION_PARACHUTE,
+        BIRD_ACTION_COUNT,
     } bird_action_t;
 
     void reset();
     void draw();
     void update();
     void apply_action(size_t bird_index, bird_action_t action);
-    bool check_end_game() const;
+    [[nodiscard]] bool check_end_game() const;
+    static size_t get_state_size();
 
     typedef enum bird_state_t
     {
