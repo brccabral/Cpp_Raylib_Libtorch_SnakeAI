@@ -26,6 +26,9 @@ void GenPopulation::apply_mutations(std::array<size_t, 2> best_indexes)
         new_members.push_back(child);
     }
 
+    mutation_rate *= 0.99;
+    mutation_rate = std::max(0.2, mutation_rate);
+
     members = std::move(new_members);
 }
 
@@ -57,13 +60,25 @@ std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<float> mutation_dist(-0.1, 0.1);
 
-void GenPopulation::mutate(const std::shared_ptr<MultiLayer> &net)
+void GenPopulation::mutate(const std::shared_ptr<MultiLayer> &net) const
 {
     for (auto &parameter: net->parameters())
     {
         auto data = parameter.data();
+        // mask = random select what values to change, mutation_rate reduces with each generation
         auto mask = torch::rand_like(data) < mutation_rate;
-        auto mutation_values = torch::rand_like(data) * mutation_dist(gen);
-        data += mask * mutation_values;
+        auto condition = torch::randint_like(data, 0, 2);
+        // mask_0 = replaces values
+        auto mask_0 = (condition == 0) & mask;
+        // mask_1 = multiplies current value
+        auto mask_1 = (condition == 1) & mask;
+        // mask_2 = sum values
+        auto mask_2 = (condition == 2) & mask;
+        // new values (replace, multiply or sum)
+        auto mutation_values = torch::rand_like(data) * 2 - 1;
+
+        data.masked_scatter_(mask_0, mutation_values);
+        data = (data - data * mask_1) + ((data * mutation_values) * mask_1);
+        data = (data + mask_2 * mutation_values).clamp(-1, 1);
     }
 }

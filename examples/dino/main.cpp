@@ -40,7 +40,7 @@ int main()
 
         const auto net = std::make_shared<LinearGen>(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
-        auto population = GenPopulation(count_dinos, 0.1, net);
+        auto population = GenPopulation(count_dinos, 0.9, net);
 
         torch::NoGradGuard no_grad;
 
