@@ -446,7 +446,7 @@ void DinoGame::apply_action(size_t dino_index, dino_actions_t action)
             {
                 break;
             }
-            if (dino->state != DINO_ACTION_FLY)
+            if (dino->state != DINO_STATE_FLYING)
             {
                 dino->sprite.frame = 10;
             }
