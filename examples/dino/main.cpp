@@ -38,7 +38,7 @@ int main()
 
         size_t record = 0;
 
-        const auto net = std::make_shared<LinearGen>(
+        const auto net = LinearGen(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT, std::vector<size_t>{8});
         auto population = GenPopulation(count_dinos, 0.9, net);
 

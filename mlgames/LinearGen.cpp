@@ -1,6 +1,6 @@
 #include <mlgames/LinearGen.h>
 
-LinearGen::LinearGen(
+LinearGenImpl::LinearGenImpl(
         size_t input_size_, size_t output_size_, const std::vector<size_t> &hidden_sizes_)
 {
     input_size = input_size_;
@@ -24,7 +24,7 @@ LinearGen::LinearGen(
     output->to(torch::kFloat);
 }
 
-torch::Tensor LinearGen::forward(const torch::Tensor &x)
+torch::Tensor LinearGenImpl::forward(const torch::Tensor &x)
 {
     torch::Tensor result = x;
     for (size_t h = 0; h < hidden_sizes.size(); ++h)
@@ -33,4 +33,14 @@ torch::Tensor LinearGen::forward(const torch::Tensor &x)
     }
     result = torch::softmax(output->forward(result), 1);
     return result;
+}
+
+LinearGen LinearGenImpl::clone()
+{
+    auto clone = LinearGen(this->input_size, this->output_size, this->hidden_sizes);
+    for (int p = 0; p < parameters().size(); ++p)
+    {
+        clone->parameters()[p].data() = parameters()[p].data().clone();
+    }
+    return clone;
 }
