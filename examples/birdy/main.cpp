@@ -19,7 +19,7 @@ int main()
     {
         auto game = BirdyGame(count_birds);
 
-        size_t record = 0;
+        float record = 0;
 
         const auto net = LinearGen(
                 BirdyGame::get_state_size(), BirdyGame::BIRD_ACTION_COUNT,
@@ -49,6 +49,15 @@ int main()
             game.draw();
             if (game.check_end_game())
             {
+                if (game.distance > record)
+                {
+                    record = game.distance;
+                }
+                printf("Generation %zu Distance: %.0f Dead: %zu Record %.0f\n", generation,
+                       game.distance, game.num_dead, record);
+                ++generation;
+                save_model<>(population.members[game.best_bird_index]);
+                population.apply_mutations(game.select_best_dinos());
                 game.reset();
             }
         }

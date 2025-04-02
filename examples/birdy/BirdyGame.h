@@ -50,6 +50,11 @@ public:
     [[nodiscard]] bool check_end_game() const;
     static size_t get_state_size();
     std::vector<float> get_state(size_t dino_index);
+    [[nodiscard]] std::array<size_t, 2> select_best_dinos() const;
+
+    double distance{};
+    size_t num_dead{};
+    size_t best_bird_index{};
 
     typedef enum bird_state_t
     {
@@ -100,12 +105,9 @@ private:
     Texture pipe_down_texture{};
     Texture pipe_up_texture{};
 
-    double distance{};
     double gravity{};
     double speed_x{};
     double jump_force{};
-    size_t num_dead{};
-    size_t best_bird_index{};
     size_t first_pipe{};
     size_t last_pipe{};
 

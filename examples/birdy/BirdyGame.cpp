@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdio>
 #include <random>
 #include "BirdyGame.h"
@@ -143,6 +144,8 @@ void BirdyGame::unload_textures() const
 
 void BirdyGame::update()
 {
+    distance += speed_x;
+
     for (auto &floor: floors)
     {
         floor.x -= speed_x;
@@ -194,6 +197,10 @@ void BirdyGame::update()
             bird->x -= speed_x;
             continue;
         }
+
+        best_bird_index = i;
+
+        bird->distance += speed_x;
         bird->action_cooldown -= 1.0;
         if (bird->state == BIRD_STATE_FLYING)
         {
@@ -345,4 +352,17 @@ float BirdyGame::distance_x_to_obstacle(const Bird *bird, const Pipe *pipe)
 float BirdyGame::distance_y_to_obstacle(const Bird *bird, const Pipe *pipe)
 {
     return pipe->y - bird->y;
+}
+
+std::array<size_t, 2> BirdyGame::select_best_dinos() const
+{
+    std::vector<std::pair<double, size_t>> birds_distances;
+    birds_distances.reserve(birds.size());
+    for (size_t i = 0; i < birds.size(); ++i)
+    {
+        birds_distances.emplace_back(birds[i].distance, i);
+    }
+    std::ranges::sort(
+            birds_distances, [](const auto &a, const auto &b) { return a.first > b.first; });
+    return {birds_distances[0].second, birds_distances[1].second};
 }
