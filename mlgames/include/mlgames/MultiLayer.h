@@ -7,7 +7,7 @@ class MultiLayer : public torch::nn::Module
 {
 public:
 
-    MultiLayer();
+    MultiLayer(size_t input_size_, size_t output_size_, const std::vector<size_t> &hidden_sizes_);
     ~MultiLayer() override;
 
     virtual torch::Tensor forward(const torch::Tensor &x) = 0;
