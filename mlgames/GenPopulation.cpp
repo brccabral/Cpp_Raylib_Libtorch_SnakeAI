@@ -12,7 +12,9 @@ GenPopulation::GenPopulation(size_t population_size_, double mutation_rate_, con
 
     for (size_t i = 0; i < population_size; i++)
     {
-        members.push_back(net);
+        auto clone = net->clone();
+        mutate(clone);
+        members.push_back(clone);
     }
 }
 

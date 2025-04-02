@@ -35,7 +35,7 @@ torch::Tensor LinearGenImpl::forward(const torch::Tensor &x)
     return result;
 }
 
-LinearGen LinearGenImpl::clone()
+LinearGen LinearGenImpl::clone() const
 {
     auto clone = LinearGen(this->input_size, this->output_size, this->hidden_sizes);
     for (int p = 0; p < parameters().size(); ++p)
