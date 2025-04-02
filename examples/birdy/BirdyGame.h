@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include <raylib.h>
 
@@ -27,16 +28,18 @@ class BirdyGame
 {
 public:
 
-    BirdyGame(size_t num_birds);
+    explicit BirdyGame(size_t num_birds);
     ~BirdyGame();
 
     void reset();
     void draw();
+    void update();
 
     typedef enum bird_state_t
     {
         BIRD_STATE_FLYING = 0,
         BIRD_STATE_PARACHUTE,
+        BIRD_STATE_DEAD,
     } bird_state_t;
 
     typedef struct Bird
@@ -49,17 +52,28 @@ public:
         Sprite sprite{};
     } Bird;
 
-    std::vector<Bird> birds;
+    std::vector<Bird> birds{};
+
+    typedef struct Floor
+    {
+        double x{}, y{};
+        Texture *texture{};
+    } Floor;
+
+    std::array<Floor, 8> floors;
 
 private:
 
     Color colors[NUM_COLORS] = {GRAY, YELLOW, GREEN, RED, BLUE, CYAN, ORANGE, PURPLE};
     Texture bird_sprites[NUM_BIRD_SPRITES]{};
-    Texture parachute{};
+    Texture parachute_texture{};
+    Texture floor_texture{};
 
-    double distance;
-    size_t num_dead;
-    size_t best_bird_index;
+    double distance{};
+    double gravity{};
+    double speed_x{};
+    size_t num_dead{};
+    size_t best_bird_index{};
 
     void load_textures();
     void unload_textures() const;

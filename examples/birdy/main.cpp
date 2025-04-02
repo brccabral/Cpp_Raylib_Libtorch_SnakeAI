@@ -8,8 +8,10 @@ int main()
 
     {
         auto game = BirdyGame(200);
+
         while (!WindowShouldClose())
         {
+            game.update();
             game.draw();
         }
     }
