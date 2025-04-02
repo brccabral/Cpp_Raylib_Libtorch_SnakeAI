@@ -35,6 +35,10 @@ int main()
             }
             game.update();
             game.draw();
+            if (game.check_end_game())
+            {
+                game.reset();
+            }
         }
     }
 

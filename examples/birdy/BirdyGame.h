@@ -46,6 +46,7 @@ public:
     void draw();
     void update();
     void apply_action(size_t bird_index, bird_action_t action);
+    bool check_end_game() const;
 
     typedef enum bird_state_t
     {

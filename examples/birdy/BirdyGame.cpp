@@ -204,6 +204,7 @@ void BirdyGame::update()
             if (bird->y < 75)
             {
                 bird->state = BIRD_STATE_DEAD;
+                ++num_dead;
             }
         }
         else if (bird->state == BIRD_STATE_PARACHUTE)
@@ -298,4 +299,9 @@ bool BirdyGame::collision(const Bird *bird) const
         }
     }
     return false;
+}
+
+bool BirdyGame::check_end_game() const
+{
+    return num_dead == birds.size();
 }
