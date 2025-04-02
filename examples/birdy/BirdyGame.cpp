@@ -24,6 +24,8 @@ void BirdyGame::reset()
     num_dead = 0;
     distance = 0;
     best_bird_index = 0;
+    first_pipe = 0;
+    last_pipe = pipes.size() - 1;
 
     for (size_t i = 0; i < birds.size(); ++i)
     {
@@ -53,6 +55,27 @@ void BirdyGame::reset()
         floor.texture = &floor_texture;
         prev_x = floor.x + floor.texture->width - 1;
     }
+
+    prev_x = GetScreenWidth() - 100;
+    for (size_t i = 0; i < pipes.size(); i += 2)
+    {
+        pipes[i].x = prev_x;
+        pipes[i].color = WHITE;
+        pipes[i].texture = &pipe_down_texture;
+        pipes[i].width = pipe_down_texture.width;
+        pipes[i].height = pipe_down_texture.height;
+        pipes[i + 1].x = prev_x;
+        pipes[i + 1].color = WHITE;
+        pipes[i + 1].texture = &pipe_up_texture;
+        pipes[i + 1].width = pipe_up_texture.width;
+        pipes[i + 1].height = pipe_up_texture.height;
+
+        double rand_y = PIPES_GAP + (rand() % (GetScreenHeight() - PIPES_GAP * 2));
+
+        pipes[i].y = pipes[i].height + rand_y + PIPES_GAP / 2;
+        pipes[i + 1].y = rand_y - PIPES_GAP / 2;
+        prev_x = pipes[i].x + PIPES_DISTANCE;
+    }
 }
 
 void BirdyGame::draw()
@@ -63,6 +86,11 @@ void BirdyGame::draw()
     for (auto &floor: floors)
     {
         DrawTexture(*floor.texture, floor.x, GetScreenHeight() - floor.y, WHITE);
+    }
+
+    for (auto &pipe: pipes)
+    {
+        DrawTexture(*pipe.texture, pipe.x, GetScreenHeight() - pipe.y, WHITE);
     }
 
     for (size_t i = 0; i < birds.size(); ++i)
@@ -97,6 +125,12 @@ void BirdyGame::load_textures()
     }
     parachute_texture = LoadTexture("assets/parachute.png");
     floor_texture = LoadTexture("assets/floor.png");
+
+    Image pipe = LoadImage("assets/pipe.png");
+    pipe_down_texture = LoadTextureFromImage(pipe);
+    ImageRotate(&pipe, 180);
+    pipe_up_texture = LoadTextureFromImage(pipe);
+    UnloadImage(pipe);
 }
 
 void BirdyGame::unload_textures() const
@@ -107,6 +141,8 @@ void BirdyGame::unload_textures() const
     }
     UnloadTexture(parachute_texture);
     UnloadTexture(floor_texture);
+    UnloadTexture(pipe_down_texture);
+    UnloadTexture(pipe_up_texture);
 }
 
 void BirdyGame::update()
@@ -117,6 +153,20 @@ void BirdyGame::update()
         if (floor.x + floor.texture->width < 0)
         {
             floor.x = GetScreenWidth() - 1;
+        }
+    }
+    for (size_t i = 0; i < pipes.size(); i += 2)
+    {
+        Pipe *pipe_down = &pipes[i];
+        Pipe *pipe_up = &pipes[i + 1];
+        pipe_down->x -= speed_x;
+        pipe_up->x -= speed_x;
+        if (pipe_down->x + pipe_down->texture->width < 0)
+        {
+            first_pipe = (first_pipe + 2) % pipes.size();
+            pipe_down->x = pipes[last_pipe].x + PIPES_DISTANCE;
+            pipe_up->x = pipes[last_pipe].x + PIPES_DISTANCE;
+            last_pipe = i;
         }
     }
     for (size_t i = 0; i < birds.size(); ++i)

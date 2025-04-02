@@ -10,6 +10,8 @@
 #define BIRD_PARACHUTE_COOLDOWN 200
 #define BIRD_GRAVITY (-0.3)
 #define BIRD_X 50
+#define PIPES_GAP 75
+#define PIPES_DISTANCE 275
 
 #define CYAN CLITERAL(Color){0, 255, 255, 255} // CYAN
 #define NUM_COLORS 8
@@ -73,12 +75,24 @@ public:
 
     std::array<Floor, 8> floors;
 
+    typedef struct Pipe
+    {
+        double x{}, y{};
+        double width{}, height{};
+        Color color{};
+        Texture *texture{};
+    } Pipe;
+
+    std::array<Pipe, 16> pipes;
+
 private:
 
     Color colors[NUM_COLORS] = {GRAY, YELLOW, GREEN, RED, BLUE, CYAN, ORANGE, PURPLE};
     Texture bird_sprites[NUM_BIRD_SPRITES]{};
     Texture parachute_texture{};
     Texture floor_texture{};
+    Texture pipe_down_texture{};
+    Texture pipe_up_texture{};
 
     double distance{};
     double gravity{};
@@ -86,6 +100,8 @@ private:
     double jump_force{};
     size_t num_dead{};
     size_t best_bird_index{};
+    size_t first_pipe{};
+    size_t last_pipe{};
 
     void load_textures();
     void unload_textures() const;
