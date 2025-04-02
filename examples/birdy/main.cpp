@@ -38,16 +38,11 @@ int main()
                 {
                     continue;
                 }
-                int action_prob = rand() % 100;
-                int action = BirdyGame::BIRD_ACTION_PARACHUTE;
-                if (action_prob < 90)
-                {
-                    action = BirdyGame::BIRD_ACTION_NONE;
-                }
-                else if (action_prob < 95)
-                {
-                    action = BirdyGame::BIRD_ACTION_JUMP;
-                }
+                std::vector<float> inputs = game.get_state(i);
+                torch::Tensor x = torch::tensor(inputs, torch::kFloat)
+                                          .reshape({1, (long) BirdyGame::get_state_size()});
+                auto actions = population.members[i]->forward(x);
+                auto action = torch::argmax(actions).item().toInt();
                 game.apply_action(i, (BirdyGame::bird_action_t) action);
             }
             game.update();

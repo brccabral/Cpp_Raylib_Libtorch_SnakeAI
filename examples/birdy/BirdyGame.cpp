@@ -215,7 +215,7 @@ void BirdyGame::update()
             }
         }
 
-        if (collision(bird))
+        if (collision(bird) || bird->y > GetScreenHeight() + PIPES_GAP)
         {
             birds[i].state = BIRD_STATE_DEAD;
             ++num_dead;
@@ -309,4 +309,40 @@ bool BirdyGame::check_end_game() const
 size_t BirdyGame::get_state_size()
 {
     return 4;
+}
+
+std::vector<float> BirdyGame::get_state(size_t index)
+{
+    std::vector<float> result;
+    result.resize(get_state_size());
+
+    const auto *bird = &birds[index];
+    const auto *pipe = find_next_pipe(bird);
+
+    result[0] = distance_x_to_obstacle(bird, pipe);
+    result[1] = distance_y_to_obstacle(bird, pipe);
+    result[2] = pipe->speed_y;
+    result[3] = pipe->color == RED ? PIPES_GAP_STEADY : PIPES_GAP;
+
+    return result;
+}
+
+BirdyGame::Pipe *BirdyGame::find_next_pipe(const Bird *bird)
+{
+    Pipe *result = &pipes[first_pipe];
+    if (result->x + result->width > bird->x)
+    {
+        result = &pipes[(first_pipe + 1) % pipes.size()];
+    }
+    return result;
+}
+
+float BirdyGame::distance_x_to_obstacle(const Bird *bird, const Pipe *pipe)
+{
+    return pipe->x - bird->x;
+}
+
+float BirdyGame::distance_y_to_obstacle(const Bird *bird, const Pipe *pipe)
+{
+    return pipe->y - bird->y;
 }

@@ -49,6 +49,7 @@ public:
     void apply_action(size_t bird_index, bird_action_t action);
     [[nodiscard]] bool check_end_game() const;
     static size_t get_state_size();
+    std::vector<float> get_state(size_t dino_index);
 
     typedef enum bird_state_t
     {
@@ -110,7 +111,15 @@ private:
 
     void pipe_status(size_t index);
     bool collision(const Bird *bird) const;
+    Pipe *find_next_pipe(const Bird *bird);
+    static float distance_x_to_obstacle(const Bird *bird, const Pipe *pipe);
+    static float distance_y_to_obstacle(const Bird *bird, const Pipe *pipe);
 
     void load_textures();
     void unload_textures() const;
 };
+
+inline bool operator==(Color c1, Color c2)
+{
+    return c1.a == c2.a && c1.b == c2.b && c1.g == c2.g && c1.r == c2.r;
+}
