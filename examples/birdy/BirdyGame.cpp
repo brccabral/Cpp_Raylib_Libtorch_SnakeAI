@@ -67,10 +67,14 @@ void BirdyGame::draw()
     for (size_t i = 0; i < birds.size(); ++i)
     {
         const auto *bird = &birds[i];
-        DrawTextureEx(
+        DrawTexturePro(
                 bird->sprite.textures[bird->sprite.frame_index],
-                Vector2{(float) bird->x, (float) (GetScreenHeight() - bird->y - bird->height)},
-                bird->angle, 1, bird->sprite.color);
+                Rectangle(0.0, 0.0, bird->width, bird->height),
+                Rectangle(
+                        bird->x + bird->width / 2.0,
+                        GetScreenHeight() - bird->y - bird->height / 2.0, bird->width,
+                        bird->height),
+                Vector2(bird->width / 2.0, bird->height / 2.0), bird->angle, bird->sprite.color);
     }
     EndDrawing();
 }
