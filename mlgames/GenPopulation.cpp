@@ -1,3 +1,4 @@
+#include <random>
 #include <mlgames/GenPopulation.h>
 
 GenPopulation::GenPopulation(
@@ -21,6 +22,7 @@ void GenPopulation::apply_mutations(std::array<size_t, 2> best_indexes)
     {
         auto child = members[best_indexes[0]];
         crossover(members[best_indexes[0]], members[best_indexes[1]], child);
+        mutate(child);
         new_members.push_back(child);
     }
 
@@ -49,5 +51,20 @@ void GenPopulation::crossover(
         child->output->weight.slice(1, 0, split) = o2_weights.slice(1, 0, split);
         child->output->weight.slice(1, split, o1_weights.size(1)) =
                 o2_weights.slice(1, split, o2_weights.size(1));
+    }
+}
+
+std::random_device rd;
+std::mt19937 gen(rd());
+std::uniform_real_distribution<float> mutation_dist(-0.1, 0.1);
+
+void GenPopulation::mutate(const std::shared_ptr<MultiLayer> &net)
+{
+    for (auto &parameter: net->parameters())
+    {
+        auto data = parameter.data();
+        auto mask = torch::rand_like(data) < mutation_rate;
+        auto mutation_values = torch::rand_like(data) * mutation_dist(gen);
+        data += mask * mutation_values;
     }
 }
