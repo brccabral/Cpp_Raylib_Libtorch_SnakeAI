@@ -157,6 +157,22 @@ void BirdyGame::update()
         Pipe *pipe_up = &pipes[i + 1];
         pipe_down->x -= speed_x;
         pipe_up->x -= speed_x;
+        if (pipe_down->speed_y != 0)
+        {
+            pipe_down->y += pipe_down->speed_y;
+            pipe_up->y += pipe_up->speed_y;
+            if (pipe_down->speed_y > 0 &&
+                pipe_down->y - pipe_down->height > GetScreenHeight() - PIPES_GAP)
+            {
+                pipe_down->speed_y *= -1;
+                pipe_up->speed_y *= -1;
+            }
+            if (pipe_up->speed_y < 0 && pipe_up->y < PIPES_GAP)
+            {
+                pipe_down->speed_y *= -1;
+                pipe_up->speed_y *= -1;
+            }
+        }
         if (pipe_down->x + pipe_down->texture->width < 0)
         {
             first_pipe = (first_pipe + 2) % pipes.size();
@@ -241,6 +257,9 @@ void BirdyGame::pipe_status(size_t index)
 
         pipes[index].y = pipes[index].height + GetScreenHeight() / 2.0 + PIPES_GAP_STEADY / 2.0;
         pipes[index + 1].y = GetScreenHeight() / 2.0 - PIPES_GAP_STEADY / 2.0;
+
+        pipes[index].speed_y = 0;
+        pipes[index + 1].speed_y = 0;
     }
     else
     {
@@ -252,5 +271,10 @@ void BirdyGame::pipe_status(size_t index)
 
         pipes[index].y = pipes[index].height + rand_y + PIPES_GAP / 2.0;
         pipes[index + 1].y = rand_y - PIPES_GAP / 2.0;
+
+        int direction = (rand() % 2) * 2 - 1;
+        double speed_y = (rand() % 500) / 100.0;
+        pipes[index].speed_y = direction * speed_y;
+        pipes[index + 1].speed_y = direction * speed_y;
     }
 }

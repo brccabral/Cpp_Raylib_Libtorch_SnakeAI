@@ -80,6 +80,7 @@ public:
     {
         double x{}, y{};
         double width{}, height{};
+        double speed_y{};
         Color color{};
         Texture *texture{};
     } Pipe;
