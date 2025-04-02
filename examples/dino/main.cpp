@@ -44,6 +44,8 @@ int main()
 
         torch::NoGradGuard no_grad;
 
+        size_t generation = 0;
+
         while (!WindowShouldClose())
         {
             for (size_t d = 0; d < count_dinos; ++d)
@@ -69,6 +71,7 @@ int main()
             DrawText(TextFormat("Dead: %zu", game.num_dead), 10, 330, 10, BLACK);
             DrawText(TextFormat("Obstacles: %zu", game.first_obstacle), 10, 340, 10, BLACK);
             DrawText(TextFormat("Record: %zu", record), 10, 350, 10, BLACK);
+            DrawText(TextFormat("Generation: %zu", generation), 10, 360, 10, BLACK);
             draw_dinos(&game, screen_height);
             draw_obstacles(&game, screen_height);
             EndDrawing();
@@ -79,8 +82,9 @@ int main()
                 {
                     record = game.first_obstacle;
                 }
-                printf("Distance: %.0f Dead: %zu Obstacles: %zu Record %zu\n", game.distance,
-                       game.num_dead, game.first_obstacle, record);
+                printf("Generation %zu Distance: %.0f Dead: %zu Obstacles: %zu Record %zu\n",
+                       generation, game.distance, game.num_dead, game.first_obstacle, record);
+                ++generation;
                 save_model<>(population.members[game.best_dino_index]);
                 population.apply_mutations(game.select_best_dinos());
                 game.reset();
