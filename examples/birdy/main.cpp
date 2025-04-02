@@ -1,4 +1,4 @@
-#include <raylib.h>
+#include "BirdyGame.h"
 
 int main()
 {
@@ -7,11 +7,10 @@ int main()
     InitWindow(screen_width, screen_height, "Birdy");
 
     {
+        auto game = BirdyGame(200);
         while (!WindowShouldClose())
         {
-            BeginDrawing();
-            ClearBackground(WHITE);
-            EndDrawing();
+            game.draw();
         }
     }
 
