@@ -291,11 +291,12 @@ void BirdyGame::pipe_status(size_t index)
 
 bool BirdyGame::collision(const Bird *bird) const
 {
+    const auto rect_bird = Rectangle(
+            bird->x, GetScreenHeight() - (bird->y + bird->height), bird->width, bird->height);
     for (const auto &pipe: pipes)
     {
-        const auto rect_pipe = Rectangle(pipe.x, pipe.y - pipe.height, pipe.width, pipe.height);
-        const auto rect_bird =
-                Rectangle(bird->x, bird->y - bird->height, bird->width, bird->height);
+        const auto rect_pipe =
+                Rectangle(pipe.x, GetScreenHeight() - pipe.y, pipe.width, pipe.height);
         if (CheckCollisionRecs(rect_pipe, rect_bird))
         {
             return true;
