@@ -5,6 +5,8 @@
 #include <mlgames/GenPopulation.h>
 #include <mlgames/LinearGen.h>
 
+#define MANUAL 0
+
 int main()
 {
     srand(time(NULL));
@@ -15,6 +17,9 @@ int main()
     constexpr int screen_width = 1366;
     constexpr int screen_height = 768;
     InitWindow(screen_width, screen_height, "Birdy");
+#if MANUAL
+    SetTargetFPS(60);
+#endif
 
     {
         auto game = BirdyGame(count_birds);
@@ -32,7 +37,20 @@ int main()
 
         while (!WindowShouldClose())
         {
-            for (size_t i = 0; i < 200; ++i)
+#if MANUAL
+            BirdyGame::bird_action_t action = BirdyGame::BIRD_ACTION_NONE;
+            if (IsKeyPressed(KEY_SPACE))
+            {
+                action = BirdyGame::BIRD_ACTION_JUMP;
+            }
+            if (IsKeyPressed(KEY_LEFT_CONTROL))
+            {
+                action = BirdyGame::BIRD_ACTION_PARACHUTE;
+            }
+            std::vector<float> inputs = game.get_state(0);
+            game.apply_action(0, action);
+#else
+            for (size_t i = 0; i < count_birds; ++i)
             {
                 if (game.birds[i].state == BirdyGame::BIRD_STATE_DEAD)
                 {
@@ -45,6 +63,7 @@ int main()
                 auto action = torch::argmax(actions).item().toInt();
                 game.apply_action(i, (BirdyGame::bird_action_t) action);
             }
+#endif
             game.update();
             game.draw();
             if (game.check_end_game())
