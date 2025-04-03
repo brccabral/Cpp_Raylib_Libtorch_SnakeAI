@@ -109,6 +109,10 @@ void BirdyGame::draw()
                         bird.width, bird.height),
                 Vector2(bird.width / 2.0, bird.height / 2.0), bird.angle, bird.sprite.color);
     }
+    DrawText(TextFormat("Dead: %zu", num_dead), 20, 20, 10, BLACK);
+    DrawText(TextFormat("Distance: %.0f", distance), 20, 30, 10, BLACK);
+    DrawText(TextFormat("Pipes: %zu", count_pipes), 20, 40, 10, BLACK);
+    DrawText(TextFormat("Runs: %zu", num_runs), 20, 50, 10, BLACK);
     EndDrawing();
 }
 
