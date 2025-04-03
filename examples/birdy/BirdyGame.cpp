@@ -283,7 +283,7 @@ void BirdyGame::pipe_status(size_t index)
         pipes[index + 1].y = rand_y - PIPES_GAP / 2.0;
 
         int direction = (rand() % 2) * 2 - 1;
-        double speed_y = (rand() % 500) / 100.0;
+        double speed_y = (rand() % 200) / 100.0;
         pipes[index].speed_y = direction * speed_y;
         pipes[index + 1].speed_y = direction * speed_y;
     }
