@@ -348,7 +348,7 @@ float BirdyGame::distance_x_to_obstacle(const Bird *bird, const Pipe *pipe)
 
 float BirdyGame::distance_y_to_obstacle(const Bird *bird, const Pipe *pipe)
 {
-    return pipe->y - bird->y;
+    return (pipe->y - pipe->height) - bird->y;
 }
 
 std::array<size_t, 2> BirdyGame::select_best_dinos() const
