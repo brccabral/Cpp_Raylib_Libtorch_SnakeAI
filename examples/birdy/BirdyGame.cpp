@@ -209,11 +209,6 @@ void BirdyGame::update()
             bird->angle = std::max(std::min(bird->angle, 88.0), 0.0);
             bird->direction += gravity;
             bird->y += bird->direction;
-            if (bird->y < 75)
-            {
-                bird->state = BIRD_STATE_DEAD;
-                ++num_dead;
-            }
         }
         else if (bird->state == BIRD_STATE_PARACHUTE)
         {
@@ -223,7 +218,7 @@ void BirdyGame::update()
             }
         }
 
-        if (collision(bird) || bird->y > GetScreenHeight() + PIPES_GAP)
+        if (collision(bird) || bird->y > (GetScreenHeight() + PIPES_GAP) || bird->y < 75)
         {
             birds[i].state = BIRD_STATE_DEAD;
             ++num_dead;
