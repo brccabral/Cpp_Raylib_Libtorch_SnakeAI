@@ -112,6 +112,7 @@ private:
     double allow_pipe_steady_cooldown{};
     size_t first_pipe{};
     size_t last_pipe{};
+    size_t count_pipes{};
 
     void pipe_status(size_t index);
     bool collision(const Bird *bird) const;

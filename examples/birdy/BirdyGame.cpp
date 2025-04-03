@@ -28,6 +28,7 @@ void BirdyGame::reset()
     first_pipe = 0;
     last_pipe = pipes.size() - 1;
     allow_pipe_steady_cooldown = ALLOW_PIPE_STEADY_COOLDOWN;
+    count_pipes = 0;
 
     for (size_t i = 0; i < birds.size(); ++i)
     {
@@ -179,6 +180,7 @@ void BirdyGame::update()
         }
         if (pipe_down->x + pipe_down->texture->width < 0)
         {
+            ++count_pipes;
             first_pipe = (first_pipe + 2) % pipes.size();
             pipe_down->x = pipes[last_pipe].x + PIPES_DISTANCE;
             pipe_up->x = pipes[last_pipe].x + PIPES_DISTANCE;
