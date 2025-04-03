@@ -38,6 +38,7 @@ void BirdyGame::reset()
         bird->direction = 0;
         bird->angle = 0;
         bird->distance = 0;
+        bird->action_cooldown = 0;
         bird->state = BIRD_STATE_FLYING;
         bird->sprite.color = colors[i % NUM_COLORS];
         bird->sprite.frame = 0;
