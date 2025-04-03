@@ -333,9 +333,9 @@ std::vector<float> BirdyGame::get_state(size_t index)
 BirdyGame::Pipe *BirdyGame::find_next_pipe(const Bird *bird)
 {
     Pipe *result = &pipes[first_pipe];
-    if (result->x + result->width > bird->x)
+    if (result->x + result->width < bird->x)
     {
-        result = &pipes[(first_pipe + 1) % pipes.size()];
+        result = &pipes[(first_pipe + 2) % pipes.size()];
     }
     return result;
 }
