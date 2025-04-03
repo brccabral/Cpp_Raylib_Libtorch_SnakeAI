@@ -310,9 +310,14 @@ bool BirdyGame::collision(const Bird *bird) const
     return false;
 }
 
-bool BirdyGame::check_end_game() const
+bool BirdyGame::check_end_game()
 {
-    return num_dead >= birds.size() || distance > 10000000.0;
+    if (num_dead >= birds.size() || distance > 10000000.0)
+    {
+        ++num_runs;
+        return true;
+    }
+    return false;
 }
 
 size_t BirdyGame::get_state_size()

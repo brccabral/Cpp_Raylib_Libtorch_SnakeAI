@@ -48,7 +48,7 @@ public:
     void draw();
     void update();
     void apply_action(size_t bird_index, bird_action_t action);
-    [[nodiscard]] bool check_end_game() const;
+    [[nodiscard]] bool check_end_game();
     static size_t get_state_size();
     std::vector<float> get_state(size_t dino_index);
     [[nodiscard]] std::array<size_t, 2> select_best_dinos() const;
@@ -113,6 +113,7 @@ private:
     size_t first_pipe{};
     size_t last_pipe{};
     size_t count_pipes{};
+    size_t num_runs{};
 
     void pipe_status(size_t index);
     bool collision(const Bird *bird) const;
