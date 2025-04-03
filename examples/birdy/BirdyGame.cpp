@@ -306,7 +306,7 @@ bool BirdyGame::collision(const Bird *bird) const
 
 bool BirdyGame::check_end_game() const
 {
-    return num_dead == birds.size();
+    return num_dead >= birds.size();
 }
 
 size_t BirdyGame::get_state_size()
