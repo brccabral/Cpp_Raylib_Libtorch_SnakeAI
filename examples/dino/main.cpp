@@ -27,6 +27,21 @@ void draw_obstacles(const DinoGame *game, const size_t screen_height)
 
 int main()
 {
+    // NOLINTNEXTLINE
+    srand(time(NULL));
+
+    c10::DeviceType device = torch::kCPU;
+    if (torch::cuda::is_available())
+    {
+        printf("Using CUDA\n");
+        device = torch::kCUDA;
+    }
+    else
+    {
+        printf("Using CPU\n");
+        device = torch::kCPU;
+    }
+
     constexpr size_t screen_width = 1366;
     constexpr size_t screen_height = 768;
     constexpr size_t count_dinos = 200;
@@ -40,9 +55,10 @@ int main()
 
         size_t record = 0;
 
-        const auto net = LinearGen(
+        auto net = LinearGen(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
+        net->to(device);
         auto population = GenPopulation(count_dinos, 0.9, 0.05, net);
 
         torch::NoGradGuard no_grad;
@@ -60,6 +76,7 @@ int main()
                 std::vector<float> inputs = game.get_state(d);
                 torch::Tensor x = torch::tensor(inputs, torch::kFloat)
                                           .reshape({1, (long) DinoGame::get_state_size()});
+                x.to(device);
                 auto actions = population.members[d]->forward(x);
                 auto action = torch::argmax(actions).item().toInt();
                 game.apply_action(d, (DinoGame::dino_actions_t) action);
