@@ -5,28 +5,29 @@
 #include <raylib.h>
 
 #define GAME_INIT_SPEEDX 2
-#define BIRD_JUMP_FORCE 7
-#define BIRD_JUMP_COOLDOWN 10
+#define BIRD_JUMP_FORCE 6
+#define BIRD_JUMP_COOLDOWN 1
 #define BIRD_PARACHUTE_COOLDOWN 100
 #define BIRD_GRAVITY (-0.3)
 #define BIRD_X 50
 #define PIPES_GAP 175
-#define PIPES_GAP_STEADY 75
+#define PIPES_GAP_STEADY 90
 #define PIPES_DISTANCE 275
+#define ALLOW_PIPE_STEADY_COOLDOWN 2500
 
 #define CYAN CLITERAL(Color){0, 255, 255, 255} // CYAN
-#define NUM_COLORS 8
+#define NUM_COLORS 9
 #define NUM_BIRD_SPRITES 3
 #define ANIMATION_SPEED (0.03)
 
 typedef struct Sprite
 {
-    Color color;
-    size_t frame_index;
-    float frame;
-    float animation_speed;
-    size_t num_textures;
-    Texture *textures;
+    Color color{};
+    size_t frame_index{};
+    float frame{};
+    float animation_speed{};
+    size_t num_textures{};
+    Texture *textures{};
 } Sprite;
 
 class BirdyGame
@@ -98,7 +99,7 @@ public:
 
 private:
 
-    Color colors[NUM_COLORS] = {GRAY, YELLOW, GREEN, RED, BLUE, CYAN, ORANGE, PURPLE};
+    Color colors[NUM_COLORS] = {GRAY, YELLOW, GREEN, RED, BLUE, CYAN, ORANGE, PURPLE, WHITE};
     Texture bird_sprites[NUM_BIRD_SPRITES]{};
     Texture parachute_texture{};
     Texture floor_texture{};
@@ -108,6 +109,7 @@ private:
     double gravity{};
     double speed_x{};
     double jump_force{};
+    double allow_pipe_steady_cooldown{};
     size_t first_pipe{};
     size_t last_pipe{};
 

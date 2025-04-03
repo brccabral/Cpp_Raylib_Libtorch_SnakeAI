@@ -27,6 +27,7 @@ void BirdyGame::reset()
     best_bird_index = 0;
     first_pipe = 0;
     last_pipe = pipes.size() - 1;
+    allow_pipe_steady_cooldown = ALLOW_PIPE_STEADY_COOLDOWN;
 
     for (size_t i = 0; i < birds.size(); ++i)
     {
@@ -72,7 +73,7 @@ void BirdyGame::reset()
 
         pipe_status(i);
 
-        prev_x = pipes[i].x + PIPES_DISTANCE;
+        prev_x = pipes[i].x + pipes[i].width + PIPES_DISTANCE;
     }
 }
 
@@ -91,23 +92,21 @@ void BirdyGame::draw()
         DrawTexture(*pipe.texture, pipe.x, GetScreenHeight() - pipe.y, pipe.color);
     }
 
-    for (size_t i = 0; i < birds.size(); ++i)
+    for (const auto &bird: birds)
     {
-        const auto *bird = &birds[i];
-        if (bird->state == BIRD_STATE_PARACHUTE)
+        if (bird.state == BIRD_STATE_PARACHUTE)
         {
             DrawTexture(
-                    parachute_texture, bird->x,
-                    GetScreenHeight() - bird->y - bird->height - parachute_texture.height, WHITE);
+                    parachute_texture, bird.x,
+                    GetScreenHeight() - bird.y - bird.height - parachute_texture.height, WHITE);
         }
         DrawTexturePro(
-                bird->sprite.textures[bird->sprite.frame_index],
-                Rectangle(0.0, 0.0, bird->width, bird->height),
+                bird.sprite.textures[bird.sprite.frame_index],
+                Rectangle(0.0, 0.0, bird.width, bird.height),
                 Rectangle(
-                        bird->x + bird->width / 2.0,
-                        GetScreenHeight() - bird->y - bird->height / 2.0, bird->width,
-                        bird->height),
-                Vector2(bird->width / 2.0, bird->height / 2.0), bird->angle, bird->sprite.color);
+                        bird.x + bird.width / 2.0, GetScreenHeight() - bird.y - bird.height / 2.0,
+                        bird.width, bird.height),
+                Vector2(bird.width / 2.0, bird.height / 2.0), bird.angle, bird.sprite.color);
     }
     EndDrawing();
 }
@@ -146,6 +145,7 @@ void BirdyGame::unload_textures() const
 void BirdyGame::update()
 {
     distance += speed_x;
+    allow_pipe_steady_cooldown -= 1.0;
 
     for (auto &floor: floors)
     {
@@ -259,8 +259,7 @@ void BirdyGame::apply_action(size_t bird_index, bird_action_t action)
 void BirdyGame::pipe_status(size_t index)
 {
     // NOLINTNEXTLINE
-    double prob = (rand() % 10000) / 100.0;
-    if (prob < 10)
+    if (allow_pipe_steady_cooldown <= 0)
     {
         pipes[index].color = RED;
         pipes[index + 1].color = RED;
@@ -270,6 +269,8 @@ void BirdyGame::pipe_status(size_t index)
 
         pipes[index].speed_y = 0;
         pipes[index + 1].speed_y = 0;
+
+        allow_pipe_steady_cooldown = ALLOW_PIPE_STEADY_COOLDOWN;
     }
     else
     {
@@ -282,8 +283,10 @@ void BirdyGame::pipe_status(size_t index)
         pipes[index].y = pipes[index].height + rand_y + PIPES_GAP / 2.0;
         pipes[index + 1].y = rand_y - PIPES_GAP / 2.0;
 
+        // NOLINTNEXTLINE
         int direction = (rand() % 2) * 2 - 1;
-        double speed_y = (rand() % 200) / 100.0;
+        // NOLINTNEXTLINE
+        double speed_y = (rand() % 100) / 100.0;
         pipes[index].speed_y = direction * speed_y;
         pipes[index + 1].speed_y = direction * speed_y;
     }

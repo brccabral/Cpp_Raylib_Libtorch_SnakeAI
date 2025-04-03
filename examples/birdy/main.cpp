@@ -9,9 +9,10 @@
 
 int main()
 {
+    // NOLINTNEXTLINE
     srand(time(NULL));
 
-    constexpr int hidden_layer_1 = 6;
+    constexpr int hidden_layer_1 = 8;
     constexpr size_t count_birds = 200;
 
     constexpr int screen_width = 1366;
