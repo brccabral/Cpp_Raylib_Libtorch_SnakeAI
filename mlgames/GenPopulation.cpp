@@ -24,6 +24,7 @@ GenPopulation::GenPopulation(
 void GenPopulation::apply_mutations(std::array<size_t, 2> best_indexes)
 {
     std::vector<LinearGen> new_members;
+    new_members.reserve(members.size());
     // leave the best untouched
     new_members.push_back(members[best_indexes[0]]);
 
