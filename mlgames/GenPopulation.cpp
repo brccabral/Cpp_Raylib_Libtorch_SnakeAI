@@ -5,10 +5,13 @@ std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<float> mutation_dist(-0.1, 0.1);
 
-GenPopulation::GenPopulation(size_t population_size_, double mutation_rate_, const LinearGen &net)
+GenPopulation::GenPopulation(
+        size_t population_size_, double mutation_rate_, double mutation_rate_lower_,
+        const LinearGen &net)
 {
     population_size = population_size_;
     mutation_rate = mutation_rate_;
+    mutation_rate_lower = mutation_rate_lower_;
 
     for (size_t i = 0; i < population_size; i++)
     {
@@ -33,7 +36,7 @@ void GenPopulation::apply_mutations(std::array<size_t, 2> best_indexes)
     }
 
     mutation_rate *= 0.99;
-    mutation_rate = std::max(0.2, mutation_rate);
+    mutation_rate = std::max(mutation_rate_lower, mutation_rate);
 
     members = std::move(new_members);
 }

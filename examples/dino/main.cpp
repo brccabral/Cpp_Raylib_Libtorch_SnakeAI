@@ -43,7 +43,7 @@ int main()
         const auto net = LinearGen(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
-        auto population = GenPopulation(count_dinos, 0.9, net);
+        auto population = GenPopulation(count_dinos, 0.9, 0.05, net);
 
         torch::NoGradGuard no_grad;
 

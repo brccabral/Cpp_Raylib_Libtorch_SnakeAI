@@ -29,7 +29,7 @@ int main()
         const auto net = LinearGen(
                 BirdyGame::get_state_size(), BirdyGame::BIRD_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
-        auto population = GenPopulation(count_birds, 0.9, net);
+        auto population = GenPopulation(count_birds, 0.9, 0.05, net);
 
         torch::NoGradGuard no_grad;
 
