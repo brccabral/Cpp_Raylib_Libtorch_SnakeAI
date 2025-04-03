@@ -16,7 +16,10 @@ GenPopulation::GenPopulation(
     for (size_t i = 0; i < population_size; i++)
     {
         auto clone = net->clone();
-        mutate(clone);
+        if (i > 0)
+        {
+            mutate(clone);
+        }
         members.push_back(clone);
     }
 }

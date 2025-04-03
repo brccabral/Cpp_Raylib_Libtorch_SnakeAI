@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     const char *net_filename = NULL;
     while (argc > 1)
     {
-        char *command = argv[1];
+        const char *command = argv[1];
         if (strcmp(command, "--net") == 0)
         {
             net_filename = argv[2];

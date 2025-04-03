@@ -25,7 +25,18 @@ void draw_obstacles(const DinoGame *game, const size_t screen_height)
     }
 }
 
-int main()
+#define do_shift(argc, argv)                                                                       \
+    do                                                                                             \
+    {                                                                                              \
+        if ((argc) > 1)                                                                            \
+        {                                                                                          \
+            (argv)++;                                                                              \
+            (argc)--;                                                                              \
+        }                                                                                          \
+    }                                                                                              \
+    while (0)
+
+int main(int argc, char *argv[])
 {
     // NOLINTNEXTLINE
     srand(time(NULL));
@@ -40,6 +51,18 @@ int main()
     {
         printf("Using CPU\n");
         device = torch::kCPU;
+    }
+
+    const char *net_filename = NULL;
+    while (argc > 1)
+    {
+        const char *command = argv[1];
+        if (strcmp(command, "--net") == 0)
+        {
+            net_filename = argv[2];
+            do_shift(argc, argv);
+        }
+        do_shift(argc, argv);
     }
 
     constexpr size_t screen_width = 1366;
@@ -58,6 +81,10 @@ int main()
         auto net = LinearGen(
                 DinoGame::get_state_size(), DinoGame::DINO_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
+        if (net_filename != NULL)
+        {
+            load_model<>(net, net_filename);
+        }
         net->to(device);
         auto population = GenPopulation(count_dinos, 0.9, 0.05, net);
 
