@@ -9,7 +9,7 @@ int main()
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Race TopDown");
     {
-        auto game = RaceTopDown();
+        auto game = RaceTopDown(15);
         while (!WindowShouldClose())
         {
             game.update();

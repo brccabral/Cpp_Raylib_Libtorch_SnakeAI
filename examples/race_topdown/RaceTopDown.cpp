@@ -3,11 +3,22 @@
 #include "RaceTopDown.h"
 
 
-RaceTopDown::RaceTopDown()
+RaceTopDown::RaceTopDown(size_t num_cars_)
 {
     camera.zoom = 1.0f;
     tracks.emplace_back("assets/track1.png", Vector2(1347, 1732), Color(110, 110, 110, 255));
+    car_texture = LoadTexture("assets/car.png");
+    cars.reserve(num_cars_);
+    for (size_t i = 0; i < num_cars_; i++)
+    {
+        cars.emplace_back(&car_texture, colors[i % NUM_COLORS]);
+    }
 };
+
+RaceTopDown::~RaceTopDown()
+{
+    UnloadTexture(car_texture);
+}
 
 void RaceTopDown::update()
 {
@@ -44,5 +55,9 @@ void RaceTopDown::draw()
     BeginDrawing();
     ClearBackground(BLACK);
     tracks[current_track].draw(camera);
+    for (auto &car: cars)
+    {
+        car.draw(camera);
+    }
     EndDrawing();
 }
