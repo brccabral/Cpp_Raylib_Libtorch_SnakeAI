@@ -14,4 +14,5 @@ private:
 
     std::vector<Track> tracks{};
     size_t current_track{};
+    Camera2D camera{};
 };

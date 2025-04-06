@@ -1,4 +1,6 @@
 #include <list>
+#include <raylib.h>
+#include <raymath.h>
 #include "Track.h"
 
 
@@ -7,16 +9,6 @@ struct DistanceLoc
     Vector2 p;
     int distance;
 };
-
-inline bool operator==(const Vector2 &lhs, const Vector2 &rhs)
-{
-    return lhs.x == rhs.x && lhs.y == rhs.y;
-}
-
-inline Vector2 operator+(const Vector2 &lhs, const Vector2 &rhs)
-{
-    return {lhs.x + rhs.x, lhs.y + rhs.y};
-}
 
 inline bool operator==(const Color &lhs, const Color &rhs)
 {
@@ -32,11 +24,6 @@ static Vector2 p_right = {1, 0};
 static Vector2 p_left = {-1, 0};
 static Vector2 p_up = {0, -1};
 static Vector2 p_down = {0, 1};
-
-inline Vector2 operator-(const Vector2 &lhs, const Vector2 &rhs)
-{
-    return {lhs.x - rhs.x, lhs.y - rhs.y};
-}
 
 Track::Track(const char *file, Vector2 finish, Color track_color)
 {
@@ -94,7 +81,9 @@ Track::~Track()
     UnloadTexture(texture);
 }
 
-void Track::draw()
+void Track::draw(const Camera2D &camera)
 {
+    BeginMode2D(camera);
     DrawTexture(texture, 0, 0, WHITE);
+    EndMode2D();
 }

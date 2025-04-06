@@ -10,7 +10,7 @@ public:
     Track(const char *file, Vector2 finish, Color track_color);
     ~Track();
 
-    void draw();
+    void draw(const Camera2D &camera);
 
 private:
 
