@@ -6,7 +6,9 @@
 RaceTopDown::RaceTopDown(size_t num_cars_)
 {
     camera.zoom = 1.0f;
-    tracks.emplace_back("assets/track1.png", Vector2(1347, 1732), Color(110, 110, 110, 255));
+    tracks.emplace_back(
+            "assets/track1.png", Vector2(1898, 882), Vector2(1347, 1732),
+            Color(110, 110, 110, 255));
     car_texture = LoadTexture("assets/car.png");
     cars.reserve(num_cars_);
     for (size_t i = 0; i < num_cars_; i++)

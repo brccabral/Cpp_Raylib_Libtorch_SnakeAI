@@ -25,7 +25,27 @@ static Vector2 p_left = {-1, 0};
 static Vector2 p_up = {0, -1};
 static Vector2 p_down = {0, 1};
 
-Track::Track(const char *file, Vector2 finish, Color track_color)
+Track::Track(const char *file_, Vector2 start_, Vector2 finish_, Color track_color)
+{
+    start = start_;
+    finish = finish_;
+    file = file_;
+    set_distances(track_color);
+}
+
+Track::~Track()
+{
+    UnloadTexture(texture);
+}
+
+void Track::draw(const Camera2D &camera)
+{
+    BeginMode2D(camera);
+    DrawTexture(texture, 0, 0, WHITE);
+    EndMode2D();
+}
+
+void Track::set_distances(Color track_color)
 {
     const Image image = LoadImage(file);
     texture = LoadTextureFromImage(image);
@@ -74,16 +94,4 @@ Track::Track(const char *file, Vector2 finish, Color track_color)
     }
 
     UnloadImage(image);
-}
-
-Track::~Track()
-{
-    UnloadTexture(texture);
-}
-
-void Track::draw(const Camera2D &camera)
-{
-    BeginMode2D(camera);
-    DrawTexture(texture, 0, 0, WHITE);
-    EndMode2D();
 }
