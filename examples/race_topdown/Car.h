@@ -27,6 +27,7 @@ public:
     } car_actions_t;
     // clang-format on
     void apply_action(car_actions_t action);
+    void set_position(int x, int y, float angle);
 
     typedef enum car_state_t
     {

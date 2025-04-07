@@ -1,18 +1,20 @@
 #pragma once
 #include <raylib.h>
 #include <vector>
+#include "Car.h"
 
 
 class Track
 {
 public:
 
-    Track(const char *file_, Vector2 start_, Vector2 finish_, Color track_color);
-    ~Track();
+    Track();
+    virtual ~Track();
 
-    void draw(const Camera2D &camera);
+    virtual void draw(const Camera2D &camera) = 0;
+    virtual void set_car_start(Car *car) = 0;
 
-private:
+protected:
 
     Texture texture;
     std::vector<int> distances;

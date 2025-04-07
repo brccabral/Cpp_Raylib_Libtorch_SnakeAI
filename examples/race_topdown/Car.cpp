@@ -8,8 +8,6 @@ Car::Car(Texture *texture_, Color color_)
 {
     texture = texture_;
     color = color_;
-
-    position.x = GetRandomValue(0, 200);
 }
 
 void Car::draw(Camera2D &camera)
@@ -72,4 +70,11 @@ void Car::apply_action(car_actions_t action)
 
     position.x += direction.x * speed;
     position.y += direction.y * speed;
+}
+
+void Car::set_position(int x, int y, float angle_)
+{
+    position.x = x;
+    position.y = y;
+    angle = angle_;
 }
