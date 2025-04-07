@@ -61,3 +61,9 @@ void RaceTopDown::draw()
     }
     EndDrawing();
 }
+
+void RaceTopDown::apply_action(size_t index, int action)
+{
+    Car *car = &cars[index];
+    car->apply_action((Car::car_actions_t) action);
+}

@@ -15,6 +15,7 @@ public:
     ~RaceTopDown();
     void update();
     void draw();
+    void apply_action(size_t index, int action);
 
 private:
 
