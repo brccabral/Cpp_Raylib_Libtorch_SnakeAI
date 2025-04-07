@@ -22,6 +22,25 @@ RaceTopDown::~RaceTopDown()
 
 void RaceTopDown::update()
 {
+    // Camera follows cars[0];
+    if (IsKeyDown(KEY_P))
+    {
+        camera.offset = GetWorldToScreen2D(cars[0].position, camera);
+        camera.target = cars[0].position;
+
+        const float wheel = GetMouseWheelMove();
+        if (wheel != 0)
+        {
+            const float scale = 0.2f * wheel;
+            camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
+        }
+
+        Vector2 delta = Vector2(GetScreenWidth() / 2.0, GetScreenHeight() / 2.0) -
+                        GetWorldToScreen2D(cars[0].position, camera);
+        delta *= -1.0f / camera.zoom;
+        camera.target += delta;
+    }
+
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
         Vector2 delta = GetMouseDelta();
