@@ -1,4 +1,6 @@
 #include "Car.h"
+
+#include <cstdio>
 #include <raymath.h>
 
 
@@ -30,33 +32,24 @@ void Car::draw(Camera2D &camera)
 
 void Car::apply_action(car_actions_t action)
 {
-    switch (action)
+    if (action & CAR_ACTION_LEFT)
     {
-        case CAR_ACTION_LEFT:
-        {
-            angle -= 5.0;
-            break;
-        }
-        case CAR_ACTION_RIGHT:
-        {
-            angle += 5.0;
-            break;
-        }
-        case CAR_ACTION_ACCELERATE:
-        {
-            speed += 0.1;
-            break;
-        }
-        case CAR_ACTION_BREAK:
-        {
-            speed -= 0.1;
-            break;
-        }
-        default:
-            break;
+        angle -= 0.3;
+    }
+    if (action & CAR_ACTION_RIGHT)
+    {
+        angle += 0.3;
+    }
+    if (action & CAR_ACTION_ACCELERATE)
+    {
+        speed += 0.1;
+    }
+    if (action & CAR_ACTION_BREAK)
+    {
+        speed -= 0.1;
     }
 
-    speed = Clamp(speed, -1.0, 1.0);
+    speed = Clamp(speed, -0.7, 0.7);
 
     // TODO drag/boost
     if (speed > 0)
