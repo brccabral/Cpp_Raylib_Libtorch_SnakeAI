@@ -13,7 +13,8 @@ RaceTopDown::RaceTopDown(size_t num_cars_)
     for (size_t i = 0; i < num_cars_; i++)
     {
         cars.emplace_back(&car_texture, colors[i % NUM_COLORS]);
-        tracks[current_track]->set_car_start(&cars[i]);
+        const auto [x, y, angle] = tracks[current_track]->get_car_start();
+        cars[i].set_position(x, y, angle);
     }
 };
 

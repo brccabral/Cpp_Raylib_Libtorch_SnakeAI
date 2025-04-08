@@ -9,5 +9,5 @@ public:
     Track1();
 
     void draw(const Camera2D &camera) override;
-    void set_car_start(Car *car) override;
+    Vector3 get_car_start() override;
 };
