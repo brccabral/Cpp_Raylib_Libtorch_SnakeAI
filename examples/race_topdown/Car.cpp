@@ -62,7 +62,7 @@ void Car::draw(const Camera2D &camera) const
     EndMode2D();
 }
 
-void Car::apply_action(car_actions_t action)
+void Car::apply_action(car_actions_t action, Track *track)
 {
     float delta_angle = 0;
     if (action & CAR_ACTION_LEFT)
@@ -107,6 +107,15 @@ void Car::apply_action(car_actions_t action)
     direction.y = sinf(angle * DEG2RAD) * speed;
 
     translate(direction);
+
+    if (position.x < 0 || position.x > track->get_width())
+    {
+        translate(direction * -1);
+    }
+    if (position.y < 0 || position.y > track->get_height())
+    {
+        translate(direction * -1);
+    }
 }
 
 void Car::set_position(int x, int y, float angle_)

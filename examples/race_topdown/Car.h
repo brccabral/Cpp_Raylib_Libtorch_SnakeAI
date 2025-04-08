@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include "Track.h"
 
 
 class Car
@@ -24,7 +25,7 @@ public:
         CAR_ACTION_BREAK_RIGHT =      0b1010,
     } car_actions_t;
     // clang-format on
-    void apply_action(car_actions_t action);
+    void apply_action(car_actions_t action, Track *track);
     void set_position(int x, int y, float angle_);
 
     typedef enum car_state_t

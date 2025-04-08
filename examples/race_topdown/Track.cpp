@@ -15,11 +15,6 @@ inline bool operator==(const Color &lhs, const Color &rhs)
     return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
 }
 
-inline size_t index_from_location(Vector2 pt, size_t width)
-{
-    return pt.y * width + pt.x;
-}
-
 static Vector2 p_right = {1, 0};
 static Vector2 p_left = {-1, 0};
 static Vector2 p_up = {0, -1};
@@ -81,4 +76,14 @@ void Track::set_distances(Color track_color)
     }
 
     UnloadImage(image);
+}
+
+int Track::get_width() const
+{
+    return texture.width;
+}
+
+int Track::get_height() const
+{
+    return texture.height;
 }

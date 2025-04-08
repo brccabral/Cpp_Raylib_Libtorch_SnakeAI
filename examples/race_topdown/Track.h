@@ -1,9 +1,14 @@
 #pragma once
 #include <raylib.h>
 #include <vector>
-#include "Car.h"
 
 
+inline size_t index_from_location(Vector2 pt, size_t width)
+{
+    return pt.y * width + pt.x;
+}
+
+class Car;
 class Track
 {
 public:
@@ -13,6 +18,8 @@ public:
 
     virtual void draw(const Camera2D &camera) = 0;
     virtual void set_car_start(Car *car) = 0;
+    int get_width() const;
+    int get_height() const;
 
 protected:
 

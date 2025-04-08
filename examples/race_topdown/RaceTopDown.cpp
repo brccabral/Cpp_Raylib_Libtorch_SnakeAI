@@ -86,5 +86,5 @@ void RaceTopDown::draw()
 void RaceTopDown::apply_action(size_t index, int action)
 {
     Car *car = &cars[index];
-    car->apply_action((Car::car_actions_t) action);
+    car->apply_action((Car::car_actions_t) action, tracks[current_track]);
 }
