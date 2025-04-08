@@ -58,7 +58,16 @@ void Car::draw(const Camera2D &camera) const
     DrawText(
             TextFormat("x %.0f y %.0f speed %.3f angle %.3f", position.x, position.y, speed, angle),
             position.x, position.y - 20, 10, WHITE);
-    DrawPixel(position.x, position.y, RED);
+
+    for (auto i = 0; i < NUM_SENSORS; ++i)
+    {
+        double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
+        Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD)) *
+                       sensors_distance[i];
+        Vector2 sensor_position = position + step;
+        DrawLineV(position, sensor_position, BLUE);
+    }
+
     EndMode2D();
 }
 

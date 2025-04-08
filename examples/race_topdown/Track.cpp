@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "Track.h"
+#include "Car.h"
 
 
 struct DistanceLoc
@@ -86,4 +87,26 @@ int Track::get_width() const
 int Track::get_height() const
 {
     return texture.height;
+}
+
+void Track::update_sensors(std::vector<Car> &cars)
+{
+    for (auto &car: cars)
+    {
+        for (int i = 0; i < NUM_SENSORS; ++i)
+        {
+            Vector2 sensor_position = car.position;
+            double sensor_angle = car.angle - 90 + i * 180.0 / NUM_SENSORS;
+            Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD));
+            while (true)
+            {
+                if (distances[index_from_location(sensor_position, texture.width)] == 0)
+                {
+                    car.sensors_distance[i] = Vector2Distance(car.position, sensor_position);
+                    break;
+                }
+                sensor_position += step;
+            }
+        }
+    }
 }

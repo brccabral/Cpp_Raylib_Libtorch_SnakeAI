@@ -3,6 +3,8 @@
 #include "Track.h"
 
 
+#define NUM_SENSORS 17
+
 class Car
 {
 
@@ -34,13 +36,14 @@ public:
         CAR_STATE_DEAD
     } car_state_t;
 
-    Vector2 position;
+    Vector2 position{};
+    // angle in degrees
+    float angle{};
+    float sensors_distance[NUM_SENSORS]{};
 
 private:
 
-    Texture *texture;
-    // angle in degrees
-    float angle{};
+    Texture *texture{};
     float speed{};
     car_state_t car_state{};
     Color color{};

@@ -18,6 +18,7 @@ public:
 
     virtual void draw(const Camera2D &camera) = 0;
     virtual Vector3 get_car_start() = 0;
+    void update_sensors(std::vector<Car> &cars);
     int get_width() const;
     int get_height() const;
 

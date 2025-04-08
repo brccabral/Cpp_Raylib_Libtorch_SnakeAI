@@ -70,6 +70,8 @@ void RaceTopDown::update()
         const float scale = 0.2f * wheel;
         camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
     }
+
+    tracks[current_track]->update_sensors(cars);
 }
 
 void RaceTopDown::draw()
