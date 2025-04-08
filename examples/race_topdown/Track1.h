@@ -10,4 +10,8 @@ public:
 
     void draw(const Camera2D &camera) override;
     Vector3 get_car_start() override;
+
+private:
+
+    void draw_distances(const Camera2D &camera);
 };
