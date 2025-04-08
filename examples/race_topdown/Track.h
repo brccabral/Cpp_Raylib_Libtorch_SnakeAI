@@ -5,7 +5,7 @@
 
 inline size_t index_from_location(Vector2 pt, size_t width)
 {
-    return pt.y * width + pt.x;
+    return int(pt.y) * width + int(pt.x);
 }
 
 class Car;
