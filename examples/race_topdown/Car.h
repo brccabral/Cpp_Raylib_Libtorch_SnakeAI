@@ -2,15 +2,13 @@
 #include <raylib.h>
 
 
-#define CAR_SCALE 20.0
-
 class Car
 {
 
 public:
 
     Car(Texture *texture_, Color color_);
-    void draw(Camera2D &camera);
+    void draw(const Camera2D &camera) const;
 
     // clang-format off
     typedef enum car_actions_t
@@ -27,7 +25,7 @@ public:
     } car_actions_t;
     // clang-format on
     void apply_action(car_actions_t action);
-    void set_position(int x, int y, float angle);
+    void set_position(int x, int y, float angle_);
 
     typedef enum car_state_t
     {
@@ -45,4 +43,9 @@ private:
     float speed{};
     car_state_t car_state{};
     Color color{};
+    Vector2 shape[5]{};
+    Vector2 texture_coords[5]{};
+
+    void rotate(float delta_angle);
+    void translate(Vector2 movement);
 };
