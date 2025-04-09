@@ -1,5 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
+
+#include <algorithm>
 #include "RaceTopDown.h"
 #include "Track.h"
 
@@ -116,4 +118,20 @@ bool RaceTopDown::check_end_game() const
         return true;
     }
     return false;
+}
+
+size_t RaceTopDown::get_state_size()
+{
+    return NUM_SENSORS + 1; // sensors + speed
+}
+
+std::vector<float> RaceTopDown::get_state(size_t index)
+{
+    std::vector<float> states(get_state_size());
+
+    const Car *car = &cars[index];
+    std::ranges::copy(car->sensors_distance, states.begin());
+    states[get_state_size() - 1] = car->speed;
+
+    return states;
 }

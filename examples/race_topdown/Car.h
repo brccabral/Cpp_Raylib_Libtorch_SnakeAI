@@ -27,6 +27,7 @@ public:
         CAR_ACTION_BREAK =            0b1000,
         CAR_ACTION_BREAK_LEFT =       0b1001,
         CAR_ACTION_BREAK_RIGHT =      0b1010,
+        CAR_ACTION_COUNT,
     } car_actions_t;
     // clang-format on
     void apply_action(car_actions_t action, int track_width, int track_height);
@@ -43,11 +44,11 @@ public:
     float angle{};
     float sensors_distance[NUM_SENSORS]{};
     car_state_t car_state{};
+    float speed{};
 
 private:
 
     Texture *texture{};
-    float speed{};
     Color color{};
     Vector2 shape[5]{};
     Vector2 texture_coords[5]{};

@@ -18,6 +18,10 @@ public:
     void apply_action(size_t index, int action);
     bool check_end_game() const;
     void reset();
+    static size_t get_state_size();
+    std::vector<float> get_state(size_t index);
+
+    std::vector<Car> cars{};
 
 private:
 
@@ -28,7 +32,6 @@ private:
     Camera2D camera{};
     Texture car_texture{};
     size_t num_cars{};
-    std::vector<Car> cars{};
     size_t num_dead{};
 
 
