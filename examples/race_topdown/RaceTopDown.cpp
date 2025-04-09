@@ -143,3 +143,16 @@ std::vector<float> RaceTopDown::get_state(size_t index)
 
     return states;
 }
+
+std::array<size_t, 2> RaceTopDown::select_best_cars() const
+{
+    std::vector<std::pair<double, size_t>> cars_distances;
+    cars_distances.reserve(cars.size());
+    for (size_t i = 0; i < cars.size(); ++i)
+    {
+        cars_distances.emplace_back(cars[i].max_distance, i);
+    }
+    std::ranges::sort(
+            cars_distances, [](const auto &a, const auto &b) { return a.first > b.first; });
+    return {cars_distances[0].second, cars_distances[1].second};
+}

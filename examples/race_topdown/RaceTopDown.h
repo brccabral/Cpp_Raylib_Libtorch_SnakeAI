@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include "Car.h"
 #include "Track1.h"
 
@@ -20,8 +21,12 @@ public:
     void reset();
     static size_t get_state_size();
     std::vector<float> get_state(size_t index);
+    std::array<size_t, 2> select_best_cars() const;
 
     std::vector<Car> cars{};
+    size_t num_dead{};
+    size_t best_car{};
+    int max_distance{};
 
 private:
 
@@ -32,9 +37,6 @@ private:
     Camera2D camera{};
     Texture car_texture{};
     size_t num_cars{};
-    size_t num_dead{};
-    size_t best_car{};
-    int max_distance{};
 
 
     Track1 track1{};

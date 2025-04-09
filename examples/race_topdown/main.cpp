@@ -65,6 +65,9 @@ int main(int argc, char *argv[])
     {
         auto game = RaceTopDown(num_cars);
 
+        float record = 0;
+        size_t generation = 0;
+
         auto net = LinearGen(
                 RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
@@ -121,6 +124,15 @@ int main(int argc, char *argv[])
 
             if (game.check_end_game())
             {
+                if (game.max_distance > record)
+                {
+                    record = game.max_distance;
+                }
+                printf("Generation %zu Distance: %d Dead: %zu Record %.0f\n", generation,
+                       game.max_distance, game.num_dead, record);
+                ++generation;
+                save_model<>(population.members[game.best_car]);
+                population.apply_mutations(game.select_best_cars());
                 game.reset();
             }
         }
