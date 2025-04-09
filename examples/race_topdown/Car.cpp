@@ -1,6 +1,6 @@
+#include <cmath>
 #include "Car.h"
 #include "common.h"
-#include <raymath.h>
 
 
 Car::Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t index_)
@@ -69,7 +69,7 @@ void Car::apply_action(car_actions_t action, int track_width, int track_height)
         speed -= 0.1;
     }
 
-    speed = Clamp(speed, -1.0, 1.0);
+    speed = std::min(std::max(speed, -1.0f), 1.0f);
 
     // TODO drag/boost
     if (speed > 0)
@@ -145,7 +145,8 @@ void Car::update_sensors(const std::vector<int> &distances, int track_width)
                 sensors_distance[i] = Vector2Distance(position, sensor_position);
                 break;
             }
-            sensor_position += step;
+            sensor_position.x += step.x;
+            sensor_position.y += step.y;
         }
     }
 }

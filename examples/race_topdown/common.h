@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include <cstddef>
 #include <raylib.h>
 #include <rlgl.h>
@@ -30,4 +31,53 @@ inline void DrawTexturePoly(
     }
     rlEnd();
     rlSetTexture(0);
+}
+
+inline Vector2 operator*(const Vector2 &lhs, float rhs)
+{
+    return Vector2(lhs.x * rhs, lhs.y * rhs);
+}
+
+inline Vector2 operator-(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return Vector2(lhs.x - rhs.x, lhs.y - rhs.y);
+}
+
+inline Vector2 operator+(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return Vector2(lhs.x + rhs.x, lhs.y + rhs.y);
+}
+
+inline void operator+=(Vector2 &lhs, const Vector2 &rhs)
+{
+    lhs.x += rhs.x;
+    lhs.y += rhs.y;
+}
+
+inline Vector2 operator/(const Vector2 &lhs, float rhs)
+{
+    return Vector2(lhs.x / rhs, lhs.y / rhs);
+}
+
+inline float Vector2Distance(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return sqrtf((lhs.x - rhs.x) * (lhs.x - rhs.x) + (lhs.y - rhs.y) * (lhs.y - rhs.y));
+}
+
+inline Vector2 Vector2Rotate(const Vector2 &v, float angle)
+{
+    Vector2 result = {0};
+
+    float cosres = cosf(angle);
+    float sinres = sinf(angle);
+
+    result.x = v.x * cosres - v.y * sinres;
+    result.y = v.x * sinres + v.y * cosres;
+
+    return result;
+}
+
+inline bool operator==(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return lhs.x == rhs.x && lhs.y == rhs.y;
 }
