@@ -1,6 +1,5 @@
 #include <cmath>
 #include "Car.h"
-#include "common.h"
 
 
 Car::Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t index_)
@@ -128,7 +127,7 @@ void Car::translate(Vector2 movement)
     }
 }
 
-void Car::update_sensors(int **distances)
+void Car::update_sensors(const Distances &distances)
 {
     for (int i = 0; i < NUM_SENSORS; ++i)
     {
@@ -137,7 +136,7 @@ void Car::update_sensors(int **distances)
         const auto step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD));
         while (true)
         {
-            if (distances[(int) sensor_position.y][(int) sensor_position.x] == 0)
+            if (distances(sensor_position.x, sensor_position.y) == 0)
             {
                 sensors_distance[i] = Vector2Distance(position, sensor_position);
                 break;
@@ -148,12 +147,12 @@ void Car::update_sensors(int **distances)
     }
 }
 
-void Car::update(int **distances)
+void Car::update(const Distances &distances)
 {
     advance_timeout -= 0.1;
-    if (distances[(int) position.y][(int) position.x] > max_distance)
+    if (distances[position] > max_distance)
     {
-        max_distance = distances[(int) position.y][(int) position.x];
+        max_distance = distances[position];
         advance_timeout = ADVANCE_TIMEOUT;
     }
     update_sensors(distances);
@@ -164,11 +163,11 @@ void Car::update(int **distances)
     }
 }
 
-bool Car::check_collision(int **distances)
+bool Car::check_collision(const Distances &distances)
 {
     for (auto i = 0; i < 4; ++i)
     {
-        if (distances[(int) shape[i].y][(int) shape[i].x] == 0.0)
+        if (distances[shape[i]] == 0.0)
         {
             return true;
         }

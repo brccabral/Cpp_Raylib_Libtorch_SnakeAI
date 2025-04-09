@@ -16,15 +16,15 @@ public:
 
     int get_width() const;
     int get_height() const;
-    int **distances;
+    Distances distances{};
 
 
 protected:
 
-    Texture texture;
+    Texture texture{};
     Vector2 start{};
     Vector2 finish{};
-    const char *file;
+    const char *file{};
 
     void set_distances(Color track_color);
 };

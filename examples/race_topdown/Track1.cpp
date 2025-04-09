@@ -43,7 +43,7 @@ void Track1::draw_distances(const Camera2D &camera)
             {
                 continue;
             }
-            if (distances[(int) world.y][(int) world.x] > 0)
+            if (distances[world] > 0)
             {
                 DrawPixel(world.x, world.y, WHITE);
             }
@@ -57,7 +57,7 @@ void Track1::update_finish_line_distances(int max_distance)
     {
         for (auto c = 1287; c < 1408; ++c)
         {
-            distances[r][c] = max_distance;
+            distances(r, c) = max_distance;
         }
     }
 }
