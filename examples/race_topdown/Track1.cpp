@@ -16,7 +16,7 @@ void Track1::reset()
 
 Vector3 Track1::get_car_start()
 {
-    const int x = GetRandomValue(1838, 1959);
+    const int x = GetRandomValue(1845, 1953);
     constexpr int y = 867;
     constexpr float angle = 270;
     return Vector3(x, y, angle);
