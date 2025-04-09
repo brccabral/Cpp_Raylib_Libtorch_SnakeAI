@@ -30,7 +30,7 @@ RaceTopDown::~RaceTopDown()
 void RaceTopDown::reset()
 {
     num_dead = 0;
-    best_car = 0;
+    best_car_index = 0;
     max_distance = 0;
 
     for (size_t i = 0; i < num_cars; i++)
@@ -47,8 +47,8 @@ void RaceTopDown::update()
     // Camera follows cars[best_car];
     if (IsKeyDown(KEY_P))
     {
-        camera.offset = GetWorldToScreen2D(cars[best_car].position, camera);
-        camera.target = cars[best_car].position;
+        camera.offset = GetWorldToScreen2D(cars[best_car_index].position, camera);
+        camera.target = cars[best_car_index].position;
 
         const float wheel = GetMouseWheelMove();
         if (wheel != 0)
@@ -58,7 +58,7 @@ void RaceTopDown::update()
         }
 
         Vector2 delta = Vector2(GetScreenWidth() / 2.0, GetScreenHeight() / 2.0) -
-                        GetWorldToScreen2D(cars[best_car].position, camera);
+                        GetWorldToScreen2D(cars[best_car_index].position, camera);
         delta *= -1.0f / camera.zoom;
         camera.target += delta;
     }
@@ -98,7 +98,7 @@ void RaceTopDown::draw()
     tracks[current_track]->draw(camera);
     for (auto &car: cars)
     {
-        car.draw(camera, best_car);
+        car.draw(camera, best_car_index);
     }
     EndDrawing();
 }
@@ -117,7 +117,7 @@ void RaceTopDown::apply_action(size_t index, int action)
     if (car->max_distance > max_distance)
     {
         max_distance = car->max_distance;
-        best_car = index;
+        best_car_index = index;
     }
 }
 

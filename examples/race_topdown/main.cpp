@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
                 printf("Generation %zu Distance: %d Dead: %zu Record %.0f\n", generation,
                        game.max_distance, game.num_dead, record);
                 ++generation;
-                save_model<>(population.members[game.best_car]);
+                save_model<>(population.members[game.best_car_index]);
                 population.apply_mutations(game.select_best_cars());
                 game.reset();
             }

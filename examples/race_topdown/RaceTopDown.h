@@ -25,7 +25,7 @@ public:
 
     std::vector<Car> cars{};
     size_t num_dead{};
-    size_t best_car{};
+    size_t best_car_index{};
     int max_distance{};
 
 private:
