@@ -159,12 +159,6 @@ void Car::update(int **distances)
         max_distance = distances[(int) position.y][(int) position.x];
         advance_timeout = ADVANCE_TIMEOUT;
     }
-    update_sensors(distances, track_width);
-    if (advance_timeout < 0.0 || check_collision(distances, track_width))
-    {
-        car_state = CAR_STATE_DEAD;
-        texture = dead_texture;
-    }
     update_sensors(distances);
 }
 

@@ -53,3 +53,14 @@ void Track1::draw_distances(const Camera2D &camera)
         }
     }
 }
+
+void Track1::update_finish_line_distances(int max_distance)
+{
+    for (auto r = 1733; r < 1753; ++r)
+    {
+        for (auto c = 1287; c < 1408; ++c)
+        {
+            distances[r][c] = max_distance;
+        }
+    }
+}

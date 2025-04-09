@@ -51,11 +51,17 @@ void Track::set_distances(Color track_color)
         }
     };
 
+    int max_distance = 0;
+
     while (!nodes.empty())
     {
         std::list<DistanceLoc> new_nodes;
         for (auto &[p, distance]: nodes)
         {
+            if (distance > max_distance)
+            {
+                max_distance = distance;
+            }
             distances[(int) p.y][(int) p.x] = distance;
 
             Vector2 right = p + p_right;
@@ -79,6 +85,8 @@ void Track::set_distances(Color track_color)
         nodes.clear();
         nodes.insert(nodes.begin(), new_nodes.begin(), new_nodes.end());
     }
+
+    update_finish_line_distances(max_distance + 1);
 
     UnloadImage(image);
 }
