@@ -94,11 +94,11 @@ int main(int argc, char *argv[])
             int action = 0;
             if (IsKeyDown(KEY_LEFT))
             {
-                action = 0b0001;
+                action = action | 0b0001;
             }
             if (IsKeyDown(KEY_RIGHT))
             {
-                action = 0b0010;
+                action = action | 0b0010;
             }
             if (IsKeyDown(KEY_UP))
             {
@@ -107,6 +107,22 @@ int main(int argc, char *argv[])
             if (IsKeyDown(KEY_DOWN))
             {
                 action = action | 0b1000;
+            }
+            if (IsKeyPressed(KEY_W))
+            {
+                action = action | 0b0100;
+            }
+            if (IsKeyPressed(KEY_S))
+            {
+                action = action | 0b1000;
+            }
+            if (IsKeyPressed(KEY_A))
+            {
+                action = action | 0b0001;
+            }
+            if (IsKeyPressed(KEY_D))
+            {
+                action = action | 0b0010;
             }
             game.apply_action(0, action);
 #else
