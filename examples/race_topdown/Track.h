@@ -1,6 +1,5 @@
 #pragma once
 #include <raylib.h>
-#include <vector>
 
 
 class Track
@@ -16,7 +15,7 @@ public:
 
     int get_width() const;
     int get_height() const;
-    std::vector<int> distances;
+    int **distances;
 
 
 protected:

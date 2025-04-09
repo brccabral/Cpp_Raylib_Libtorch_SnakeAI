@@ -19,6 +19,12 @@ Track::Track() = default;
 
 Track::~Track()
 {
+    for (int r = 0; r < texture.height; ++r)
+    {
+        delete[] distances[r]; // Free each row
+    }
+    delete[] distances; // Free the array of pointers
+
     UnloadTexture(texture);
 }
 
@@ -27,7 +33,11 @@ void Track::set_distances(Color track_color)
     const Image image = LoadImage(file);
     texture = LoadTextureFromImage(image);
 
-    distances.resize(image.width * image.height, 0);
+    distances = new int *[texture.height];
+    for (int r = 0; r < texture.height; ++r)
+    {
+        distances[r] = new int[texture.width];
+    }
 
     std::list<DistanceLoc> nodes;
     nodes.emplace_back(start, 1);
@@ -35,8 +45,7 @@ void Track::set_distances(Color track_color)
     auto CheckNewDistance = [&](const Vector2 &pt, int distance, std::list<DistanceLoc> &new_nodes)
     {
         const Color color = GetImageColor(image, pt.x, pt.y);
-        if (ColorIsEqual(color, track_color) &&
-            distances[index_from_location(pt, image.width)] == 0)
+        if (ColorIsEqual(color, track_color) && distances[(int) pt.y][(int) pt.x] == 0)
         {
             new_nodes.emplace_back(pt, distance + 1);
         }
@@ -47,7 +56,7 @@ void Track::set_distances(Color track_color)
         std::list<DistanceLoc> new_nodes;
         for (auto &[p, distance]: nodes)
         {
-            distances[index_from_location(p, image.width)] = distance;
+            distances[(int) p.y][(int) p.x] = distance;
 
             Vector2 right = p + p_right;
             Vector2 left = p + p_left;

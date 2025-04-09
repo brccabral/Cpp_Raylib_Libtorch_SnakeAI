@@ -131,7 +131,7 @@ void Car::translate(Vector2 movement)
     }
 }
 
-void Car::update_sensors(const std::vector<int> &distances, int track_width)
+void Car::update_sensors(int **distances)
 {
     for (int i = 0; i < NUM_SENSORS; ++i)
     {
@@ -140,7 +140,7 @@ void Car::update_sensors(const std::vector<int> &distances, int track_width)
         const auto step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD));
         while (true)
         {
-            if (distances[index_from_location(sensor_position, track_width)] == 0)
+            if (distances[(int) sensor_position.y][(int) sensor_position.x] == 0)
             {
                 sensors_distance[i] = Vector2Distance(position, sensor_position);
                 break;
@@ -151,12 +151,12 @@ void Car::update_sensors(const std::vector<int> &distances, int track_width)
     }
 }
 
-void Car::update(const std::vector<int> &distances, int track_width)
+void Car::update(int **distances)
 {
     advance_timeout -= 0.1;
-    if (distances[index_from_location(position, track_width)] > max_distance)
+    if (distances[(int) position.y][(int) position.x] > max_distance)
     {
-        max_distance = distances[index_from_location(position, track_width)];
+        max_distance = distances[(int) position.y][(int) position.x];
         advance_timeout = ADVANCE_TIMEOUT;
     }
     update_sensors(distances, track_width);
@@ -165,13 +165,14 @@ void Car::update(const std::vector<int> &distances, int track_width)
         car_state = CAR_STATE_DEAD;
         texture = dead_texture;
     }
+    update_sensors(distances);
 }
 
-bool Car::check_collision(const std::vector<int> &distances, int track_width)
+bool Car::check_collision(int **distances)
 {
     for (auto i = 0; i < 4; ++i)
     {
-        if (distances[index_from_location(shape[i], track_width)] == 0.0)
+        if (distances[(int) shape[i].y][(int) shape[i].x] == 0.0)
         {
             return true;
         }

@@ -13,7 +13,7 @@ public:
 
     Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t index_);
     void draw(const Camera2D &camera, size_t best_index) const;
-    void update(const std::vector<int> &distances, int track_width);
+    void update(int **distances);
     void reset();
 
     // clang-format off
@@ -61,6 +61,6 @@ private:
 
     void rotate(float delta_angle);
     void translate(Vector2 movement);
-    void update_sensors(const std::vector<int> &distances, int track_width);
-    bool check_collision(const std::vector<int> &distances, int track_width);
+    void update_sensors(int **distances);
+    bool check_collision(int **distances);
 };
