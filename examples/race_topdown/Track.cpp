@@ -1,8 +1,8 @@
+#include "common.h"
 #include <list>
 #include <raylib.h>
 #include <raymath.h>
 #include "Track.h"
-#include "Car.h"
 
 
 struct DistanceLoc
@@ -10,11 +10,6 @@ struct DistanceLoc
     Vector2 p;
     int distance;
 };
-
-inline bool operator==(const Color &lhs, const Color &rhs)
-{
-    return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
-}
 
 static Vector2 p_right = {1, 0};
 static Vector2 p_left = {-1, 0};
@@ -41,7 +36,8 @@ void Track::set_distances(Color track_color)
     auto CheckNewDistance = [&](const Vector2 &pt, int distance, std::list<DistanceLoc> &new_nodes)
     {
         const Color color = GetImageColor(image, pt.x, pt.y);
-        if (color == track_color && distances[index_from_location(pt, image.width)] == 0)
+        if (ColorIsEqual(color, track_color) &&
+            distances[index_from_location(pt, image.width)] == 0)
         {
             new_nodes.emplace_back(pt, distance + 1);
         }
@@ -87,26 +83,4 @@ int Track::get_width() const
 int Track::get_height() const
 {
     return texture.height;
-}
-
-void Track::update_sensors(std::vector<Car> &cars)
-{
-    for (auto &car: cars)
-    {
-        for (int i = 0; i < NUM_SENSORS; ++i)
-        {
-            Vector2 sensor_position = car.position;
-            double sensor_angle = car.angle - 90 + i * 180.0 / NUM_SENSORS;
-            Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD));
-            while (true)
-            {
-                if (distances[index_from_location(sensor_position, texture.width)] == 0)
-                {
-                    car.sensors_distance[i] = Vector2Distance(car.position, sensor_position);
-                    break;
-                }
-                sensor_position += step;
-            }
-        }
-    }
 }

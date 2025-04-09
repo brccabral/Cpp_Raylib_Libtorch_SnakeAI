@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "RaceTopDown.h"
-#include "Track1.h"
+#include "Track.h"
 
 
 RaceTopDown::RaceTopDown(size_t num_cars_)
@@ -71,7 +71,10 @@ void RaceTopDown::update()
         camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
     }
 
-    tracks[current_track]->update_sensors(cars);
+    for (auto &car: cars)
+    {
+        car.update_sensors(tracks[current_track]->distances, tracks[current_track]->get_width());
+    }
 }
 
 void RaceTopDown::draw()
@@ -89,5 +92,7 @@ void RaceTopDown::draw()
 void RaceTopDown::apply_action(size_t index, int action)
 {
     Car *car = &cars[index];
-    car->apply_action((Car::car_actions_t) action, tracks[current_track]);
+    car->apply_action(
+            (Car::car_actions_t) action, tracks[current_track]->get_width(),
+            tracks[current_track]->get_height());
 }

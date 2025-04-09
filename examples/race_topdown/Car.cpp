@@ -1,32 +1,6 @@
 #include "Car.h"
-
-#include <cstdio>
+#include "common.h"
 #include <raymath.h>
-#include <rlgl.h>
-
-void DrawTexturePoly(
-        const Texture2D *texture, Vector2 center, const Vector2 *points,
-        const Vector2 *texture_coords, int pointCount, Color tint)
-{
-    rlSetTexture(texture->id);
-    rlBegin(RL_TRIANGLES);
-
-    rlColor4ub(tint.r, tint.g, tint.b, tint.a);
-
-    for (int i = 0; i < pointCount - 1; i++)
-    {
-        rlTexCoord2f(0.5f, 0.5f);
-        rlVertex2f(center.x, center.y);
-
-        rlTexCoord2f(texture_coords[i].x, texture_coords[i].y);
-        rlVertex2f(points[i].x, points[i].y);
-
-        rlTexCoord2f(texture_coords[i + 1].x, texture_coords[i + 1].y);
-        rlVertex2f(points[i + 1].x, points[i + 1].y);
-    }
-    rlEnd();
-    rlSetTexture(0);
-}
 
 
 Car::Car(Texture *texture_, Color color_)
@@ -61,17 +35,17 @@ void Car::draw(const Camera2D &camera) const
 
     for (auto i = 0; i < NUM_SENSORS; ++i)
     {
-        double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
-        Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD)) *
-                       sensors_distance[i];
-        Vector2 sensor_position = position + step;
+        const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
+        const Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD)) *
+                             sensors_distance[i];
+        const Vector2 sensor_position = position + step;
         DrawLineV(position, sensor_position, BLUE);
     }
 
     EndMode2D();
 }
 
-void Car::apply_action(car_actions_t action, Track *track)
+void Car::apply_action(car_actions_t action, int track_width, int track_height)
 {
     float delta_angle = 0;
     if (action & CAR_ACTION_LEFT)
@@ -91,16 +65,16 @@ void Car::apply_action(car_actions_t action, Track *track)
         speed -= 0.1;
     }
 
-    speed = Clamp(speed, -0.7, 0.7);
+    speed = Clamp(speed, -1.0, 1.0);
 
     // TODO drag/boost
     if (speed > 0)
     {
-        speed -= 0.01;
+        speed -= 0.005;
     }
     else if (speed < 0)
     {
-        speed += 0.01;
+        speed += 0.005;
     }
 
     if (std::abs(speed) < 0.001)
@@ -117,11 +91,11 @@ void Car::apply_action(car_actions_t action, Track *track)
 
     translate(direction);
 
-    if (position.x < 0 || position.x > track->get_width())
+    if (position.x < 0 || position.x > track_width)
     {
         translate(direction * -1);
     }
-    if (position.y < 0 || position.y > track->get_height())
+    if (position.y < 0 || position.y > track_height)
     {
         translate(direction * -1);
     }
@@ -150,5 +124,24 @@ void Car::translate(Vector2 movement)
     for (auto &corner: shape)
     {
         corner += movement;
+    }
+}
+
+void Car::update_sensors(const std::vector<int> &distances, int track_width)
+{
+    for (int i = 0; i < NUM_SENSORS; ++i)
+    {
+        Vector2 sensor_position = position;
+        const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
+        const auto step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD));
+        while (true)
+        {
+            if (distances[index_from_location(sensor_position, track_width)] == 0)
+            {
+                sensors_distance[i] = Vector2Distance(position, sensor_position);
+                break;
+            }
+            sensor_position += step;
+        }
     }
 }

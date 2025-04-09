@@ -1,6 +1,6 @@
 #pragma once
+#include <vector>
 #include <raylib.h>
-#include "Track.h"
 
 
 #define NUM_SENSORS 17
@@ -12,6 +12,7 @@ public:
 
     Car(Texture *texture_, Color color_);
     void draw(const Camera2D &camera) const;
+    void update_sensors(const std::vector<int> &distances, int track_width);
 
     // clang-format off
     typedef enum car_actions_t
@@ -27,7 +28,7 @@ public:
         CAR_ACTION_BREAK_RIGHT =      0b1010,
     } car_actions_t;
     // clang-format on
-    void apply_action(car_actions_t action, Track *track);
+    void apply_action(car_actions_t action, int track_width, int track_height);
     void set_position(int x, int y, float angle_);
 
     typedef enum car_state_t
