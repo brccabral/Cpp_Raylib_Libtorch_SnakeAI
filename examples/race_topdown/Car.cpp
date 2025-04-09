@@ -22,8 +22,10 @@ void Car::draw(const Camera2D &camera) const
     BeginMode2D(camera);
     DrawTexturePoly(texture, position, shape, texture_coords, 5, color);
     DrawText(
-            TextFormat("x %.0f y %.0f speed %.3f angle %.3f", position.x, position.y, speed, angle),
-            position.x, position.y - 20, 10, WHITE);
+            TextFormat(
+                    "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout %.0f",
+                    position.x, position.y, speed, angle, max_distance, advance_timeout),
+            position.x - 50, position.y - 20, 10, WHITE);
 
     for (auto i = 0; i < NUM_SENSORS; ++i)
     {

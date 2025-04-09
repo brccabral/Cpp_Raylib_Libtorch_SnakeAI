@@ -31,7 +31,7 @@ void Track::set_distances(Color track_color)
     distances.resize(image.width * image.height, 0);
 
     std::list<DistanceLoc> nodes;
-    nodes.emplace_back(finish, 1);
+    nodes.emplace_back(start, 1);
 
     auto CheckNewDistance = [&](const Vector2 &pt, int distance, std::list<DistanceLoc> &new_nodes)
     {

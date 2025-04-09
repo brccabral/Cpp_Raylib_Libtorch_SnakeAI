@@ -4,7 +4,7 @@
 
 
 #define NUM_SENSORS 17
-#define ADVANCE_TIMEOUT (1000.0)
+#define ADVANCE_TIMEOUT (100.0)
 
 class Car
 {
