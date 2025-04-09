@@ -134,7 +134,8 @@ void Car::update_sensors(const Distances &distances)
         Vector2 sensor_position = position;
         const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
 
-        Vector2 sensor_direction = Vector2(cosf(sensor_angle), sinf(sensor_angle));
+        Vector2 sensor_direction =
+                Vector2(cosf(sensor_angle * DEG2RAD), sinf(sensor_angle * DEG2RAD));
 
         Vector2 step;
         step.x = sensor_direction.x == 0 ? 1e30f : abs(1 / sensor_direction.x);
@@ -148,7 +149,7 @@ void Car::update_sensors(const Distances &distances)
 
         while (true)
         {
-            if (distances(sensor_position.x, sensor_position.y) == 0)
+            if (distances(sensor_position.y, sensor_position.x) == 0)
             {
                 sensors_distance[i] = Vector2Distance(position, sensor_position);
                 break;
@@ -177,11 +178,13 @@ void Car::update(const Distances &distances)
         advance_timeout = ADVANCE_TIMEOUT;
     }
     update_sensors(distances);
+#if !MANUAL
     if (advance_timeout < 0.0 || check_collision(distances))
     {
         car_state = CAR_STATE_DEAD;
         texture = dead_texture;
     }
+#endif
 }
 
 bool Car::check_collision(const Distances &distances)

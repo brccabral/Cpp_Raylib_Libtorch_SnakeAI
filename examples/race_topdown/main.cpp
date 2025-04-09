@@ -5,8 +5,6 @@
 #include "RaceTopDown.h"
 
 
-#define MANUAL 0
-
 #if !MANUAL
 #include <mlgames/GenPopulation.h>
 #include <mlgames/LinearGen.h>
@@ -71,6 +69,8 @@ int main(int argc, char *argv[])
         auto game = RaceTopDown(num_cars);
 
         float record = 0;
+
+#if !MANUAL
         size_t generation = 0;
 
 #if !MANUAL
