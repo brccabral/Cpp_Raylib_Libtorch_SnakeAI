@@ -10,8 +10,8 @@ inline size_t index_from_location(Vector2 pt, size_t width)
 }
 
 inline void DrawTexturePoly(
-        const Texture2D *texture, Vector2 center, const Vector2 *points,
-        const Vector2 *texture_coords, int pointCount, Color tint)
+        const Texture2D *texture, const Vector2 &center, const Vector2 *points,
+        const Vector2 *texture_coords, int pointCount, const Color &tint)
 {
     rlSetTexture(texture->id);
     rlBegin(RL_TRIANGLES);
