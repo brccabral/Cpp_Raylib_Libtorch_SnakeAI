@@ -160,6 +160,11 @@ void Car::update(int **distances)
         advance_timeout = ADVANCE_TIMEOUT;
     }
     update_sensors(distances);
+    if (advance_timeout < 0.0 || check_collision(distances))
+    {
+        car_state = CAR_STATE_DEAD;
+        texture = dead_texture;
+    }
 }
 
 bool Car::check_collision(int **distances)
