@@ -1,6 +1,5 @@
+#include <cmath>
 #include <raylib.h>
-#include <raymath.h>
-
 #include <algorithm>
 #include "RaceTopDown.h"
 #include "Track.h"
@@ -54,7 +53,7 @@ void RaceTopDown::update()
         if (wheel != 0)
         {
             const float scale = 0.2f * wheel;
-            camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
+            camera.zoom = std::min(std::max(expf(logf(camera.zoom) + scale), 0.125f), 64.0f);
         }
 
         Vector2 delta = Vector2(GetScreenWidth() / 2.0, GetScreenHeight() / 2.0) -
@@ -87,7 +86,7 @@ void RaceTopDown::update()
         // Zoom increment
         // Uses log scaling to provide consistent zoom speed
         const float scale = 0.2f * wheel;
-        camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
+        camera.zoom = std::min(std::max(expf(logf(camera.zoom) + scale), 0.125f), 64.0f);
     }
 }
 
