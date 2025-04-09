@@ -33,6 +33,8 @@ private:
     Texture car_texture{};
     size_t num_cars{};
     size_t num_dead{};
+    size_t best_car{};
+    int max_distance{};
 
 
     Track1 track1{};
