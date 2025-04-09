@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
 
-#define MANUAL 1
+#define MANUAL 0
 
 void DrawTexturePoly(
         const Texture2D *texture, const Vector2 &center, const Vector2 *points,

@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 #if MANUAL
     constexpr int num_cars = 1;
 #else
-    constexpr int num_cars = 15;
+    constexpr int num_cars = 1000;
 #endif
 
     {
@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
 #if !MANUAL
         size_t generation = 0;
 
-#if !MANUAL
         auto net = LinearGen(
                 RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
