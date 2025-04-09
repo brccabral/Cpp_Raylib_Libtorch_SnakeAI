@@ -140,8 +140,14 @@ void Car::update_sensors(const std::vector<int> &distances, int track_width)
 
 void Car::update(const std::vector<int> &distances, int track_width)
 {
+    advance_timeout -= 0.1;
+    if (distances[index_from_location(position, track_width)] > max_distance)
+    {
+        max_distance = distances[index_from_location(position, track_width)];
+        advance_timeout = ADVANCE_TIMEOUT;
+    }
     update_sensors(distances, track_width);
-    if (check_collision(distances, track_width))
+    if (advance_timeout < 0.0 || check_collision(distances, track_width))
     {
         car_state = CAR_STATE_DEAD;
     }
@@ -164,6 +170,7 @@ void Car::reset()
     car_state = CAR_STATE_ALIVE;
     speed = 0;
     angle = 0;
+    advance_timeout = ADVANCE_TIMEOUT;
 
     position = Vector2(0, 0);
 

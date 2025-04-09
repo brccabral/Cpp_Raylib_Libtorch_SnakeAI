@@ -4,6 +4,7 @@
 
 
 #define NUM_SENSORS 17
+#define ADVANCE_TIMEOUT (1000.0)
 
 class Car
 {
@@ -45,6 +46,7 @@ public:
     float sensors_distance[NUM_SENSORS]{};
     car_state_t car_state{};
     float speed{};
+    int max_distance{};
 
 private:
 
@@ -52,6 +54,7 @@ private:
     Color color{};
     Vector2 shape[5]{};
     Vector2 texture_coords[5]{};
+    float advance_timeout{};
 
     void rotate(float delta_angle);
     void translate(Vector2 movement);
