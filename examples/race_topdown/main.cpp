@@ -1,12 +1,16 @@
 #include <ctime>
 #include <random>
+#include <cstring>
 #include <raylib.h>
 #include "RaceTopDown.h"
 
-#include <mlgames/GenPopulation.h>
-#include <mlgames/LinearGen.h>
 
 #define MANUAL 0
+
+#if !MANUAL
+#include <mlgames/GenPopulation.h>
+#include <mlgames/LinearGen.h>
+#endif
 
 #define do_shift(argc, argv)                                                                       \
     do                                                                                             \
@@ -24,6 +28,7 @@ int main(int argc, char *argv[])
     // NOLINTNEXTLINE
     srand(time(NULL));
 
+#if !MANUAL
     c10::DeviceType device = torch::kCPU;
     if (torch::cuda::is_available())
     {
@@ -47,6 +52,7 @@ int main(int argc, char *argv[])
         }
         do_shift(argc, argv);
     }
+#endif
 
     constexpr int hidden_layer_1 = 8;
 
@@ -57,7 +63,6 @@ int main(int argc, char *argv[])
 
 #if MANUAL
     constexpr int num_cars = 1;
-    SetTargetFPS(60);
 #else
     constexpr int num_cars = 15;
 #endif
@@ -68,6 +73,7 @@ int main(int argc, char *argv[])
         float record = 0;
         size_t generation = 0;
 
+#if !MANUAL
         auto net = LinearGen(
                 RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
                 std::vector<size_t>{hidden_layer_1});
@@ -80,6 +86,7 @@ int main(int argc, char *argv[])
         auto population = GenPopulation(num_cars, 0.9, 0.05, net);
 
         torch::NoGradGuard no_grad;
+#endif
 
         while (!WindowShouldClose())
         {
@@ -128,11 +135,13 @@ int main(int argc, char *argv[])
                 {
                     record = game.max_distance;
                 }
+#if !MANUAL
                 printf("Generation %zu Distance: %d Dead: %zu Record %.0f\n", generation,
                        game.max_distance, game.num_dead, record);
                 ++generation;
                 save_model<>(population.members[game.best_car_index]);
                 population.apply_mutations(game.select_best_cars());
+#endif
                 game.reset();
             }
         }
