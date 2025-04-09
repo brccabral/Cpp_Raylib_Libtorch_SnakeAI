@@ -11,8 +11,8 @@ class Car
 
 public:
 
-    Car(Texture *texture_, Color color_);
-    void draw(const Camera2D &camera) const;
+    Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t index_);
+    void draw(const Camera2D &camera, size_t best_index) const;
     void update(const std::vector<int> &distances, int track_width);
     void reset();
 
@@ -51,10 +51,13 @@ public:
 private:
 
     Texture *texture{};
+    Texture *alive_texture{};
+    Texture *dead_texture{};
     Color color{};
     Vector2 shape[5]{};
     Vector2 texture_coords[5]{};
     float advance_timeout{};
+    size_t index;
 
     void rotate(float delta_angle);
     void translate(Vector2 movement);

@@ -11,11 +11,12 @@ RaceTopDown::RaceTopDown(size_t num_cars_)
     camera.zoom = 1.0f;
     tracks.emplace_back(&track1);
     car_texture = LoadTexture("assets/car.png");
+    car_dead = LoadTexture("assets/dead.png");
     num_cars = num_cars_;
     cars.reserve(num_cars_);
     for (size_t i = 0; i < num_cars_; i++)
     {
-        cars.emplace_back(&car_texture, colors[i % NUM_COLORS]);
+        cars.emplace_back(&car_texture, &car_dead, colors[i % NUM_COLORS], i);
     }
     reset();
 };
@@ -23,6 +24,7 @@ RaceTopDown::RaceTopDown(size_t num_cars_)
 RaceTopDown::~RaceTopDown()
 {
     UnloadTexture(car_texture);
+    UnloadTexture(car_dead);
 }
 
 void RaceTopDown::reset()
@@ -42,7 +44,7 @@ void RaceTopDown::reset()
 
 void RaceTopDown::update()
 {
-    // Camera follows cars[0];
+    // Camera follows cars[best_car];
     if (IsKeyDown(KEY_P))
     {
         camera.offset = GetWorldToScreen2D(cars[best_car].position, camera);
@@ -96,7 +98,7 @@ void RaceTopDown::draw()
     tracks[current_track]->draw(camera);
     for (auto &car: cars)
     {
-        car.draw(camera);
+        car.draw(camera, best_car);
     }
     EndDrawing();
 }

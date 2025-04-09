@@ -36,6 +36,7 @@ private:
     size_t current_track{};
     Camera2D camera{};
     Texture car_texture{};
+    Texture car_dead{};
     size_t num_cars{};
 
 

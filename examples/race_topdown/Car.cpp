@@ -3,10 +3,13 @@
 #include <raymath.h>
 
 
-Car::Car(Texture *texture_, Color color_)
+Car::Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t index_)
 {
-    texture = texture_;
+    alive_texture = alive_texture_;
+    dead_texture = dead_texture_;
+    texture = alive_texture_;
     color = color_;
+    index = index_;
 
     texture_coords[0] = Vector2(0.0, 0.0);
     texture_coords[1] = Vector2(0.0, 1.0);
@@ -17,23 +20,30 @@ Car::Car(Texture *texture_, Color color_)
     reset();
 }
 
-void Car::draw(const Camera2D &camera) const
+void Car::draw(const Camera2D &camera, size_t best_index) const
 {
     BeginMode2D(camera);
-    DrawTexturePoly(texture, position, shape, texture_coords, 5, color);
-    DrawText(
-            TextFormat(
-                    "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout %.0f",
-                    position.x, position.y, speed, angle, max_distance, advance_timeout),
-            position.x - 50, position.y - 20, 10, WHITE);
-
-    for (auto i = 0; i < NUM_SENSORS; ++i)
+    if (index == best_index)
     {
-        const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
-        const Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD)) *
-                             sensors_distance[i];
-        const Vector2 sensor_position = position + step;
-        DrawLineV(position, sensor_position, BLUE);
+        DrawCircle(position.x, position.y, 30, Color(88, 88, 88, 80));
+    }
+    DrawTexturePoly(texture, position, shape, texture_coords, 5, color);
+
+    if (IsKeyDown(KEY_P))
+    {
+        DrawText(
+                TextFormat(
+                        "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout %.0f",
+                        position.x, position.y, speed, angle, max_distance, advance_timeout),
+                position.x - 100, position.y - 20, 10, WHITE);
+        for (auto i = 0; i < NUM_SENSORS; ++i)
+        {
+            const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
+            const Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD)) *
+                                 sensors_distance[i];
+            const Vector2 sensor_position = position + step;
+            DrawLineV(position, sensor_position, BLUE);
+        }
     }
 
     EndMode2D();
@@ -152,6 +162,7 @@ void Car::update(const std::vector<int> &distances, int track_width)
     if (advance_timeout < 0.0 || check_collision(distances, track_width))
     {
         car_state = CAR_STATE_DEAD;
+        texture = dead_texture;
     }
 }
 
@@ -173,6 +184,7 @@ void Car::reset()
     speed = 0;
     angle = 0;
     advance_timeout = ADVANCE_TIMEOUT;
+    texture = alive_texture;
     max_distance = 0;
 
     position = Vector2(0, 0);
