@@ -12,7 +12,7 @@ int main()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Race TopDown");
 
     {
-        auto game = RaceTopDown(15);
+        auto game = RaceTopDown(1);
         while (!WindowShouldClose())
         {
             int action = 0;
@@ -36,6 +36,11 @@ int main()
 
             game.update();
             game.draw();
+
+            if (game.check_end_game())
+            {
+                game.reset();
+            }
         }
     }
     CloseWindow();

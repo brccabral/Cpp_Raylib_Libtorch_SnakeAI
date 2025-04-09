@@ -9,19 +9,31 @@ RaceTopDown::RaceTopDown(size_t num_cars_)
     camera.zoom = 1.0f;
     tracks.emplace_back(&track1);
     car_texture = LoadTexture("assets/car.png");
+    num_cars = num_cars_;
     cars.reserve(num_cars_);
     for (size_t i = 0; i < num_cars_; i++)
     {
         cars.emplace_back(&car_texture, colors[i % NUM_COLORS]);
-        const auto [x, y, angle] = tracks[current_track]->get_car_start();
-        cars[i].set_position(x, y, angle);
     }
+    reset();
 };
 
 RaceTopDown::~RaceTopDown()
 {
     UnloadTexture(car_texture);
 }
+
+void RaceTopDown::reset()
+{
+    num_dead = 0;
+    for (size_t i = 0; i < num_cars; i++)
+    {
+        cars[i].reset();
+        const auto [x, y, angle] = tracks[current_track]->get_car_start();
+        cars[i].set_position(x, y, angle);
+    }
+}
+
 
 void RaceTopDown::update()
 {
@@ -70,11 +82,6 @@ void RaceTopDown::update()
         const float scale = 0.2f * wheel;
         camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
     }
-
-    for (auto &car: cars)
-    {
-        car.update_sensors(tracks[current_track]->distances, tracks[current_track]->get_width());
-    }
 }
 
 void RaceTopDown::draw()
@@ -95,4 +102,18 @@ void RaceTopDown::apply_action(size_t index, int action)
     car->apply_action(
             (Car::car_actions_t) action, tracks[current_track]->get_width(),
             tracks[current_track]->get_height());
+    car->update(tracks[current_track]->distances, tracks[current_track]->get_width());
+    if (car->car_state == Car::CAR_STATE_DEAD)
+    {
+        ++num_dead;
+    }
+}
+
+bool RaceTopDown::check_end_game() const
+{
+    if (num_dead >= num_cars)
+    {
+        return true;
+    }
+    return false;
 }

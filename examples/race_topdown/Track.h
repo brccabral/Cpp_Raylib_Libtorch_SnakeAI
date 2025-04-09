@@ -12,9 +12,12 @@ public:
 
     virtual void draw(const Camera2D &camera) = 0;
     virtual Vector3 get_car_start() = 0;
+    virtual void reset() = 0;
+
     int get_width() const;
     int get_height() const;
     std::vector<int> distances;
+
 
 protected:
 

@@ -16,6 +16,8 @@ public:
     void update();
     void draw();
     void apply_action(size_t index, int action);
+    bool check_end_game() const;
+    void reset();
 
 private:
 
@@ -27,6 +29,7 @@ private:
     Texture car_texture{};
     size_t num_cars{};
     std::vector<Car> cars{};
+    size_t num_dead{};
 
 
     Track1 track1{};

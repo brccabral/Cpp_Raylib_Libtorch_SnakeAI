@@ -10,6 +10,7 @@ public:
 
     void draw(const Camera2D &camera) override;
     Vector3 get_car_start() override;
+    void reset() override;
 
 private:
 

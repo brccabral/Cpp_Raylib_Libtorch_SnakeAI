@@ -12,7 +12,8 @@ public:
 
     Car(Texture *texture_, Color color_);
     void draw(const Camera2D &camera) const;
-    void update_sensors(const std::vector<int> &distances, int track_width);
+    void update(const std::vector<int> &distances, int track_width);
+    void reset();
 
     // clang-format off
     typedef enum car_actions_t
@@ -41,16 +42,18 @@ public:
     // angle in degrees
     float angle{};
     float sensors_distance[NUM_SENSORS]{};
+    car_state_t car_state{};
 
 private:
 
     Texture *texture{};
     float speed{};
-    car_state_t car_state{};
     Color color{};
     Vector2 shape[5]{};
     Vector2 texture_coords[5]{};
 
     void rotate(float delta_angle);
     void translate(Vector2 movement);
+    void update_sensors(const std::vector<int> &distances, int track_width);
+    bool check_collision(const std::vector<int> &distances, int track_width);
 };

@@ -10,10 +10,14 @@ Track1::Track1()
     set_distances(Color(110, 110, 110, 255));
 }
 
+void Track1::reset()
+{}
+
+
 Vector3 Track1::get_car_start()
 {
     const int x = GetRandomValue(1838, 1959);
-    constexpr int y = 882;
+    constexpr int y = 867;
     constexpr float angle = 270;
     return Vector3(x, y, angle);
 }
