@@ -95,11 +95,13 @@ void RaceTopDown::draw()
 {
     BeginDrawing();
     ClearBackground(BLACK);
+    BeginMode2D(camera);
     tracks[current_track]->draw(camera);
     for (auto &car: cars)
     {
         car.draw(camera, best_car_index);
     }
+    EndMode2D();
     EndDrawing();
 }
 

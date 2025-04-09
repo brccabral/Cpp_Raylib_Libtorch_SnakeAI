@@ -24,15 +24,12 @@ Vector3 Track1::get_car_start()
 
 void Track1::draw(const Camera2D &camera)
 {
-    BeginMode2D(camera);
     DrawTexture(texture, 0, 0, WHITE);
 
     if (IsKeyDown(KEY_M))
     {
         draw_distances(camera);
     }
-
-    EndMode2D();
 }
 
 void Track1::draw_distances(const Camera2D &camera)

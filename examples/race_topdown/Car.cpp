@@ -22,7 +22,6 @@ Car::Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t i
 
 void Car::draw(const Camera2D &camera, size_t best_index) const
 {
-    BeginMode2D(camera);
     if (index == best_index)
     {
         DrawCircle(position.x, position.y, 30, Color(88, 88, 88, 80));
@@ -45,8 +44,6 @@ void Car::draw(const Camera2D &camera, size_t best_index) const
             DrawLineV(position, sensor_position, BLUE);
         }
     }
-
-    EndMode2D();
 }
 
 void Car::apply_action(car_actions_t action, int track_width, int track_height)
