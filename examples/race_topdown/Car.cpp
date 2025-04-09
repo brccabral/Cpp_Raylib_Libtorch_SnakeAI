@@ -173,6 +173,7 @@ void Car::reset()
     speed = 0;
     angle = 0;
     advance_timeout = ADVANCE_TIMEOUT;
+    max_distance = 0;
 
     position = Vector2(0, 0);
 
