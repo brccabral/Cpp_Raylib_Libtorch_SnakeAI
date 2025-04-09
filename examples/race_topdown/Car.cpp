@@ -133,7 +133,19 @@ void Car::update_sensors(const Distances &distances)
     {
         Vector2 sensor_position = position;
         const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
-        const auto step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD));
+
+        Vector2 sensor_direction = Vector2(cosf(sensor_angle), sinf(sensor_angle));
+
+        Vector2 step;
+        step.x = sensor_direction.x == 0 ? 1e30f : abs(1 / sensor_direction.x);
+        step.y = sensor_direction.y == 0 ? 1e30f : abs(1 / sensor_direction.y);
+
+        Vector2 inner_depth;
+        inner_depth.x = sensor_direction.x > 0 ? ceilf(sensor_position.x) - sensor_position.x
+                                               : sensor_position.x - floorf(sensor_position.x);
+        inner_depth.y = sensor_direction.y > 0 ? ceilf(sensor_position.y) - sensor_position.y
+                                               : sensor_position.y - floorf(sensor_position.y);
+
         while (true)
         {
             if (distances(sensor_position.x, sensor_position.y) == 0)
@@ -141,8 +153,17 @@ void Car::update_sensors(const Distances &distances)
                 sensors_distance[i] = Vector2Distance(position, sensor_position);
                 break;
             }
-            sensor_position.x += step.x;
-            sensor_position.y += step.y;
+
+            if (inner_depth.x < inner_depth.y)
+            {
+                sensor_position += sensor_direction * inner_depth.x;
+                inner_depth.x += step.x;
+            }
+            else
+            {
+                sensor_position += sensor_direction * inner_depth.y;
+                inner_depth.y += step.y;
+            }
         }
     }
 }
