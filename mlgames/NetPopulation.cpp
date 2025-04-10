@@ -1,4 +1,3 @@
-#include <iostream>
 #include <random>
 #include <mlgames/NetPopulation.h>
 
@@ -45,16 +44,6 @@ void NetPopulation::apply_mutations(std::array<size_t, 2> best_indexes)
     mutation_rate = std::max(mutation_rate_lower, mutation_rate);
 
     members = std::move(new_members);
-}
-
-void some()
-{
-    Eigen::Matrix<float, 5, 6> mat;
-    mat.setRandom(); // fill with random values for example
-
-    // Get a block: all rows, columns 2 to 4 (3 columns total)
-    Eigen::Matrix<float, 5, 3> slice = mat.block<5, 3>(0, 2);
-    std::cout << slice << "\n";
 }
 
 void NetPopulation::crossover(const NetGen &parent1, const NetGen &parent2, NetGen &child)
@@ -130,7 +119,7 @@ void mutate_vector(MLVector &input, double mutation_rate)
 
 void NetPopulation::mutate(NetGen &net) const
 {
-    for (auto h = 0; h < net.ml_count_hidden; ++h)
+    for (size_t h = 0; h < net.ml_count_hidden; ++h)
     {
         mutate_matrix(net.ml_hidden_w[h], mutation_rate);
         mutate_vector(net.ml_hidden_b[h], mutation_rate);
