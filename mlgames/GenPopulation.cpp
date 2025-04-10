@@ -72,7 +72,7 @@ void GenPopulation::mutate(const LinearGen &net) const
     {
         auto data = parameter.data();
         // mask = random select what values to change, mutation_rate reduces with each generation
-        auto mask = torch::rand_like(data) < mutation_rate;
+        auto mask = torch::rand_like(data).abs() < mutation_rate;
         auto condition = torch::randint_like(data, 0, 2);
         // mask_0 = replaces values
         auto mask_0 = (condition == 0) & mask;
