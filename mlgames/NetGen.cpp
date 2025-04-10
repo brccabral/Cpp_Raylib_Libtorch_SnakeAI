@@ -162,9 +162,8 @@ MLMatrix relu(const MLMatrix &m)
 
 MLMatrix softmax(const MLMatrix &m)
 {
-    MLMatrix e = (m.rowwise() - m.colwise().maxCoeff()).array().exp();
-    e = e.array().rowwise() / e.array().colwise().sum();
-    return e;
+    MLMatrix e = (m - m.colwise().maxCoeff().replicate(m.rows(), 1)).array().exp();
+    return e.array().rowwise() / e.array().colwise().sum();
 }
 
 NetGen NetGen::clone() const
