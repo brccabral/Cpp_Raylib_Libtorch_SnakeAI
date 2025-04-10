@@ -5,9 +5,18 @@
 #include "RaceTopDown.h"
 
 
+#define NET_LIB_TORCH 1
+#define NET_LIB_EIGEN 2
+#define NET_LIB NET_LIB_EIGEN
+
 #if !MANUAL
+#if NET_LIB == NET_LIB_TORCH
 #include <mlgames/GenPopulation.h>
 #include <mlgames/LinearGen.h>
+#else
+#include <mlgames/NetGen.h>
+#include <mlgames/NetPopulation.h>
+#endif
 #endif
 
 #define do_shift(argc, argv)                                                                       \
@@ -27,17 +36,6 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
 #if !MANUAL
-    c10::DeviceType device = torch::kCPU;
-    if (torch::cuda::is_available())
-    {
-        printf("Using CUDA\n");
-        device = torch::kCUDA;
-    }
-    else
-    {
-        printf("Using CPU\n");
-        device = torch::kCPU;
-    }
 
     const char *net_filename = NULL;
     while (argc > 1)
@@ -50,6 +48,21 @@ int main(int argc, char *argv[])
         }
         do_shift(argc, argv);
     }
+
+#if NET_LIB == NET_LIB_TORCH
+    c10::DeviceType device = torch::kCPU;
+    if (torch::cuda::is_available())
+    {
+        printf("Using CUDA\n");
+        device = torch::kCUDA;
+    }
+    else
+    {
+        printf("Using CPU\n");
+        device = torch::kCPU;
+    }
+
+#endif
 #endif
 
     constexpr int hidden_layer_1 = 8;
@@ -72,6 +85,7 @@ int main(int argc, char *argv[])
 
 #if !MANUAL
         size_t generation = 0;
+#if NET_LIB == NET_LIB_TORCH
 
         auto net = LinearGen(
                 RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
@@ -85,6 +99,13 @@ int main(int argc, char *argv[])
         auto population = GenPopulation(num_cars, 0.9, 0.05, net);
 
         torch::NoGradGuard no_grad;
+#else
+        auto net =
+                NetGen(RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
+                       std::vector<size_t>{hidden_layer_1});
+        auto population = NetPopulation(num_cars, 0.9, 0.05, net);
+
+#endif
 #endif
 
         while (!WindowShouldClose())
@@ -132,12 +153,24 @@ int main(int argc, char *argv[])
                     continue;
                 }
                 std::vector<float> inputs = game.get_state(i);
+#if NET_LIB == NET_LIB_TORCH
                 torch::Tensor x = torch::tensor(inputs, torch::kFloat)
                                           .reshape({1, (long) RaceTopDown::get_state_size()});
                 x.to(device);
                 auto actions = population.members[i]->forward(x);
                 auto action = torch::argmax(actions).item().toInt();
                 game.apply_action(i, action);
+#else
+                std::vector<double> input_double(inputs.size());
+                for (size_t j = 0; j < inputs.size(); ++j)
+                {
+                    input_double[j] = inputs[j];
+                }
+                Eigen::Map<MLMatrix> x(input_double.data(), 1, RaceTopDown::get_state_size());
+                population.members[i].forward(x, true);
+                auto action = population.members[i].get_output_index(0, true);
+                game.apply_action(i, action);
+#endif
             }
 #endif
 
@@ -154,7 +187,9 @@ int main(int argc, char *argv[])
                 printf("Generation %zu Distance: %d Dead: %zu Record %.0f\n", generation,
                        game.max_distance, game.num_dead, record);
                 ++generation;
+#if NET_LIB == NET_LIB_TORCH
                 save_model<>(population.members[game.best_car_index]);
+#endif
                 population.apply_mutations(game.select_best_cars());
 #endif
                 game.reset();

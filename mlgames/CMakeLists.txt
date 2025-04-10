@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.27)
 project(MLGamesLib)
 
 find_package(Torch REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 add_library(mlgames STATIC)
 add_library(mlgames::mlgames ALIAS mlgames)
@@ -20,4 +21,19 @@ target_sources(mlgames
 
 target_compile_features(mlgames PUBLIC cxx_std_20)
 
+target_include_directories(mlgames PUBLIC ${EIGEN3_INCLUDE_DIRS})
+
 target_link_libraries(mlgames PUBLIC ${TORCH_LIBRARIES})
+
+function(print_cmake_variables_matching pattern)
+    get_cmake_property(_variableNames VARIABLES)
+    string(TOLOWER "${pattern}" pattern_lower)
+    foreach (_variableName ${_variableNames})
+        string(TOLOWER "${_variableName}" variable_lower)
+        if (variable_lower MATCHES "${pattern_lower}")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif ()
+    endforeach ()
+endfunction()
+
+print_cmake_variables_matching("^eigen")
