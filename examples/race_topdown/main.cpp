@@ -7,15 +7,20 @@
 
 #define NET_LIB_TORCH 1
 #define NET_LIB_EIGEN 2
-#define NET_LIB NET_LIB_EIGEN
+#define NET_LIB_DNA 3
+
+#define NET_LIB NET_LIB_DNA
 
 #if !MANUAL
-#if NET_LIB == NET_LIB_TORCH
+#if (NET_LIB == NET_LIB_TORCH)
 #include <mlgames/GenPopulation.h>
 #include <mlgames/LinearGen.h>
-#else
+#elif (NET_LIB == NET_LIB_EIGEN)
 #include <mlgames/NetGen.h>
 #include <mlgames/NetPopulation.h>
+#elif (NET_LIB == NET_LIB_DNA)
+#include <mlgames/NetDNA.h>
+#include <mlgames/PopulationDNA.h>
 #endif
 #endif
 
@@ -99,12 +104,16 @@ int main(int argc, char *argv[])
         auto population = GenPopulation(num_cars, 0.9, 0.05, net);
 
         torch::NoGradGuard no_grad;
-#else
+#elif (NET_LIB == NET_LIB_EIGEN)
         auto net =
                 NetGen(RaceTopDown::get_state_size(), Car::get_action_count(),
                        std::vector<size_t>{hidden_layer_1});
         auto population = NetPopulation(num_cars, 0.9, 0.05, net);
-
+#elif (NET_LIB == NET_LIB_DNA)
+        auto net =
+                NetDNA(1, RaceTopDown::get_state_size(), hidden_layer_1, Car::get_action_count());
+        auto population = PopulationDNA(num_cars, 0.9, 0.05, net);
+        float *actions = new float[Car::get_action_count()];
 #endif
 #endif
 
@@ -144,7 +153,6 @@ int main(int argc, char *argv[])
             {
                 action = action | Car::CAR_ACTION_RIGHT;
             }
-            game.apply_action(0, action);
 #else
             for (size_t i = 0; i < num_cars; ++i)
             {
@@ -153,12 +161,12 @@ int main(int argc, char *argv[])
                     continue;
                 }
                 std::vector<float> inputs = game.get_state(i);
+                int action = 0;
 #if NET_LIB == NET_LIB_TORCH
                 torch::Tensor x = torch::tensor(inputs, torch::kFloat)
                                           .reshape({1, (long) RaceTopDown::get_state_size()});
                 x.to(device);
                 auto actions = population.members[i]->forward(x);
-                int action = 0;
                 if (actions[0][0].item<float>() > 0)
                 {
                     action = action | Car::CAR_ACTION_LEFT;
@@ -175,8 +183,7 @@ int main(int argc, char *argv[])
                 {
                     action = action | Car::CAR_ACTION_BREAK;
                 }
-                game.apply_action(i, action);
-#else
+#elif (NET_LIB == NET_LIB_EIGEN)
                 std::vector<double> input_double(inputs.size());
                 for (size_t j = 0; j < inputs.size(); ++j)
                 {
@@ -184,7 +191,6 @@ int main(int argc, char *argv[])
                 }
                 Eigen::Map<MLMatrix> x(input_double.data(), 1, RaceTopDown::get_state_size());
                 auto actions = population.members[i].forward(x, true);
-                int action = 0;
                 if (actions[0] > 0)
                 {
                     action = action | Car::CAR_ACTION_LEFT;
@@ -201,8 +207,26 @@ int main(int argc, char *argv[])
                 {
                     action = action | Car::CAR_ACTION_BREAK;
                 }
-                game.apply_action(i, action);
+#elif (NET_LIB == NET_LIB_DNA)
+                population.members[i].forward(inputs.data(), actions);
+                if (actions[0] > 0)
+                {
+                    action = action | Car::CAR_ACTION_LEFT;
+                }
+                if (actions[1] > 0)
+                {
+                    action = action | Car::CAR_ACTION_RIGHT;
+                }
+                if (actions[2] > 0)
+                {
+                    action = action | Car::CAR_ACTION_ACCELERATE;
+                }
+                if (actions[3] > 0)
+                {
+                    action = action | Car::CAR_ACTION_BREAK;
+                }
 #endif
+                game.apply_action(i, action);
             }
 #endif
 
@@ -232,6 +256,9 @@ int main(int argc, char *argv[])
                 break;
             }
         }
+#if (NET_LIB == NET_LIB_DNA)
+        delete[] actions;
+#endif
     }
     CloseWindow();
 }
