@@ -11,5 +11,6 @@ public:
             size_t input_size_, size_t output_size_, const std::vector<size_t> &hidden_sizes_);
     torch::Tensor forward(const torch::Tensor &x) override;
     LinearGen clone() const;
+    void mutate(double mutation_rate) const;
 };
 TORCH_MODULE(LinearGen);

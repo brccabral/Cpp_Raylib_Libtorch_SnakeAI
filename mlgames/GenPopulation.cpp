@@ -18,7 +18,7 @@ GenPopulation::GenPopulation(
         auto clone = net->clone();
         if (i > 0)
         {
-            mutate(clone);
+            clone->mutate(mutation_rate);
         }
         members.push_back(clone);
     }
@@ -35,7 +35,7 @@ void GenPopulation::apply_mutations(std::array<size_t, 2> best_indexes)
     {
         auto child = members[best_indexes[0]]->clone();
         crossover(members[best_indexes[0]], members[best_indexes[1]], child);
-        mutate(child);
+        child->mutate(mutation_rate);
         new_members.push_back(child);
     }
 
@@ -64,27 +64,4 @@ void GenPopulation::crossover(
     child->output->weight.slice(1, 0, split) = o2_weights.slice(1, 0, split);
     child->output->weight.slice(1, split, o1_weights.size(1)) =
             o2_weights.slice(1, split, o2_weights.size(1));
-}
-
-void GenPopulation::mutate(const LinearGen &net) const
-{
-    for (auto &parameter: net->parameters())
-    {
-        auto data = parameter.data();
-        // mask = random select what values to change, mutation_rate reduces with each generation
-        auto mask = torch::rand_like(data).abs() < mutation_rate;
-        auto condition = torch::randint_like(data, 0, 2);
-        // mask_0 = replaces values
-        auto mask_0 = (condition == 0) & mask;
-        // mask_1 = multiplies current value
-        auto mask_1 = (condition == 1) & mask;
-        // mask_2 = sum values
-        auto mask_2 = (condition == 2) & mask;
-        // new values (replace, multiply or sum)
-        auto mutation_values = torch::rand_like(data) * 2 - 1;
-
-        data.masked_scatter_(mask_0, mutation_values);
-        data = (data - data * mask_1) + ((data * mutation_values) * mask_1);
-        data = (data + mask_2 * mutation_values).clamp(-1, 1);
-    }
 }

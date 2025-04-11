@@ -21,6 +21,7 @@ public:
 
     MLVector forward(const MLMatrix &X, bool guard);
     NetGen clone() const;
+    void mutate(double mutation_rate);
 
     size_t ml_input_size{};
     size_t ml_output_size{};

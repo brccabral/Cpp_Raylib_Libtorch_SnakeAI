@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <random>
 #include <mlgames/NetDNA.h>
 
@@ -285,4 +286,102 @@ NetDNA NetDNA::clone() const
     clone_Layer(output, result.output);
 
     return result;
+}
+
+
+void NetDNA::mutate(double mutation_rate) const
+{
+    // find size of DNA weights
+    int size_dna = 0;
+    for (int h = 0; h < count_hidden; h++)
+    {
+        for (auto n = 0; n < hidden[h].count_neurons; ++n)
+        {
+            size_dna += hidden[h].neurons[n].count_weights;
+        }
+    }
+    for (auto n = 0; n < output.count_neurons; ++n)
+    {
+        size_dna += output.neurons[n].count_weights;
+    }
+
+    // copy weights into DNA
+    auto *dna = new float[size_dna];
+    int d = 0;
+    for (auto h = 0; h < count_hidden; ++h)
+    {
+        for (int n = 0; n < hidden[h].count_neurons; n++)
+        {
+            for (int w = 0; w < hidden[h].neurons[n].count_weights; w++)
+            {
+                dna[d++] = hidden[h].neurons[n].weights[n];
+            }
+        }
+    }
+    for (int n = 0; n < output.count_neurons; n++)
+    {
+        for (int w = 0; w < output.neurons[n].count_weights; w++)
+        {
+            dna[d++] = output.neurons[n].weights[n];
+        }
+    }
+    assert(d == size_dna);
+
+    // mutate randomly
+    const auto count_mutations = size_dna * mutation_rate;
+    for (auto m = 0; m < count_mutations; m++)
+    {
+        const int type = std::uniform_int_distribution<int>(0, 2)(gen);
+        const int index = std::uniform_int_distribution<int>(0, size_dna)(gen);
+        switch (type)
+        {
+            // replace
+            case 0:
+            {
+                dna[index] = rand_weight(gen);
+                break;
+            }
+            // multiply
+            case 1:
+            {
+                dna[index] *= rand_weight(gen);
+                break;
+            }
+            // sum, clamp
+            case 2:
+            {
+                dna[index] += rand_weight(gen);
+                dna[index] = std::min(std::max(dna[index], -1.0f), 1.0f);
+                break;
+            }
+            default:
+            {
+                (void) fprintf(stderr, "ERROR: Wrong random type.\n");
+                break;
+            }
+        }
+    }
+
+    // copy back
+    d = 0;
+    for (auto h = 0; h < count_hidden; ++h)
+    {
+        for (int n = 0; n < hidden[h].count_neurons; n++)
+        {
+            for (int w = 0; w < hidden[h].neurons[n].count_weights; w++)
+            {
+                hidden[h].neurons[n].weights[n] = dna[d++];
+            }
+        }
+    }
+    for (int n = 0; n < output.count_neurons; n++)
+    {
+        for (int w = 0; w < output.neurons[n].count_weights; w++)
+        {
+            output.neurons[n].weights[n] = dna[d++];
+        }
+    }
+    assert(d == size_dna);
+
+    delete[] dna;
 }

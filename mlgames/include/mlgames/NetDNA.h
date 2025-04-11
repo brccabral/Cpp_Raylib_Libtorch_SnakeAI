@@ -53,6 +53,7 @@ public:
 
     void forward(const float *inputs_, float *result);
     NetDNA clone() const;
+    void mutate(double mutation_rate) const;
 
     Layer input{};
     Layer output{};

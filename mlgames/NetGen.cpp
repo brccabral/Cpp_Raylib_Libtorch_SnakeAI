@@ -177,3 +177,60 @@ NetGen NetGen::clone() const
 
     return result;
 }
+
+void mutate_matrix(MLMatrix &input, double mutation_rate)
+{
+    MLMatrix prob = MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); })
+                            .cwiseAbs();
+    MLMatrix mask = (prob.array() < mutation_rate).cast<double>();
+
+    Eigen::MatrixXi condition =
+            Eigen::MatrixXi::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
+    condition = condition.cwiseAbs();
+    condition = (condition * 3).array().unaryExpr([](const auto &val) { return val % 3; });
+
+    MLMatrix mask_0 = (condition.array() == 0).cast<double>();
+    MLMatrix mask_1 = (condition.array() == 1).cast<double>();
+    MLMatrix mask_2 = (condition.array() == 2).cast<double>();
+
+    MLMatrix mutation_values =
+            MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
+    input = input.array() * (1 - mask_0.array()) + mutation_values.array() * mask_0.array();
+    input = (input.array() - input.array() * mask_1.array()) +
+            (input.array() * mutation_values.array() * mask_1.array());
+    input = (input.array() + mask_2.array() * mutation_values.array()).min(1.0).max(-1.0);
+}
+
+void mutate_vector(MLVector &input, double mutation_rate)
+{
+    MLMatrix prob = MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); })
+                            .cwiseAbs();
+    MLMatrix mask = (prob.array() < mutation_rate).cast<double>();
+
+    Eigen::MatrixXi condition =
+            Eigen::MatrixXi::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
+    condition = condition.cwiseAbs();
+    condition = condition.array().unaryExpr([](const auto &val) { return val % 3; });
+
+    MLMatrix mask_0 = (condition.array() == 0).cast<double>();
+    MLMatrix mask_1 = (condition.array() == 1).cast<double>();
+    MLMatrix mask_2 = (condition.array() == 2).cast<double>();
+
+    MLMatrix mutation_values =
+            MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
+    input = input.array() * (1 - mask_0.array()) + mutation_values.array() * mask_0.array();
+    input = (input.array() - input.array() * mask_1.array()) +
+            (input.array() * mutation_values.array() * mask_1.array());
+    input = (input.array() + mask_2.array() * mutation_values.array()).min(1.0).max(-1.0);
+}
+
+void NetGen::mutate(double mutation_rate)
+{
+    for (size_t h = 0; h < ml_count_hidden; ++h)
+    {
+        mutate_matrix(ml_hidden_w[h], mutation_rate);
+        mutate_vector(ml_hidden_b[h], mutation_rate);
+    }
+    mutate_matrix(ml_output_w, mutation_rate);
+    mutate_vector(ml_output_b, mutation_rate);
+}

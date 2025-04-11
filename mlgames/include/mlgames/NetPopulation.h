@@ -20,5 +20,4 @@ private:
     double mutation_rate_lower{};
 
     static void crossover(const NetGen &parent1, const NetGen &parent2, NetGen &child);
-    void mutate(NetGen &net) const;
 };

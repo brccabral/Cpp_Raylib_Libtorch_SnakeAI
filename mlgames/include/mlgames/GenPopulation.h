@@ -22,5 +22,4 @@ private:
 
     static void
     crossover(const LinearGen &parent1, const LinearGen &parent2, const LinearGen &child);
-    void mutate(const LinearGen &net) const;
 };

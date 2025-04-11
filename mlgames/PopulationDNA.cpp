@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <random>
 #include <mlgames/PopulationDNA.h>
 
@@ -20,7 +19,7 @@ PopulationDNA::PopulationDNA(
         auto clone = net.clone();
         if (i > 0)
         {
-            mutate(clone);
+            clone.mutate(mutation_rate);
         }
         members.push_back(clone);
     }
@@ -37,7 +36,7 @@ void PopulationDNA::apply_mutations(std::array<size_t, 2> best_indexes)
     {
         auto child = members[best_indexes[0]].clone();
         crossover(members[best_indexes[0]], members[best_indexes[1]], child);
-        mutate(child);
+        child.mutate(mutation_rate);
         new_members.push_back(child);
     }
 
@@ -75,101 +74,4 @@ void PopulationDNA::crossover(const NetDNA &parent1, const NetDNA &parent2, NetD
     {
         child.output.neurons[n] = h2_weights[n];
     }
-}
-
-void PopulationDNA::mutate(NetDNA &net) const
-{
-    // find size of DNA weights
-    int size_dna = 0;
-    for (int h = 0; h < net.count_hidden; h++)
-    {
-        for (auto n = 0; n < net.hidden[h].count_neurons; ++n)
-        {
-            size_dna += net.hidden[h].neurons[n].count_weights;
-        }
-    }
-    for (auto n = 0; n < net.output.count_neurons; ++n)
-    {
-        size_dna += net.output.neurons[n].count_weights;
-    }
-
-    // copy weights into DNA
-    auto *dna = new float[size_dna];
-    int d = 0;
-    for (auto h = 0; h < net.count_hidden; ++h)
-    {
-        for (int n = 0; n < net.hidden[h].count_neurons; n++)
-        {
-            for (int w = 0; w < net.hidden[h].neurons[n].count_weights; w++)
-            {
-                dna[d++] = net.hidden[h].neurons[n].weights[n];
-            }
-        }
-    }
-    for (int n = 0; n < net.output.count_neurons; n++)
-    {
-        for (int w = 0; w < net.output.neurons[n].count_weights; w++)
-        {
-            dna[d++] = net.output.neurons[n].weights[n];
-        }
-    }
-    assert(d == size_dna);
-
-    // mutate randomly
-    const auto count_mutations = size_dna * mutation_rate;
-    for (auto m = 0; m < count_mutations; m++)
-    {
-        const int type = std::uniform_int_distribution<int>(0, 2)(gen);
-        const int index = std::uniform_int_distribution<int>(0, size_dna)(gen);
-        switch (type)
-        {
-            // replace
-            case 0:
-            {
-                dna[index] = rand_weight(gen);
-                break;
-            }
-            // multiply
-            case 1:
-            {
-                dna[index] *= rand_weight(gen);
-                break;
-            }
-            // sum, clamp
-            case 2:
-            {
-                dna[index] += rand_weight(gen);
-                dna[index] = std::min(std::max(dna[index], -1.0f), 1.0f);
-                break;
-            }
-            default:
-            {
-                (void) fprintf(stderr, "ERROR: Wrong random type.\n");
-                break;
-            }
-        }
-    }
-
-    // copy back
-    d = 0;
-    for (auto h = 0; h < net.count_hidden; ++h)
-    {
-        for (int n = 0; n < net.hidden[h].count_neurons; n++)
-        {
-            for (int w = 0; w < net.hidden[h].neurons[n].count_weights; w++)
-            {
-                net.hidden[h].neurons[n].weights[n] = dna[d++];
-            }
-        }
-    }
-    for (int n = 0; n < net.output.count_neurons; n++)
-    {
-        for (int w = 0; w < net.output.neurons[n].count_weights; w++)
-        {
-            net.output.neurons[n].weights[n] = dna[d++];
-        }
-    }
-    assert(d == size_dna);
-
-    delete[] dna;
 }
