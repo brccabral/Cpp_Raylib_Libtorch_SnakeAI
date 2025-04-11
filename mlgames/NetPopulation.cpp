@@ -1,9 +1,9 @@
 #include <random>
 #include <mlgames/NetPopulation.h>
 
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<float> mutation_dist(-0.1, 0.1);
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
 NetPopulation::NetPopulation(
         size_t population_size_, double mutation_rate_, double mutation_rate_lower_,
@@ -79,10 +79,12 @@ void NetPopulation::crossover(const NetGen &parent1, const NetGen &parent2, NetG
 
 void mutate_matrix(MLMatrix &input, double mutation_rate)
 {
-    MLMatrix prob = MLMatrix::Random(input.rows(), input.cols()).cwiseAbs();
+    MLMatrix prob = MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); })
+                            .cwiseAbs();
     MLMatrix mask = (prob.array() < mutation_rate).cast<double>();
 
-    Eigen::MatrixXi condition = Eigen::MatrixXi::Random(input.rows(), input.cols());
+    Eigen::MatrixXi condition =
+            Eigen::MatrixXi::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
     condition = condition.cwiseAbs();
     condition = (condition * 3).array().unaryExpr([](const auto &val) { return val % 3; });
 
@@ -90,7 +92,8 @@ void mutate_matrix(MLMatrix &input, double mutation_rate)
     MLMatrix mask_1 = (condition.array() == 1).cast<double>();
     MLMatrix mask_2 = (condition.array() == 2).cast<double>();
 
-    MLMatrix mutation_values = MLMatrix::Random(input.rows(), input.cols());
+    MLMatrix mutation_values =
+            MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
     input = input.array() * (1 - mask_0.array()) + mutation_values.array() * mask_0.array();
     input = (input.array() - input.array() * mask_1.array()) +
             (input.array() * mutation_values.array() * mask_1.array());
@@ -99,10 +102,12 @@ void mutate_matrix(MLMatrix &input, double mutation_rate)
 
 void mutate_vector(MLVector &input, double mutation_rate)
 {
-    MLMatrix prob = MLMatrix::Random(input.rows(), input.cols()).cwiseAbs();
+    MLMatrix prob = MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); })
+                            .cwiseAbs();
     MLMatrix mask = (prob.array() < mutation_rate).cast<double>();
 
-    Eigen::MatrixXi condition = Eigen::MatrixXi::Random(input.rows(), input.cols());
+    Eigen::MatrixXi condition =
+            Eigen::MatrixXi::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
     condition = condition.cwiseAbs();
     condition = condition.array().unaryExpr([](const auto &val) { return val % 3; });
 
@@ -110,7 +115,8 @@ void mutate_vector(MLVector &input, double mutation_rate)
     MLMatrix mask_1 = (condition.array() == 1).cast<double>();
     MLMatrix mask_2 = (condition.array() == 2).cast<double>();
 
-    MLMatrix mutation_values = MLMatrix::Random(input.rows(), input.cols());
+    MLMatrix mutation_values =
+            MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
     input = input.array() * (1 - mask_0.array()) + mutation_values.array() * mask_0.array();
     input = (input.array() - input.array() * mask_1.array()) +
             (input.array() * mutation_values.array() * mask_1.array());

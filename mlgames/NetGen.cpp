@@ -1,5 +1,9 @@
-#include <ATen/core/interned_strings.h>
+#include <random>
 #include <mlgames/NetGen.h>
+
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
 NetGen::NetGen(size_t input_size_, size_t output_size_, const std::vector<size_t> &hidden_sizes_)
 {
@@ -93,16 +97,16 @@ void NetGen::setup()
     {
         current = hidden_sizes[i];
         ml_hidden_w[i].resize(current, prev);
-        ml_hidden_w[i] = MLMatrix::Random(current, prev);
+        ml_hidden_w[i] = MLMatrix::NullaryExpr(current, prev, [&]() { return dist(gen); });
         ml_hidden_w[i] = ml_hidden_w[i].array() / 2.0F;
         ml_hidden_b[i].resize(current);
-        ml_hidden_b[i] = MLVector::Random(current);
+        ml_hidden_b[i] = MLVector::NullaryExpr(current, [&]() { return dist(gen); });
         ml_hidden_b[i] = ml_hidden_b[i].array() / 2.0F;
         prev = current;
     }
-    ml_output_w = MLMatrix::Random(ml_output_size, current);
+    ml_output_w = MLMatrix::NullaryExpr(ml_output_size, current, [&]() { return dist(gen); });
     ml_output_w = ml_output_w.array() / 2.0F;
-    ml_output_b = MLVector::Random(ml_output_size);
+    ml_output_b = MLVector::NullaryExpr(ml_output_size, [&]() { return dist(gen); });
     ml_output_b = ml_output_b.array() / 2.0F;
 }
 
