@@ -50,31 +50,31 @@ void Car::apply_action(car_actions_t action, int track_width, int track_height)
     float delta_angle = 0;
     if (action & CAR_ACTION_LEFT)
     {
-        delta_angle = -0.3;
+        delta_angle = -5.0;
     }
     if (action & CAR_ACTION_RIGHT)
     {
-        delta_angle = 0.3;
+        delta_angle = 5.0;
     }
     if (action & CAR_ACTION_ACCELERATE)
     {
-        speed += 0.1;
+        speed += 0.2;
     }
     if (action & CAR_ACTION_BREAK)
     {
-        speed -= 0.1;
+        speed -= 0.2;
     }
 
-    speed = std::min(std::max(speed, -1.0f), 1.0f);
+    speed = std::max(speed, -4.0f);
 
     // TODO drag/boost
     if (speed > 0)
     {
-        speed -= 0.005;
+        speed -= 0.1;
     }
     else if (speed < 0)
     {
-        speed += 0.005;
+        speed += 0.1;
     }
 
     if (std::abs(speed) < 0.001)
@@ -83,7 +83,6 @@ void Car::apply_action(car_actions_t action, int track_width, int track_height)
     }
 
     rotate(delta_angle);
-    angle += delta_angle;
 
     Vector2 direction;
     direction.x = cosf(angle * DEG2RAD) * speed;
@@ -91,11 +90,7 @@ void Car::apply_action(car_actions_t action, int track_width, int track_height)
 
     translate(direction);
 
-    if (position.x < 0 || position.x > track_width)
-    {
-        translate(direction * -1);
-    }
-    if (position.y < 0 || position.y > track_height)
+    if (position.x < 0 || position.x > track_width || position.y < 0 || position.y > track_height)
     {
         translate(direction * -1);
     }
@@ -106,7 +101,6 @@ void Car::set_position(int x, int y, float angle_)
     const Vector2 direction = Vector2(x, y) - position;
     rotate(angle_ - angle);
     translate(direction);
-    angle = angle_;
 }
 
 void Car::rotate(float delta_angle)
@@ -116,6 +110,7 @@ void Car::rotate(float delta_angle)
     {
         corner = Vector2Rotate(corner - position, rad) + position;
     }
+    angle += delta_angle;
 }
 
 void Car::translate(Vector2 movement)
