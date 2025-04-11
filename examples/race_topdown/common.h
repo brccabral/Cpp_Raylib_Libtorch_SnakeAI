@@ -22,7 +22,8 @@ class Distances
 public:
 
     Distances() = default;
-    Distances(int width_, int height_);
+    ~Distances();
+    void init(int width_, int height_);
     int operator[](Vector2 pt) const;
     int &operator[](Vector2 pt);
     int operator()(int y, int x) const;

@@ -19,7 +19,6 @@ Track::Track() = default;
 
 Track::~Track()
 {
-    delete[] distances.values;
     UnloadTexture(texture);
 }
 
@@ -28,7 +27,7 @@ void Track::set_distances(Color track_color)
     const Image image = LoadImage(file);
     texture = LoadTextureFromImage(image);
 
-    distances = Distances(image.width, image.height);
+    distances.init(image.width, image.height);
 
     std::list<DistanceLoc> nodes;
     nodes.emplace_back(start, 1);

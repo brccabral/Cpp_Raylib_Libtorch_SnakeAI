@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cmath>
 #include "common.h"
 #include <rlgl.h>
@@ -91,29 +92,43 @@ bool operator==(const Vector2 &lhs, const Vector2 &rhs)
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
-Distances::Distances(int width_, int height_)
+void Distances::init(int width_, int height_)
 {
     width = width_;
     height = height_;
     values = new int[width * height];
 }
 
+Distances::~Distances()
+{
+    delete[] values;
+}
+
+
 int Distances::operator[](Vector2 pt) const
 {
+    assert(pt.x < width);
+    assert(pt.y < height);
     return values[int(pt.y) * width + int(pt.x)];
 }
 
 int &Distances::operator[](Vector2 pt)
 {
+    assert(pt.x < width);
+    assert(pt.y < height);
     return values[int(pt.y) * width + int(pt.x)];
 }
 
 int Distances::operator()(int y, int x) const
 {
+    assert(x < width);
+    assert(y < height);
     return values[y * width + x];
 }
 
 int &Distances::operator()(int y, int x)
 {
+    assert(x < width);
+    assert(y < height);
     return values[y * width + x];
 }

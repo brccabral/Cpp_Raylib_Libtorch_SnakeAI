@@ -39,7 +39,8 @@ void Track1::draw_distances(const Camera2D &camera)
         for (auto c = 0; c < GetScreenWidth(); ++c)
         {
             auto world = GetScreenToWorld2D(Vector2(c, r), camera);
-            if (world.x < 0 || world.y < 0 || world.x > texture.width || world.y > texture.height)
+            if (world.x < 0 || world.y < 0 || world.x > texture.width - 1 ||
+                world.y > texture.height - 1)
             {
                 continue;
             }
