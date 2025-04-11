@@ -73,6 +73,7 @@ Layer::Layer() = default;
 
 Layer::Layer(int count_neurons_, int count_weights_)
 {
+    assert(count_neurons_);
     count_neurons = count_neurons_;
     neurons = new Neuron[count_neurons];
     for (int i = 0; i < count_neurons; i++)
@@ -314,7 +315,7 @@ void NetDNA::mutate(double mutation_rate) const
         {
             for (int w = 0; w < hidden[h].neurons[n].count_weights; w++)
             {
-                dna[d++] = hidden[h].neurons[n].weights[n];
+                dna[d++] = hidden[h].neurons[n].weights[w];
             }
         }
     }
@@ -322,7 +323,7 @@ void NetDNA::mutate(double mutation_rate) const
     {
         for (int w = 0; w < output.neurons[n].count_weights; w++)
         {
-            dna[d++] = output.neurons[n].weights[n];
+            dna[d++] = output.neurons[n].weights[w];
         }
     }
     assert(d == size_dna);
@@ -370,7 +371,7 @@ void NetDNA::mutate(double mutation_rate) const
         {
             for (int w = 0; w < hidden[h].neurons[n].count_weights; w++)
             {
-                hidden[h].neurons[n].weights[n] = dna[d++];
+                hidden[h].neurons[n].weights[w] = dna[d++];
             }
         }
     }
@@ -378,7 +379,7 @@ void NetDNA::mutate(double mutation_rate) const
     {
         for (int w = 0; w < output.neurons[n].count_weights; w++)
         {
-            output.neurons[n].weights[n] = dna[d++];
+            output.neurons[n].weights[w] = dna[d++];
         }
     }
     assert(d == size_dna);
