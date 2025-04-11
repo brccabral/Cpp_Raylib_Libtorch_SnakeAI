@@ -12,7 +12,7 @@
 
 #if !MANUAL
 
-#define NET_LIB NET_LIB_DNA
+#define NET_LIB NET_LIB_EIGEN
 
 #if (NET_LIB == NET_LIB_TORCH)
 #include <mlgames/GenPopulation.h>

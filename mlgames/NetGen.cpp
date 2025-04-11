@@ -4,6 +4,7 @@
 static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<double> dist(-1.0, 1.0);
+static std::uniform_int_distribution<int> rand_0_2(0, 2);
 
 NetGen::NetGen(size_t input_size_, size_t output_size_, const std::vector<size_t> &hidden_sizes_)
 {
@@ -184,14 +185,13 @@ void mutate_matrix(MLMatrix &input, double mutation_rate)
                             .cwiseAbs();
     MLMatrix mask = (prob.array() < mutation_rate).cast<double>();
 
-    Eigen::MatrixXi condition =
-            Eigen::MatrixXi::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
+    Eigen::MatrixXi condition = Eigen::MatrixXi::NullaryExpr(
+            input.rows(), input.cols(), [&]() { return rand_0_2(gen); });
     condition = condition.cwiseAbs();
-    condition = (condition * 3).array().unaryExpr([](const auto &val) { return val % 3; });
 
-    MLMatrix mask_0 = (condition.array() == 0).cast<double>();
-    MLMatrix mask_1 = (condition.array() == 1).cast<double>();
-    MLMatrix mask_2 = (condition.array() == 2).cast<double>();
+    MLMatrix mask_0 = (condition.array() == 0).cast<double>().array() * mask.array();
+    MLMatrix mask_1 = (condition.array() == 1).cast<double>().array() * mask.array();
+    MLMatrix mask_2 = (condition.array() == 2).cast<double>().array() * mask.array();
 
     MLMatrix mutation_values =
             MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
@@ -207,14 +207,13 @@ void mutate_vector(MLVector &input, double mutation_rate)
                             .cwiseAbs();
     MLMatrix mask = (prob.array() < mutation_rate).cast<double>();
 
-    Eigen::MatrixXi condition =
-            Eigen::MatrixXi::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
+    Eigen::MatrixXi condition = Eigen::MatrixXi::NullaryExpr(
+            input.rows(), input.cols(), [&]() { return rand_0_2(gen); });
     condition = condition.cwiseAbs();
-    condition = condition.array().unaryExpr([](const auto &val) { return val % 3; });
 
-    MLMatrix mask_0 = (condition.array() == 0).cast<double>();
-    MLMatrix mask_1 = (condition.array() == 1).cast<double>();
-    MLMatrix mask_2 = (condition.array() == 2).cast<double>();
+    MLMatrix mask_0 = (condition.array() == 0).cast<double>().array() * mask.array();
+    MLMatrix mask_1 = (condition.array() == 1).cast<double>().array() * mask.array();
+    MLMatrix mask_2 = (condition.array() == 2).cast<double>().array() * mask.array();
 
     MLMatrix mutation_values =
             MLMatrix::NullaryExpr(input.rows(), input.cols(), [&]() { return dist(gen); });
