@@ -12,6 +12,7 @@ public:
     Vector3 get_car_start() override;
     void reset() override;
     void update_finish_line_distances(int max_distance) override;
+    void update() override;
 
 private:
 

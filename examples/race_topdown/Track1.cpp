@@ -62,3 +62,6 @@ void Track1::update_finish_line_distances(int max_distance)
         }
     }
 }
+
+void Track1::update()
+{}

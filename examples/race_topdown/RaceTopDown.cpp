@@ -13,7 +13,7 @@ RaceTopDown::RaceTopDown(size_t num_cars_)
     car_dead = LoadTexture("assets/dead.png");
     num_cars = num_cars_;
     cars.reserve(num_cars_);
-    for (size_t i = 0; i < num_cars_; i++)
+    for (size_t i = 0; i < num_cars_; ++i)
     {
         cars.emplace_back(&car_texture, &car_dead, colors[i % NUM_COLORS], i);
     }
@@ -32,7 +32,9 @@ void RaceTopDown::reset()
     best_car_index = 0;
     max_distance = 0;
 
-    for (size_t i = 0; i < num_cars; i++)
+    tracks[current_track]->reset();
+
+    for (size_t i = 0; i < num_cars; ++i)
     {
         cars[i].reset();
         const auto [x, y, angle] = tracks[current_track]->get_car_start();
@@ -88,6 +90,8 @@ void RaceTopDown::update()
         const float scale = 0.2f * wheel;
         camera.zoom = std::min(std::max(expf(logf(camera.zoom) + scale), 0.125f), 64.0f);
     }
+
+    tracks[current_track]->update();
 }
 
 void RaceTopDown::draw()
