@@ -9,9 +9,11 @@
 #define NET_LIB_EIGEN 2
 #define NET_LIB_DNA 3
 
-#define NET_LIB NET_LIB_DNA
 
 #if !MANUAL
+
+#define NET_LIB NET_LIB_DNA
+
 #if (NET_LIB == NET_LIB_TORCH)
 #include <mlgames/GenPopulation.h>
 #include <mlgames/LinearGen.h>
@@ -79,6 +81,7 @@ int main(int argc, char *argv[])
 
 #if MANUAL
     constexpr int num_cars = 1;
+    SetTargetFPS(60);
 #else
     constexpr int num_cars = 1000;
 #endif
@@ -153,6 +156,7 @@ int main(int argc, char *argv[])
             {
                 action = action | Car::CAR_ACTION_RIGHT;
             }
+            game.apply_action(0, action);
 #else
             for (size_t i = 0; i < num_cars; ++i)
             {
