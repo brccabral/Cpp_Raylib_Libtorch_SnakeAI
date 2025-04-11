@@ -49,8 +49,8 @@ private:
     Texture *alive_texture{};
     Texture *dead_texture{};
     Color color{};
-    Vector2 shape[5]{};
-    Vector2 texture_coords[5]{};
+    Vector2 shape[4]{};
+    Vector2 texture_coords[4]{};
     float advance_timeout{};
     size_t index;
 

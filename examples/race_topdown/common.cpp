@@ -2,6 +2,19 @@
 #include "common.h"
 #include <rlgl.h>
 
+void draw_triangle(
+        const Vector2 &center, const Vector2 &p1, const Vector2 &p2, const Vector2 &t1,
+        const Vector2 &t2)
+{
+    rlTexCoord2f(0.5f, 0.5f);
+    rlVertex2f(center.x, center.y);
+
+    rlTexCoord2f(t1.x, t1.y);
+    rlVertex2f(p1.x, p1.y);
+
+    rlTexCoord2f(t2.x, t2.y);
+    rlVertex2f(p2.x, p2.y);
+}
 
 void DrawTexturePoly(
         const Texture2D *texture, const Vector2 &center, const Vector2 *points,
@@ -14,15 +27,11 @@ void DrawTexturePoly(
 
     for (int i = 0; i < pointCount - 1; i++)
     {
-        rlTexCoord2f(0.5f, 0.5f);
-        rlVertex2f(center.x, center.y);
-
-        rlTexCoord2f(texture_coords[i].x, texture_coords[i].y);
-        rlVertex2f(points[i].x, points[i].y);
-
-        rlTexCoord2f(texture_coords[i + 1].x, texture_coords[i + 1].y);
-        rlVertex2f(points[i + 1].x, points[i + 1].y);
+        draw_triangle(center, points[i], points[i + 1], texture_coords[i], texture_coords[i + 1]);
     }
+    draw_triangle(
+            center, points[pointCount - 1], points[0], texture_coords[pointCount - 1],
+            texture_coords[0]);
     rlEnd();
     rlSetTexture(0);
 }

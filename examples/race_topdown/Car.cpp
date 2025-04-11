@@ -14,7 +14,6 @@ Car::Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t i
     texture_coords[1] = Vector2(0.0, 1.0);
     texture_coords[2] = Vector2(1.0, 1.0);
     texture_coords[3] = Vector2(1.0, 0.0);
-    texture_coords[4] = Vector2(0.0, 0.0);
 
     reset();
 }
@@ -23,26 +22,27 @@ void Car::draw(const Camera2D &camera, size_t best_index) const
 {
     if (index == best_index)
     {
-        DrawCircle(position.x, position.y, 30, Color(88, 88, 88, 80));
-    }
-    DrawTexturePoly(texture, position, shape, texture_coords, 5, color);
-
-    if (IsKeyDown(KEY_P))
-    {
-        DrawText(
-                TextFormat(
-                        "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout %.0f",
-                        position.x, position.y, speed, angle, max_distance, advance_timeout),
-                position.x - 100, position.y - 20, 10, WHITE);
-        for (auto i = 0; i < NUM_SENSORS; ++i)
+        if (IsKeyDown(KEY_P))
         {
-            const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
-            const Vector2 step = Vector2(cos(sensor_angle * DEG2RAD), sin(sensor_angle * DEG2RAD)) *
-                                 sensors_distance[i];
-            const Vector2 sensor_position = position + step;
-            DrawLineV(position, sensor_position, BLUE);
+            DrawText(
+                    TextFormat(
+                            "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout "
+                            "%.0f",
+                            position.x, position.y, speed, angle, max_distance, advance_timeout),
+                    position.x - 100, position.y - 20, 10, WHITE);
+            for (auto i = 0; i < NUM_SENSORS; ++i)
+            {
+                const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
+                const Vector2 step = Vector2(std::cos(sensor_angle * DEG2RAD),
+                                             std::sin(sensor_angle * DEG2RAD)) *
+                                     sensors_distance[i];
+                const Vector2 sensor_position = position + step;
+                DrawLineV(position, sensor_position, BLUE);
+            }
+            DrawCircle(position.x, position.y, 30, Color(88, 88, 88, 80));
         }
     }
+    DrawTexturePoly(texture, position, shape, texture_coords, 4, color);
 }
 
 void Car::apply_action(car_actions_t action, int track_width, int track_height)
@@ -217,7 +217,6 @@ void Car::reset()
     shape[1] = (Vector2(0, texture->height) - center) / car_scale;
     shape[2] = (Vector2(texture->width, texture->height) - center) / car_scale;
     shape[3] = (Vector2(texture->width, 0) - center) / car_scale;
-    shape[4] = (Vector2(0, 0) - center) / car_scale;
 }
 
 size_t Car::get_action_count()
