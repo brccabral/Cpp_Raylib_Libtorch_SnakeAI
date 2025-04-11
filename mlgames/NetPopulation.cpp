@@ -65,7 +65,7 @@ void NetPopulation::crossover(const NetGen &parent1, const NetGen &parent2, NetG
     }
     const auto h1_weights = parent1.ml_output_w;
     const auto h2_weights = parent2.ml_output_w;
-    const int split = std::uniform_int_distribution<int>(0, h1_weights.cols() - 1)(gen);
+    const int split = std::uniform_int_distribution<int>(0, h1_weights.rows() - 1)(gen);
     child.ml_output_w.block(0, 0, split, h1_weights.cols()) =
             h1_weights.block(0, 0, split, h1_weights.cols());
     child.ml_output_w.block(split, 0, h2_weights.rows() - split, h2_weights.cols()) =
