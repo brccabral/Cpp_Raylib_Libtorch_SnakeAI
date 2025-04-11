@@ -62,5 +62,7 @@ public:
 
 private:
 
+    int size_dna = 0;
+
     void copy(const NetDNA &other);
 };

@@ -145,6 +145,18 @@ NetDNA::NetDNA(
         }
     }
     output = Layer(num_output_neurons, num_hidden_neurons);
+
+    for (int h = 0; h < count_hidden; h++)
+    {
+        for (auto n = 0; n < hidden[h].count_neurons; ++n)
+        {
+            size_dna += hidden[h].neurons[n].count_weights;
+        }
+    }
+    for (auto n = 0; n < output.count_neurons; ++n)
+    {
+        size_dna += output.neurons[n].count_weights;
+    }
 }
 
 void NetDNA::copy(const NetDNA &other)
@@ -157,6 +169,7 @@ void NetDNA::copy(const NetDNA &other)
         hidden[i] = other.hidden[i];
     }
     output = other.output;
+    size_dna = other.size_dna;
 }
 
 NetDNA::NetDNA(const NetDNA &other)
@@ -173,6 +186,7 @@ NetDNA::NetDNA(NetDNA &&other) noexcept
         hidden = other.hidden;
     }
     output = other.output;
+    size_dna = other.size_dna;
 
     other.hidden = nullptr;
 }
@@ -292,20 +306,6 @@ NetDNA NetDNA::clone() const
 
 void NetDNA::mutate(double mutation_rate) const
 {
-    // find size of DNA weights
-    int size_dna = 0;
-    for (int h = 0; h < count_hidden; h++)
-    {
-        for (auto n = 0; n < hidden[h].count_neurons; ++n)
-        {
-            size_dna += hidden[h].neurons[n].count_weights;
-        }
-    }
-    for (auto n = 0; n < output.count_neurons; ++n)
-    {
-        size_dna += output.neurons[n].count_weights;
-    }
-
     // copy weights into DNA
     auto *dna = new float[size_dna];
     int d = 0;
@@ -329,8 +329,8 @@ void NetDNA::mutate(double mutation_rate) const
     assert(d == size_dna);
 
     // mutate randomly
-    const auto count_mutations = size_dna * mutation_rate;
-    for (auto m = 0; m < count_mutations; m++)
+    int count_mutations = size_dna * mutation_rate;
+    while (count_mutations--)
     {
         const int type = std::uniform_int_distribution<int>(0, 2)(gen);
         const int index = std::uniform_int_distribution<int>(0, size_dna)(gen);
