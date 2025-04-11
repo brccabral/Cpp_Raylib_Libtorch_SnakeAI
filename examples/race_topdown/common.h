@@ -32,3 +32,9 @@ public:
     int width{};
     int height{};
 };
+
+typedef struct Vector2i
+{
+    int x;
+    int y;
+} Vector2i;

@@ -126,39 +126,57 @@ void Car::update_sensors(const Distances &distances)
 {
     for (int i = 0; i < NUM_SENSORS; ++i)
     {
-        Vector2 sensor_position = position;
+        auto sensor_position = Vector2i(position.x, position.y);
         const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
 
-        Vector2 sensor_direction =
-                Vector2(cosf(sensor_angle * DEG2RAD), sinf(sensor_angle * DEG2RAD));
+        const auto sensor_direction =
+                Vector2(std::cos(sensor_angle * DEG2RAD), std::sin(sensor_angle * DEG2RAD));
+
+        Vector2 delta;
+        delta.x = sensor_direction.x == 0 ? 1e30f : std::abs(1 / sensor_direction.x);
+        delta.y = sensor_direction.y == 0 ? 1e30f : std::abs(1 / sensor_direction.y);
 
         Vector2 step;
-        step.x = sensor_direction.x == 0 ? 1e30f : abs(1 / sensor_direction.x);
-        step.y = sensor_direction.y == 0 ? 1e30f : abs(1 / sensor_direction.y);
-
         Vector2 inner_depth;
-        inner_depth.x = sensor_direction.x > 0 ? ceilf(sensor_position.x) - sensor_position.x
-                                               : sensor_position.x - floorf(sensor_position.x);
-        inner_depth.y = sensor_direction.y > 0 ? ceilf(sensor_position.y) - sensor_position.y
-                                               : sensor_position.y - floorf(sensor_position.y);
+        if (sensor_direction.x < 0)
+        {
+            step.x = -1;
+            inner_depth.x = (position.x - sensor_position.x) * delta.x;
+        }
+        else
+        {
+            step.x = 1;
+            inner_depth.x = (sensor_position.x + 1.0 - position.x) * delta.x;
+        }
+        if (sensor_direction.y < 0)
+        {
+            step.y = -1;
+            inner_depth.y = (position.y - sensor_position.y) * delta.y;
+        }
+        else
+        {
+            step.y = 1;
+            inner_depth.y = (sensor_position.y + 1.0 - position.y) * delta.y;
+        }
 
         while (true)
         {
             if (distances(sensor_position.y, sensor_position.x) == 0)
             {
-                sensors_distance[i] = Vector2Distance(position, sensor_position);
+                sensors_distance[i] =
+                        Vector2Distance(position, Vector2(sensor_position.x, sensor_position.y));
                 break;
             }
 
             if (inner_depth.x < inner_depth.y)
             {
-                sensor_position += sensor_direction * inner_depth.x;
-                inner_depth.x += step.x;
+                sensor_position.x += step.x;
+                inner_depth.x += delta.x;
             }
             else
             {
-                sensor_position += sensor_direction * inner_depth.y;
-                inner_depth.y += step.y;
+                sensor_position.y += step.y;
+                inner_depth.y += delta.y;
             }
         }
     }
