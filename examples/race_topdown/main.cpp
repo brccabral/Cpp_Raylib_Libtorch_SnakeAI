@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 #endif
 #endif
 
-    constexpr int hidden_layer_1 = 8;
+    constexpr int hidden_layer_1 = 6;
 
     constexpr int SCREEN_WIDTH = 1366;
     constexpr int SCREEN_HEIGHT = 768;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 #if NET_LIB == NET_LIB_TORCH
 
         auto net = LinearGen(
-                RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
+                RaceTopDown::get_state_size(), Car::get_action_count(),
                 std::vector<size_t>{hidden_layer_1});
         if (net_filename != NULL)
         {
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         torch::NoGradGuard no_grad;
 #else
         auto net =
-                NetGen(RaceTopDown::get_state_size(), Car::CAR_ACTION_COUNT,
+                NetGen(RaceTopDown::get_state_size(), Car::get_action_count(),
                        std::vector<size_t>{hidden_layer_1});
         auto population = NetPopulation(num_cars, 0.9, 0.05, net);
 
@@ -114,35 +114,35 @@ int main(int argc, char *argv[])
             int action = 0;
             if (IsKeyDown(KEY_LEFT))
             {
-                action = action | 0b0001;
+                action = action | Car::CAR_ACTION_LEFT;
             }
             if (IsKeyDown(KEY_RIGHT))
             {
-                action = action | 0b0010;
+                action = action | Car::CAR_ACTION_RIGHT;
             }
             if (IsKeyDown(KEY_UP))
             {
-                action = action | 0b0100;
+                action = action | Car::CAR_ACTION_ACCELERATE;
             }
             if (IsKeyDown(KEY_DOWN))
             {
-                action = action | 0b1000;
+                action = action | Car::CAR_ACTION_BREAK;
             }
             if (IsKeyPressed(KEY_W))
             {
-                action = action | 0b0100;
+                action = action | Car::CAR_ACTION_ACCELERATE;
             }
             if (IsKeyPressed(KEY_S))
             {
-                action = action | 0b1000;
+                action = action | Car::CAR_ACTION_BREAK;
             }
             if (IsKeyPressed(KEY_A))
             {
-                action = action | 0b0001;
+                action = action | Car::CAR_ACTION_LEFT;
             }
             if (IsKeyPressed(KEY_D))
             {
-                action = action | 0b0010;
+                action = action | Car::CAR_ACTION_RIGHT;
             }
             game.apply_action(0, action);
 #else
@@ -158,7 +158,23 @@ int main(int argc, char *argv[])
                                           .reshape({1, (long) RaceTopDown::get_state_size()});
                 x.to(device);
                 auto actions = population.members[i]->forward(x);
-                auto action = torch::argmax(actions).item().toInt();
+                int action = 0;
+                if (actions[0][0].item<float>() > 0)
+                {
+                    action = action | Car::CAR_ACTION_LEFT;
+                }
+                if (actions[0][1].item<float>() > 0)
+                {
+                    action = action | Car::CAR_ACTION_RIGHT;
+                }
+                if (actions[0][2].item<float>() > 0)
+                {
+                    action = action | Car::CAR_ACTION_ACCELERATE;
+                }
+                if (actions[0][3].item<float>() > 0)
+                {
+                    action = action | Car::CAR_ACTION_BREAK;
+                }
                 game.apply_action(i, action);
 #else
                 std::vector<double> input_double(inputs.size());
@@ -167,8 +183,24 @@ int main(int argc, char *argv[])
                     input_double[j] = inputs[j];
                 }
                 Eigen::Map<MLMatrix> x(input_double.data(), 1, RaceTopDown::get_state_size());
-                population.members[i].forward(x, true);
-                auto action = population.members[i].get_output_index(0, true);
+                auto actions = population.members[i].forward(x, true);
+                int action = 0;
+                if (actions[0] > 0)
+                {
+                    action = action | Car::CAR_ACTION_LEFT;
+                }
+                if (actions[1] > 0)
+                {
+                    action = action | Car::CAR_ACTION_RIGHT;
+                }
+                if (actions[2] > 0)
+                {
+                    action = action | Car::CAR_ACTION_ACCELERATE;
+                }
+                if (actions[3] > 0)
+                {
+                    action = action | Car::CAR_ACTION_BREAK;
+                }
                 game.apply_action(i, action);
 #endif
             }
@@ -193,6 +225,11 @@ int main(int argc, char *argv[])
                 population.apply_mutations(game.select_best_cars());
 #endif
                 game.reset();
+            }
+
+            if (record > 14314)
+            {
+                break;
             }
         }
     }

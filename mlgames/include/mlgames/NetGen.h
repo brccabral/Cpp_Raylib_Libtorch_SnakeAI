@@ -19,8 +19,7 @@ public:
     NetGen &operator=(const NetGen &other);
     ~NetGen();
 
-    void forward(const MLMatrix &X, bool guard);
-    size_t get_output_index(size_t sample_index, bool guard);
+    MLVector forward(const MLMatrix &X, bool guard);
     NetGen clone() const;
 
     size_t ml_input_size{};
@@ -33,12 +32,10 @@ public:
     MLVector ml_output_b{};
 
     MLMatrix *ml_zh{}, *ml_ah{};
-    MLMatrix *zh{}, *ah{};
 
 private:
 
-    MLMatrix ml_zo{}, ml_ao{};
-    MLMatrix zo{}, ao{};
+    MLMatrix ml_ao{};
 
     void setup();
     void copy(const NetGen &other);

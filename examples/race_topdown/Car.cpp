@@ -219,3 +219,8 @@ void Car::reset()
     shape[3] = (Vector2(texture->width, 0) - center) / car_scale;
     shape[4] = (Vector2(0, 0) - center) / car_scale;
 }
+
+size_t Car::get_action_count()
+{
+    return 4;
+}

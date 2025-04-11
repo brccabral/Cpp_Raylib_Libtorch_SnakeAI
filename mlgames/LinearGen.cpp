@@ -12,7 +12,8 @@ torch::Tensor LinearGenImpl::forward(const torch::Tensor &x)
     {
         result = relu(hidden_layers[h]->forward(result));
     }
-    result = torch::softmax(output->forward(result), 1);
+    // result = torch::softmax(output->forward(result), 1);
+    result = relu(output->forward(result));
     return result;
 }
 

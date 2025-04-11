@@ -25,16 +25,17 @@ void NetGen::copy(const NetGen &other)
     ml_hidden_b = new MLVector[ml_count_hidden];
     ml_zh = new MLMatrix[ml_count_hidden];
     ml_ah = new MLMatrix[ml_count_hidden];
-    zh = new MLMatrix[ml_count_hidden];
-    ah = new MLMatrix[ml_count_hidden];
 
     for (size_t i = 0; i < other.ml_count_hidden; i++)
     {
         ml_hidden_w[i] = other.ml_hidden_w[i];
         ml_hidden_b[i] = other.ml_hidden_b[i];
+        ml_zh[i] = other.ml_zh[i];
+        ml_ah[i] = other.ml_ah[i];
     }
     ml_output_w = other.ml_output_w;
     ml_output_b = other.ml_output_b;
+    ml_ao = other.ml_ao;
 }
 
 NetGen::NetGen(const NetGen &other)
@@ -53,18 +54,13 @@ NetGen::NetGen(NetGen &&other) noexcept
     ml_hidden_b = other.ml_hidden_b;
     ml_zh = other.ml_zh;
     ml_ah = other.ml_ah;
-    zh = other.zh;
-    ah = other.ah;
 
     ml_output_w = other.ml_output_w;
     ml_output_b = other.ml_output_b;
+    ml_ao = other.ml_ao;
 
     other.ml_hidden_w = nullptr;
     other.ml_hidden_b = nullptr;
-    other.ml_zh = nullptr;
-    other.ml_ah = nullptr;
-    other.zh = nullptr;
-    other.ah = nullptr;
 }
 
 NetGen &NetGen::operator=(const NetGen &other)
@@ -75,8 +71,6 @@ NetGen &NetGen::operator=(const NetGen &other)
         delete[] ml_hidden_b;
         delete[] ml_zh;
         delete[] ml_ah;
-        delete[] zh;
-        delete[] ah;
         copy(other);
     }
     return *this;
@@ -88,8 +82,6 @@ void NetGen::setup()
     ml_hidden_b = new MLVector[ml_count_hidden];
     ml_zh = new MLMatrix[ml_count_hidden];
     ml_ah = new MLMatrix[ml_count_hidden];
-    zh = new MLMatrix[ml_count_hidden];
-    ah = new MLMatrix[ml_count_hidden];
 
     size_t prev = ml_input_size;
     size_t current = ml_input_size;
@@ -116,30 +108,27 @@ NetGen::~NetGen()
     delete[] ml_hidden_b;
     delete[] ml_zh;
     delete[] ml_ah;
-    delete[] zh;
-    delete[] ah;
 }
 
-void NetGen::forward(const MLMatrix &X, const bool guard)
+MLVector NetGen::forward(const MLMatrix &X, const bool guard)
 {
     if (guard)
     {
         // inputs is vector
-        zh[0] = ml_hidden_w[0] * X.transpose();
-        zh[0] = zh[0].colwise() + ml_hidden_b[0];
-        ah[0] = relu(zh[0]);
+        MLMatrix zh = ml_hidden_w[0] * X.transpose();
+        zh = zh.colwise() + ml_hidden_b[0];
+        auto ah = relu(zh);
 
         for (size_t i = 1; i < ml_count_hidden; ++i)
         {
-            zh[i] = ml_hidden_w[i] * zh[i - 1];
-            zh[i] = zh[i].colwise() + ml_hidden_b[i];
-            ah[i] = relu(zh[i]);
+            zh = ml_hidden_w[i] * zh;
+            zh = zh.colwise() + ml_hidden_b[i];
+            ah = relu(zh);
         }
 
-        zo = ml_output_w * ah[ml_count_hidden - 1];
+        MLMatrix zo = ml_output_w * ah;
         zo = zo.colwise() + ml_output_b;
-        ao = softmax(zo);
-        return;
+        return relu(zo);
     }
 
     // inputs is vector
@@ -154,9 +143,10 @@ void NetGen::forward(const MLMatrix &X, const bool guard)
         ml_ah[i] = relu(ml_zh[i]);
     }
 
-    ml_zo = ml_output_w * ml_ah[ml_count_hidden - 1];
+    MLMatrix ml_zo = ml_output_w * ml_ah[ml_count_hidden - 1];
     ml_zo = ml_zo.colwise() + ml_output_b;
-    ml_ao = softmax(ml_zo);
+    ml_ao = relu(ml_zo);
+    return ml_ao;
 }
 
 MLMatrix relu(const MLMatrix &m)
@@ -178,23 +168,12 @@ NetGen NetGen::clone() const
     {
         result.ml_hidden_w[i] = ml_hidden_w[i];
         result.ml_hidden_b[i] = ml_hidden_b[i];
+        result.ml_zh[i] = ml_zh[i];
+        result.ml_ah[i] = ml_ah[i];
     }
     result.ml_output_w = ml_output_w;
     result.ml_output_b = ml_output_b;
+    result.ml_ao = ml_ao;
 
     return result;
-}
-
-size_t NetGen::get_output_index(size_t sample_index, const bool guard)
-{
-    MLIndex maxIndex;
-    if (guard)
-    {
-        ao.col(sample_index).maxCoeff(&maxIndex);
-    }
-    else
-    {
-        ml_ao.col(sample_index).maxCoeff(&maxIndex);
-    }
-    return maxIndex;
 }
