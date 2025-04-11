@@ -11,8 +11,10 @@ Track1::Track1()
 }
 
 void Track1::reset()
-{}
-
+{
+    laser_distance = 1;
+    laser_speed = 1;
+}
 
 Vector3 Track1::get_car_start()
 {
@@ -25,6 +27,20 @@ Vector3 Track1::get_car_start()
 void Track1::draw(const Camera2D &camera)
 {
     DrawTexture(texture, 0, 0, WHITE);
+
+    if (IsKeyDown(KEY_L))
+    {
+        for (int r = 0; r < get_height(); ++r)
+        {
+            for (int c = 0; c < get_width(); ++c)
+            {
+                if (distances(r, c) == laser_distance)
+                {
+                    DrawRectangle(c, r, 3, 3, LIME);
+                }
+            }
+        }
+    }
 
     if (IsKeyDown(KEY_M))
     {
@@ -64,4 +80,7 @@ void Track1::update_finish_line_distances(int max_distance)
 }
 
 void Track1::update()
-{}
+{
+    laser_distance += laser_speed;
+    laser_speed += 0.004;
+}

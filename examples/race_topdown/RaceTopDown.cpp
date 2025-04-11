@@ -114,7 +114,7 @@ void RaceTopDown::apply_action(size_t index, int action)
     car->apply_action(
             (Car::car_actions_t) action, tracks[current_track]->get_width(),
             tracks[current_track]->get_height());
-    car->update(tracks[current_track]->distances);
+    car->update(tracks[current_track]->distances, tracks[current_track]->laser_distance);
     if (car->car_state == Car::CAR_STATE_DEAD)
     {
         ++num_dead;

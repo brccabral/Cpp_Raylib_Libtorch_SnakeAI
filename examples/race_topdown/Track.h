@@ -19,6 +19,7 @@ public:
     int get_height() const;
     Distances distances{};
 
+    int laser_distance = 1;
 
 protected:
 
@@ -26,6 +27,7 @@ protected:
     Vector2 start{};
     Vector2 finish{};
     const char *file{};
+    double laser_speed = 1;
 
     void set_distances(Color track_color);
 };

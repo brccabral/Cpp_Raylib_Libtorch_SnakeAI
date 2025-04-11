@@ -182,7 +182,7 @@ void Car::update_sensors(const Distances &distances)
     }
 }
 
-void Car::update(const Distances &distances)
+void Car::update(const Distances &distances, int laser_distance)
 {
     advance_timeout -= 0.1;
     if (distances[position] > max_distance)
@@ -192,7 +192,8 @@ void Car::update(const Distances &distances)
     }
     update_sensors(distances);
 #if !MANUAL
-    if (advance_timeout < 0.0 || check_collision(distances))
+    if (advance_timeout < 0.0 || check_collision(distances) ||
+        distances[position] <= laser_distance)
     {
         car_state = CAR_STATE_DEAD;
         texture = dead_texture;
