@@ -5,5 +5,4 @@ repos:
         name: cmake-format
         entry: cmake-format -i
         language: system
-        args: [ --check ]
         files: ^(CMakeLists\.txt|.*\.cmake)$

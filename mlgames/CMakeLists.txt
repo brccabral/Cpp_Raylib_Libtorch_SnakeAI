@@ -10,13 +10,17 @@ add_library(mlgames::mlgames ALIAS mlgames)
 file(GLOB CPP_FILES "*.cpp")
 file(GLOB H_FILES "./include/*.h")
 
-target_sources(mlgames
-        PUBLIC
-        FILE_SET mlgames_headers
-        TYPE HEADERS
-        BASE_DIRS ./include
-        FILES ${H_FILES}
-        PRIVATE ${CPP_FILES}
+target_sources(
+    mlgames
+    PUBLIC FILE_SET
+    mlgames_headers
+    TYPE
+    HEADERS
+    BASE_DIRS
+    ./include
+    FILES
+    ${H_FILES}
+    PRIVATE ${CPP_FILES}
 )
 
 target_compile_features(mlgames PUBLIC cxx_std_20)
@@ -24,16 +28,3 @@ target_compile_features(mlgames PUBLIC cxx_std_20)
 target_include_directories(mlgames PUBLIC ${EIGEN3_INCLUDE_DIRS})
 
 target_link_libraries(mlgames PUBLIC ${TORCH_LIBRARIES})
-
-function(print_cmake_variables_matching pattern)
-    get_cmake_property(_variableNames VARIABLES)
-    string(TOLOWER "${pattern}" pattern_lower)
-    foreach (_variableName ${_variableNames})
-        string(TOLOWER "${_variableName}" variable_lower)
-        if (variable_lower MATCHES "${pattern_lower}")
-            message(STATUS "${_variableName}=${${_variableName}}")
-        endif ()
-    endforeach ()
-endfunction()
-
-print_cmake_variables_matching("^eigen")
