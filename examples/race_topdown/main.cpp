@@ -3,6 +3,7 @@
 #include <cstring>
 #include <raylib.h>
 #include "RaceTopDown.h"
+#include "mlgames/Plotter.h"
 
 
 #define NET_LIB_TORCH 1
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
     constexpr int SCREEN_WIDTH = 1366;
     constexpr int SCREEN_HEIGHT = 768;
 
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Race TopDown");
 
 #if MANUAL
@@ -88,6 +90,7 @@ int main(int argc, char *argv[])
 
     {
         auto game = RaceTopDown(num_cars);
+        auto plotter = Plotter();
 
         float record = 0;
 
@@ -235,7 +238,12 @@ int main(int argc, char *argv[])
 #endif
 
             game.update();
+
+            BeginDrawing();
+            ClearBackground(BLACK);
             game.draw();
+            plotter.draw();
+            EndDrawing();
 
             if (game.check_end_game())
             {
