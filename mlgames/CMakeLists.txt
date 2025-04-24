@@ -3,7 +3,6 @@ project(MLGamesLib)
 
 find_package(Torch REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(rlImGui REQUIRED)
 
 add_library(mlgames STATIC)
 add_library(mlgames::mlgames ALIAS mlgames)
@@ -28,4 +27,4 @@ target_compile_features(mlgames PUBLIC cxx_std_20)
 
 target_include_directories(mlgames PUBLIC ${EIGEN3_INCLUDE_DIRS})
 
-target_link_libraries(mlgames PUBLIC ${TORCH_LIBRARIES} rlImGui::rlImGui)
+target_link_libraries(mlgames PUBLIC ${TORCH_LIBRARIES})

@@ -1,6 +1,6 @@
 #include <rlImGui.h>
 #include <imgui.h>
-#include <mlgames/Plotter.h>
+#include <plotter/Plotter.h>
 
 Plotter::Plotter()
 {

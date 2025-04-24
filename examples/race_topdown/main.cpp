@@ -3,7 +3,7 @@
 #include <cstring>
 #include <raylib.h>
 #include "RaceTopDown.h"
-#include "mlgames/Plotter.h"
+#include <plotter/Plotter.h>
 
 
 #define NET_LIB_TORCH 1
