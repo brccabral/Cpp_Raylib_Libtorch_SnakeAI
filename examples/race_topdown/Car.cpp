@@ -18,30 +18,28 @@ Car::Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t i
     reset();
 }
 
-void Car::draw(const Camera2D &camera, size_t best_index) const
+void Car::draw_debug() const
 {
-    if (index == best_index)
+    DrawText(
+            TextFormat(
+                    "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout "
+                    "%.0f",
+                    position.x, position.y, speed, angle, max_distance, advance_timeout),
+            position.x - 100, position.y - 20, 10, WHITE);
+    for (auto i = 0; i < NUM_SENSORS; ++i)
     {
-        if (IsKeyDown(KEY_P))
-        {
-            DrawText(
-                    TextFormat(
-                            "x %.0f y %.0f speed %.3f angle %.3f max_distance %d advance_timeout "
-                            "%.0f",
-                            position.x, position.y, speed, angle, max_distance, advance_timeout),
-                    position.x - 100, position.y - 20, 10, WHITE);
-            for (auto i = 0; i < NUM_SENSORS; ++i)
-            {
-                const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
-                const Vector2 step = Vector2(std::cos(sensor_angle * DEG2RAD),
-                                             std::sin(sensor_angle * DEG2RAD)) *
-                                     sensors_distance[i];
-                const Vector2 sensor_position = position + step;
-                DrawLineV(position, sensor_position, BLUE);
-            }
-            DrawCircle(position.x, position.y, 30, Color(88, 88, 88, 80));
-        }
+        const double sensor_angle = angle - 90 + i * 180.0 / NUM_SENSORS;
+        const Vector2 step =
+                Vector2(std::cos(sensor_angle * DEG2RAD), std::sin(sensor_angle * DEG2RAD)) *
+                sensors_distance[i];
+        const Vector2 sensor_position = position + step;
+        DrawLineV(position, sensor_position, BLUE);
     }
+    DrawCircle(position.x, position.y, 30, Color(88, 88, 88, 80));
+}
+
+void Car::draw() const
+{
     DrawTexturePoly(texture, position, shape, texture_coords, 4, color);
 }
 

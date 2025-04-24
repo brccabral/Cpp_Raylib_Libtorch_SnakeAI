@@ -96,11 +96,20 @@ void RaceTopDown::update()
 
 void RaceTopDown::draw()
 {
+    bool draw_debug = false;
+    if (IsKeyDown(KEY_P))
+    {
+        draw_debug = true;
+    }
     BeginMode2D(camera);
     tracks[current_track]->draw(camera);
-    for (auto &car: cars)
+    for (size_t c = 0; c < cars.size(); ++c)
     {
-        car.draw(camera, best_car_index);
+        if (draw_debug && c == best_car_index)
+        {
+            cars[c].draw_debug();
+        }
+        cars[c].draw();
     }
     EndMode2D();
 }

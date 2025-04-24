@@ -12,7 +12,8 @@ class Car
 public:
 
     Car(Texture *alive_texture_, Texture *dead_texture_, Color color_, size_t index_);
-    void draw(const Camera2D &camera, size_t best_index) const;
+    void draw() const;
+    void draw_debug() const;
     void update(const Distances &distances, int laser_distance);
     void reset();
 
