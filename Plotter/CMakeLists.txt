@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.23)
 project(Plotter)
 
+find_package(imgui REQUIRED)
 find_package(rlImGui REQUIRED)
+find_package(implot REQUIRED)
 
 add_library(plotter STATIC)
 add_library(plotter::plotter ALIAS plotter)
@@ -22,4 +24,4 @@ target_sources(
     PRIVATE ${CPP_FILES}
 )
 
-target_link_libraries(plotter PUBLIC rlImGui::rlImGui)
+target_link_libraries(plotter PUBLIC rlImGui::rlImGui implot::implot)

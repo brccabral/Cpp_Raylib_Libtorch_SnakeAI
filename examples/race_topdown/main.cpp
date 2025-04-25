@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
     {
         auto game = RaceTopDown(num_cars);
         auto plotter = Plotter();
+        auto record_plot = plotter.add_plot("Record", "Generation", "Distance");
 
         float record = 0;
 
@@ -251,6 +252,7 @@ int main(int argc, char *argv[])
                 {
                     record = game.max_distance;
                 }
+                plotter.push_data(record_plot, generation, record);
 #if !MANUAL
                 printf("Generation %zu Distance: %d Dead: %zu Record %.0f\n", generation,
                        game.max_distance, game.num_dead, record);
