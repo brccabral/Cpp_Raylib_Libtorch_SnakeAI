@@ -22,31 +22,33 @@ Plotter::~Plotter()
 Plot2DData::Plot2DData() = default;
 Plot2DData::~Plot2DData() = default;
 
-Chart::Chart() = default;
+Chart::Chart(std::string title, std::string x_label, std::string y_label)
+    : title(std::move(title)), x_label(std::move(x_label)), y_label(std::move(y_label))
+{}
 Chart::~Chart() = default;
 
-Series::Series() = default;
+Series::Series(SeriesType type, size_t data_index, std::string label)
+    : type(type), data_index(data_index), label(std::move(label))
+{}
 Series::~Series() = default;
 
-void Plotter::draw()
+void Plotter::draw() const
 {
     rlImGuiBegin();
     bool open = true;
     if (ImGui::Begin("Plots", &open))
     {
-        for (auto p = 0; p < charts.size(); ++p)
+        for (const auto &chart: charts)
         {
-            auto &chart = charts[p];
             if (ImPlot::BeginPlot(chart.title.c_str()))
             {
                 ImPlot::SetupAxes(
                         chart.x_label.c_str(), chart.y_label.c_str(), ImPlotAxisFlags_AutoFit,
                         ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_LockMin);
                 ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
-                for (auto s = 0; s < series.size(); ++s)
+                for (const auto &series_: series)
                 {
-                    auto &series_ = series[s];
-                    auto &data = datas[series[s].data_index];
+                    auto &data = datas[series_.data_index];
                     if (series_.type == SERIES_LINE)
                     {
                         ImPlot::PlotLine(
@@ -61,14 +63,11 @@ void Plotter::draw()
     rlImGuiEnd();
 }
 
-size_t Plotter::create_chart(std::string title, std::string x_label, std::string y_label)
+size_t Plotter::create_chart(
+        const std::string &title, const std::string &x_label, const std::string &y_label)
 {
-    charts.emplace_back();
-    const int index = charts.size() - 1;
-    charts[index].title = std::move(title);
-    charts[index].x_label = std::move(x_label);
-    charts[index].y_label = std::move(y_label);
-    return index;
+    charts.emplace_back(title, x_label, y_label);
+    return charts.size() - 1;
 }
 
 void Plot2DData::push_back(double x_, double y_)
@@ -78,14 +77,10 @@ void Plot2DData::push_back(double x_, double y_)
     ++count;
 }
 
-size_t Plotter::create_series(SeriesType type, size_t data_index, std::string label)
+size_t Plotter::create_series(SeriesType type, size_t data_index, const std::string &label)
 {
-    series.emplace_back();
-    const size_t index = series.size() - 1;
-    series[index].type = type;
-    series[index].data_index = data_index;
-    series[index].label = std::move(label);
-    return index;
+    series.emplace_back(type, data_index, label);
+    return series.size() - 1;
 }
 
 size_t Plotter::create_data()
