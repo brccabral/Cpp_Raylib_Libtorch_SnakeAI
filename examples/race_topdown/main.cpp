@@ -269,11 +269,6 @@ int main(int argc, char *argv[])
 #endif
                 game.reset();
             }
-
-            if (record > 14314)
-            {
-                break;
-            }
         }
 #if (NET_LIB == NET_LIB_DNA)
         delete[] actions;
