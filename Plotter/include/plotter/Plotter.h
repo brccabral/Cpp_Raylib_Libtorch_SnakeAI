@@ -1,3 +1,6 @@
+#pragma once
+
+#include <implot.h>
 #include <string>
 #include <vector>
 
@@ -43,6 +46,13 @@ public:
     std::string title;
     std::string x_label;
     std::string y_label;
+    ImPlotAxisFlags x_axis_flags{};
+    ImPlotAxisFlags y_axis_flags{};
+
+    double x_min{};
+    double x_max{};
+    double y_min{};
+    double y_max{};
 
     std::vector<size_t> series;
 };
@@ -62,6 +72,10 @@ public:
     size_t create_series(SeriesType type, size_t data_index, const std::string &label);
     void add_series_to_chart(size_t chart_index, size_t series_index);
     void push_data(size_t data_index, double x, double y);
+    void set_chart_flags(
+            size_t chart_index, ImPlotAxisFlags x_axis_flags_, ImPlotAxisFlags y_axis_flags_);
+    void
+    set_chart_limits(size_t chart_index, double x_min, double x_max, double y_min, double y_max);
 
     std::vector<Chart> charts;
     std::vector<Series> series;

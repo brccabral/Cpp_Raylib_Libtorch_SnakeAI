@@ -91,7 +91,11 @@ int main(int argc, char *argv[])
     {
         auto game = RaceTopDown(num_cars);
         auto plotter = Plotter();
-        auto distances_plot = plotter.create_chart("Distances", "Generation", "Distance");
+        auto distance_chart = plotter.create_chart("Distances", "Generation", "Distance");
+        plotter.set_chart_flags(
+                distance_chart, ImPlotAxisFlags_AutoFit,
+                ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_LockMin);
+        plotter.set_chart_limits(distance_chart, 0, 1, 0, 1);
         auto record_data = plotter.create_data();
         auto best_data = plotter.create_data();
         auto record_series = plotter.create_series(SERIES_LINE, record_data, "Record");
