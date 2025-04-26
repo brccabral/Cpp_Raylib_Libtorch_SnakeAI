@@ -94,7 +94,7 @@ void RaceTopDown::update()
     tracks[current_track]->update();
 }
 
-void RaceTopDown::draw()
+void RaceTopDown::draw() const
 {
     bool draw_debug = false;
     if (IsKeyDown(KEY_P))
@@ -146,7 +146,7 @@ size_t RaceTopDown::get_state_size()
     return NUM_SENSORS + 1; // sensors + speed
 }
 
-std::vector<float> RaceTopDown::get_state(size_t index)
+std::vector<float> RaceTopDown::get_state(size_t index) const
 {
     std::vector<float> states(get_state_size());
 
@@ -168,4 +168,15 @@ std::array<size_t, 2> RaceTopDown::select_best_cars() const
     std::ranges::sort(
             cars_distances, [](const auto &a, const auto &b) { return a.first > b.first; });
     return {cars_distances[0].second, cars_distances[1].second};
+}
+
+double RaceTopDown::avg_distance() const
+{
+    double result = 0.0;
+    for (const auto &car: cars)
+    {
+        result += car.max_distance;
+    }
+    result /= cars.size();
+    return result;
 }

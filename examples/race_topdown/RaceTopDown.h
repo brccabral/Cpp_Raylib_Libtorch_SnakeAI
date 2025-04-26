@@ -12,16 +12,17 @@ class RaceTopDown
 {
 public:
 
-    RaceTopDown(size_t num_cars_);
+    explicit RaceTopDown(size_t num_cars_);
     ~RaceTopDown();
     void update();
-    void draw();
+    void draw() const;
     void apply_action(size_t index, int action);
-    bool check_end_game() const;
+    [[nodiscard]] bool check_end_game() const;
     void reset();
     static size_t get_state_size();
-    std::vector<float> get_state(size_t index);
-    std::array<size_t, 2> select_best_cars() const;
+    std::vector<float> get_state(size_t index) const;
+    [[nodiscard]] std::array<size_t, 2> select_best_cars() const;
+    double avg_distance() const;
 
     std::vector<Car> cars{};
     size_t num_dead{};
