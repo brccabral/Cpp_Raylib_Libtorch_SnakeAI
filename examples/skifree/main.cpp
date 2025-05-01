@@ -1,3 +1,6 @@
+#include "SkiFree.h"
+
+
 #include <raylib.h>
 
 int main()
@@ -5,11 +8,11 @@ int main()
     InitWindow(800, 600, "SkiFree");
 
     {
+        SkiFree game;
         while (!WindowShouldClose())
         {
-            ClearBackground(WHITE);
-            BeginDrawing();
-            EndDrawing();
+            game.inputs();
+            game.draw();
         }
     }
 

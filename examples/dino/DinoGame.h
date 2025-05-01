@@ -25,7 +25,7 @@
 #define NUM_OBSTACLE_SPRITES 8
 #define ANIMATION_SPEED (0.03)
 
-typedef struct Sprite
+typedef struct SkiObject
 {
     Color color;
     size_t frame_index;

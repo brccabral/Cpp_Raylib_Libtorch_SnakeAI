@@ -20,7 +20,7 @@
 #define NUM_BIRD_SPRITES 3
 #define ANIMATION_SPEED (0.03)
 
-typedef struct Sprite
+typedef struct SkiObject
 {
     Color color{};
     size_t frame_index{};
