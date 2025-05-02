@@ -40,7 +40,8 @@ public:
         TYPE_LIFT_CHAIR,
         TYPE_YETI,
         TYPE_URINE,
-        TYPE_TREE_WALK
+        TYPE_TREE_WALK,
+        TYPE_RESTART_PAUSE_SIGN
     };
 
     enum object_state
@@ -106,15 +107,15 @@ public:
 
 private:
 
-    Texture2D all_textures;
+    Texture2D all_textures{};
     std::vector<Rectangle> frames;
 
-    enum game_state_t
+    enum game_mode_t
     {
-        STATE_PRACTICE = 0,
-        STATE_SLALOM,
-        STATE_FREESTYLE,
-        STATE_TREE_SLALOM
+        MODE_PRACTICE = 0,
+        MODE_SLALOM,
+        MODE_FREESTYLE,
+        MODE_TREE_SLALOM
     };
 
     std::list<SkiObject *> long_live_objects;
@@ -125,12 +126,16 @@ private:
     SkiObject slalom_sign;
     SkiObject freestyle_sign;
     SkiObject tree_slalom_sign;
+    SkiObject restart_pause_sign;
 
-    game_state_t current_state{};
+    game_mode_t current_mode{};
 
     Rectangle current_area{};
     float area_size = 3000.0f;
     size_t num_elements_in_area = 190;
 
     void manage_objects();
+
+    bool is_paused{};
+    bool is_waiting_action{};
 };

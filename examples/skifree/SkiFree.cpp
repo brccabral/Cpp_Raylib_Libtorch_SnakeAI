@@ -94,7 +94,7 @@ SkiFree::SkiFree()
     frames[85] = Rectangle(0, prev_y += 27, 8, 11); // mushroom
     frames[86] = Rectangle(0, prev_y += 11, 28, 32); // tree_walk_idle
     frames[87] = Rectangle(0, prev_y += 32, 28, 32); // tree_walk_right
-    frames[88] = Rectangle(0, prev_y += 32, 28, 32); // tree_walk_left
+    frames[88] = Rectangle(0, prev_y + 32, 28, 32); // tree_walk_left
 
     camera.zoom = 1.0f;
 
@@ -113,10 +113,16 @@ SkiFree::SkiFree()
     tree_slalom_sign.current_frame_index = 61;
     tree_slalom_sign.current_frame_rectangle = frames[61];
 
+    restart_pause_sign.type = SkiObject::TYPE_RESTART_PAUSE_SIGN;
+    restart_pause_sign.position = Vector2(180, 0);
+    restart_pause_sign.current_frame_index = 55;
+    restart_pause_sign.current_frame_rectangle = frames[55];
+
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
     long_live_objects.emplace_back(&tree_slalom_sign);
+    long_live_objects.emplace_back(&restart_pause_sign);
 
     reset();
 };
@@ -142,6 +148,19 @@ void SkiFree::draw() const
                 WHITE);
     }
     EndMode2D();
+
+    DrawRectangle(0, 0, GetScreenWidth(), 30, BLUE);
+    const char *text;
+    if (is_paused)
+    {
+        text = "Ski Paused... Press F3 to continue";
+    }
+    else
+    {
+        text = "Ski Free";
+    }
+    const int width = MeasureText(text, 22);
+    DrawText(text, (GetScreenWidth() - width) / 2, 5, 22, WHITE);
 }
 
 void SkiFree::inputs()
@@ -150,8 +169,29 @@ void SkiFree::inputs()
     {
         reset();
     }
+    if (IsKeyPressed(KEY_F3))
+    {
+        is_paused = !is_paused;
+        if (is_paused)
+        {
+            is_waiting_action = true;
+        }
+        else
+        {
+            is_waiting_action = false;
+        }
+    }
+    if (is_paused && IsKeyPressed(KEY_T))
+    {
+        is_waiting_action = true;
+    }
+    if (!is_waiting_action)
+    {
+        return;
+    }
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
     {
+        is_waiting_action = false;
         switch (player.state)
         {
             case SkiObject::STATE_PLAYER_RIGHT:
@@ -232,6 +272,7 @@ void SkiFree::inputs()
     }
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_KP_4))
     {
+        is_waiting_action = false;
         switch (player.state)
         {
             case SkiObject::STATE_PLAYER_LEFT:
@@ -311,6 +352,7 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_KP_9))
     {
+        is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_RIGHT;
         player.current_frame_index = 6;
         player.speed = 1;
@@ -318,6 +360,7 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_KP_7))
     {
+        is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_LEFT;
         player.current_frame_index = 3;
         player.speed = 1;
@@ -325,6 +368,7 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_KP_3))
     {
+        is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_30_RIGHT;
         player.current_frame_index = 4;
         player.speed = 1;
@@ -333,6 +377,7 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_KP_1))
     {
+        is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_30_LEFT;
         player.current_frame_index = 1;
         player.speed = 1;
@@ -341,6 +386,7 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
     {
+        is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_DOWN;
         player.current_frame_index = 0;
         player.speed = 1;
@@ -348,6 +394,7 @@ void SkiFree::inputs()
     }
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
     {
+        is_waiting_action = false;
         switch (player.state)
         {
             case SkiObject::STATE_PLAYER_LEFT:
@@ -395,6 +442,10 @@ void SkiFree::inputs()
 
 void SkiFree::update()
 {
+    if (is_paused && !IsKeyPressed(KEY_T))
+    {
+        return;
+    }
     manage_objects();
     for (const auto long_live_object: long_live_objects)
     {
