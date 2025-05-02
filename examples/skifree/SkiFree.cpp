@@ -1,6 +1,52 @@
 #include "SkiFree.h"
 #include <raymath.h>
 
+
+void SkiObject::update()
+{
+    Vector2 velocity{};
+    if (direction.x != 0 || direction.y != 0)
+    {
+        velocity = direction * speed;
+    }
+    position += velocity;
+    switch (type)
+    {
+        case TYPE_SKIER:
+        {
+            switch (state)
+            {
+                case STATE_PLAYER_30_LEFT:
+                case STATE_PLAYER_30_RIGHT:
+                {
+                    speed += 0.3;
+                    break;
+                }
+                case STATE_PLAYER_60_LEFT:
+                case STATE_PLAYER_60_RIGHT:
+                {
+                    speed += 0.6;
+                    break;
+                }
+                case STATE_PLAYER_DOWN:
+                {
+                    speed += 1;
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (speed > 25)
+            {
+                speed = 25;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 SkiFree::SkiFree()
 {
     all_textures = LoadTexture("assets/images.bmp");
@@ -461,51 +507,6 @@ void SkiFree::update()
                     GetWorldToScreen2D(player.position, camera);
     delta *= -1.0f / camera.zoom;
     camera.target += delta;
-}
-
-void SkiObject::update()
-{
-    Vector2 velocity{};
-    if (direction.x != 0 || direction.y != 0)
-    {
-        velocity = direction * speed;
-    }
-    position += velocity;
-    switch (type)
-    {
-        case TYPE_SKIER:
-        {
-            switch (state)
-            {
-                case STATE_PLAYER_30_LEFT:
-                case STATE_PLAYER_30_RIGHT:
-                {
-                    speed += 0.3;
-                    break;
-                }
-                case STATE_PLAYER_60_LEFT:
-                case STATE_PLAYER_60_RIGHT:
-                {
-                    speed += 0.6;
-                    break;
-                }
-                case STATE_PLAYER_DOWN:
-                {
-                    speed += 1;
-                    break;
-                }
-                default:
-                    break;
-            }
-            if (speed > 25)
-            {
-                speed = 25;
-            }
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 void SkiFree::manage_objects()
