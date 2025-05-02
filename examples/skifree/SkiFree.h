@@ -137,5 +137,5 @@ private:
     void manage_objects();
 
     bool is_paused{};
-    bool is_waiting_action{};
+    bool is_waiting_action = true;
 };
