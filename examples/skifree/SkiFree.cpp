@@ -146,6 +146,10 @@ void SkiFree::draw() const
 
 void SkiFree::inputs()
 {
+    if (IsKeyPressed(KEY_F2))
+    {
+        reset();
+    }
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
     {
         switch (player.state)
@@ -502,6 +506,9 @@ void SkiFree::reset()
     player.position = Vector2(0, 0);
     player.current_frame_index = 3;
     player.current_frame_rectangle = frames[player.current_frame_index];
+    player.speed = 0;
+    player.direction = {1, 0};
+    player.state = SkiObject::STATE_PLAYER_LEFT;
 
     current_area = Rectangle(player.position.x - 100, player.position.y - 100, 100, 100);
 
