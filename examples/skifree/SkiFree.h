@@ -52,6 +52,7 @@ public:
         STATE_PLAYER_SIT,
         STATE_PLAYER_JUMP,
         STATE_PLAYER_HIT,
+        STATE_PLAYER_DOWN,
         STATE_SLALOM_LEFT,
         STATE_SLALOM_RIGHT,
         STATE_SLALOM_SUCCESS,
@@ -82,8 +83,10 @@ public:
 
     object_type type{};
     Vector2 position{};
+    Vector2 direction{};
     size_t current_frame_index{};
     Rectangle current_frame_rectangle{};
+    object_state state;
 };
 
 class SkiFree
