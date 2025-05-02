@@ -96,12 +96,12 @@ SkiFree::SkiFree()
     frames[87] = Rectangle(0, prev_y += 32, 28, 32); // tree_walk_right
     frames[88] = Rectangle(0, prev_y += 32, 28, 32); // tree_walk_left
 
-    long_live_objects.emplace_back();
-    SkiObject *player = &long_live_objects.front();
-    player->type = SkiObject::TYPE_SKIER;
-    player->position = Vector2(20, 20);
-    player->current_frame_index = 3;
-    player->current_frame_rectangle = frames[player->current_frame_index];
+    player.type = SkiObject::TYPE_SKIER;
+    player.position = Vector2(20, 20);
+    player.current_frame_index = 3;
+    player.current_frame_rectangle = frames[player.current_frame_index];
+
+    long_live_objects.emplace_back(&player);
 };
 
 SkiFree::~SkiFree()
@@ -116,70 +116,69 @@ void SkiFree::draw()
     for (const auto &long_live_object: long_live_objects)
     {
         DrawTextureRec(
-                all_textures, frames[long_live_object.current_frame_index],
-                long_live_object.position, WHITE);
+                all_textures, frames[long_live_object->current_frame_index],
+                long_live_object->position, WHITE);
     }
     EndDrawing();
 }
 
 void SkiFree::inputs()
 {
-    SkiObject *player = &long_live_objects.front();
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
     {
-        switch (player->state)
+        switch (player.state)
         {
             case SkiObject::STATE_PLAYER_RIGHT:
             {
                 // 6, 8, 10
-                if (player->current_frame_index == 6)
+                if (player.current_frame_index == 6)
                 {
-                    player->current_frame_index = 8;
+                    player.current_frame_index = 8;
                 }
-                else if (player->current_frame_index == 8)
+                else if (player.current_frame_index == 8)
                 {
-                    player->current_frame_index = 10;
+                    player.current_frame_index = 10;
                 }
-                else if (player->current_frame_index == 10)
+                else if (player.current_frame_index == 10)
                 {
-                    player->current_frame_index = 6;
+                    player.current_frame_index = 6;
                 }
                 break;
             }
             case SkiObject::STATE_PLAYER_LEFT:
             {
-                player->state = SkiObject::STATE_PLAYER_60_LEFT;
-                player->current_frame_index = 2;
+                player.state = SkiObject::STATE_PLAYER_60_LEFT;
+                player.current_frame_index = 2;
                 break;
             }
             case SkiObject::STATE_PLAYER_60_LEFT:
             {
-                player->state = SkiObject::STATE_PLAYER_30_LEFT;
-                player->current_frame_index = 1;
+                player.state = SkiObject::STATE_PLAYER_30_LEFT;
+                player.current_frame_index = 1;
                 break;
             }
             case SkiObject::STATE_PLAYER_30_LEFT:
             {
-                player->state = SkiObject::STATE_PLAYER_DOWN;
-                player->current_frame_index = 0;
+                player.state = SkiObject::STATE_PLAYER_DOWN;
+                player.current_frame_index = 0;
                 break;
             }
             case SkiObject::STATE_PLAYER_DOWN:
             {
-                player->state = SkiObject::STATE_PLAYER_30_RIGHT;
-                player->current_frame_index = 4;
+                player.state = SkiObject::STATE_PLAYER_30_RIGHT;
+                player.current_frame_index = 4;
                 break;
             }
             case SkiObject::STATE_PLAYER_30_RIGHT:
             {
-                player->state = SkiObject::STATE_PLAYER_60_RIGHT;
-                player->current_frame_index = 5;
+                player.state = SkiObject::STATE_PLAYER_60_RIGHT;
+                player.current_frame_index = 5;
                 break;
             }
             case SkiObject::STATE_PLAYER_60_RIGHT:
             {
-                player->state = SkiObject::STATE_PLAYER_RIGHT;
-                player->current_frame_index = 6;
+                player.state = SkiObject::STATE_PLAYER_RIGHT;
+                player.current_frame_index = 6;
                 break;
             }
             default:
@@ -188,59 +187,59 @@ void SkiFree::inputs()
     }
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_KP_4))
     {
-        switch (player->state)
+        switch (player.state)
         {
             case SkiObject::STATE_PLAYER_LEFT:
             {
                 // 3, 7, 9
-                if (player->current_frame_index == 3)
+                if (player.current_frame_index == 3)
                 {
-                    player->current_frame_index = 7;
+                    player.current_frame_index = 7;
                 }
-                else if (player->current_frame_index == 7)
+                else if (player.current_frame_index == 7)
                 {
-                    player->current_frame_index = 9;
+                    player.current_frame_index = 9;
                 }
-                else if (player->current_frame_index == 9)
+                else if (player.current_frame_index == 9)
                 {
-                    player->current_frame_index = 3;
+                    player.current_frame_index = 3;
                 }
                 break;
             }
             case SkiObject::STATE_PLAYER_RIGHT:
             {
-                player->state = SkiObject::STATE_PLAYER_60_RIGHT;
-                player->current_frame_index = 5;
+                player.state = SkiObject::STATE_PLAYER_60_RIGHT;
+                player.current_frame_index = 5;
                 break;
             }
             case SkiObject::STATE_PLAYER_60_RIGHT:
             {
-                player->state = SkiObject::STATE_PLAYER_30_RIGHT;
-                player->current_frame_index = 4;
+                player.state = SkiObject::STATE_PLAYER_30_RIGHT;
+                player.current_frame_index = 4;
                 break;
             }
             case SkiObject::STATE_PLAYER_30_RIGHT:
             {
-                player->state = SkiObject::STATE_PLAYER_DOWN;
-                player->current_frame_index = 0;
+                player.state = SkiObject::STATE_PLAYER_DOWN;
+                player.current_frame_index = 0;
                 break;
             }
             case SkiObject::STATE_PLAYER_DOWN:
             {
-                player->state = SkiObject::STATE_PLAYER_30_LEFT;
-                player->current_frame_index = 1;
+                player.state = SkiObject::STATE_PLAYER_30_LEFT;
+                player.current_frame_index = 1;
                 break;
             }
             case SkiObject::STATE_PLAYER_30_LEFT:
             {
-                player->state = SkiObject::STATE_PLAYER_60_LEFT;
-                player->current_frame_index = 2;
+                player.state = SkiObject::STATE_PLAYER_60_LEFT;
+                player.current_frame_index = 2;
                 break;
             }
             case SkiObject::STATE_PLAYER_60_LEFT:
             {
-                player->state = SkiObject::STATE_PLAYER_LEFT;
-                player->current_frame_index = 3;
+                player.state = SkiObject::STATE_PLAYER_LEFT;
+                player.current_frame_index = 3;
                 break;
             }
             default:
@@ -249,63 +248,63 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_KP_9))
     {
-        player->state = SkiObject::STATE_PLAYER_RIGHT;
-        player->current_frame_index = 6;
+        player.state = SkiObject::STATE_PLAYER_RIGHT;
+        player.current_frame_index = 6;
     }
     if (IsKeyPressed(KEY_KP_7))
     {
-        player->state = SkiObject::STATE_PLAYER_LEFT;
-        player->current_frame_index = 3;
+        player.state = SkiObject::STATE_PLAYER_LEFT;
+        player.current_frame_index = 3;
     }
     if (IsKeyPressed(KEY_KP_3))
     {
-        player->state = SkiObject::STATE_PLAYER_30_RIGHT;
-        player->current_frame_index = 4;
+        player.state = SkiObject::STATE_PLAYER_30_RIGHT;
+        player.current_frame_index = 4;
     }
     if (IsKeyPressed(KEY_KP_1))
     {
-        player->state = SkiObject::STATE_PLAYER_30_LEFT;
-        player->current_frame_index = 1;
+        player.state = SkiObject::STATE_PLAYER_30_LEFT;
+        player.current_frame_index = 1;
     }
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
     {
-        player->state = SkiObject::STATE_PLAYER_DOWN;
-        player->current_frame_index = 0;
+        player.state = SkiObject::STATE_PLAYER_DOWN;
+        player.current_frame_index = 0;
     }
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
     {
-        switch (player->state)
+        switch (player.state)
         {
             case SkiObject::STATE_PLAYER_LEFT:
             {
-                if (player->current_frame_index == 3)
+                if (player.current_frame_index == 3)
                 {
-                    player->current_frame_index = 7;
+                    player.current_frame_index = 7;
                 }
-                else if (player->current_frame_index == 7)
+                else if (player.current_frame_index == 7)
                 {
-                    player->current_frame_index = 9;
+                    player.current_frame_index = 9;
                 }
-                else if (player->current_frame_index == 9)
+                else if (player.current_frame_index == 9)
                 {
-                    player->current_frame_index = 3;
+                    player.current_frame_index = 3;
                 }
                 break;
             }
             case SkiObject::STATE_PLAYER_RIGHT:
             {
                 // 6, 8, 10
-                if (player->current_frame_index == 6)
+                if (player.current_frame_index == 6)
                 {
-                    player->current_frame_index = 8;
+                    player.current_frame_index = 8;
                 }
-                else if (player->current_frame_index == 8)
+                else if (player.current_frame_index == 8)
                 {
-                    player->current_frame_index = 10;
+                    player.current_frame_index = 10;
                 }
-                else if (player->current_frame_index == 10)
+                else if (player.current_frame_index == 10)
                 {
-                    player->current_frame_index = 6;
+                    player.current_frame_index = 6;
                 }
                 break;
             }

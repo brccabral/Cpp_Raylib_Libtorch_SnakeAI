@@ -112,8 +112,10 @@ private:
         STATE_TREE_SLALOM
     };
 
-    std::list<SkiObject> long_live_objects;
+    std::list<SkiObject*> long_live_objects;
     std::list<SkiObject> short_live_objects;
+
+    SkiObject player;
 
     game_state_t current_state{};
 };
