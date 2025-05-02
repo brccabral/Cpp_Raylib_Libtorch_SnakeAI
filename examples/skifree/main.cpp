@@ -12,7 +12,12 @@ int main()
         while (!WindowShouldClose())
         {
             game.inputs();
+            game.update();
+
+            BeginDrawing();
+            ClearBackground(BLACK);
             game.draw();
+            EndDrawing();
         }
     }
 

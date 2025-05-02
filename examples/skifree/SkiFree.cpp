@@ -1,5 +1,5 @@
 #include "SkiFree.h"
-
+#include <raymath.h>
 
 SkiFree::SkiFree()
 {
@@ -96,8 +96,10 @@ SkiFree::SkiFree()
     frames[87] = Rectangle(0, prev_y += 32, 28, 32); // tree_walk_right
     frames[88] = Rectangle(0, prev_y += 32, 28, 32); // tree_walk_left
 
+    camera.zoom = 1.0f;
+
     player.type = SkiObject::TYPE_SKIER;
-    player.position = Vector2(20, 20);
+    player.position = Vector2(0, 0);
     player.current_frame_index = 3;
     player.current_frame_rectangle = frames[player.current_frame_index];
 
@@ -111,15 +113,14 @@ SkiFree::~SkiFree()
 
 void SkiFree::draw()
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
+    BeginMode2D(camera);
     for (const auto &long_live_object: long_live_objects)
     {
         DrawTextureRec(
                 all_textures, frames[long_live_object->current_frame_index],
                 long_live_object->position, WHITE);
     }
-    EndDrawing();
+    EndMode2D();
 }
 
 void SkiFree::inputs()
@@ -143,42 +144,61 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 6;
                 }
+                player.speed = 1;
+                player.direction = {1, 0};
                 break;
             }
             case SkiObject::STATE_PLAYER_LEFT:
             {
                 player.state = SkiObject::STATE_PLAYER_60_LEFT;
                 player.current_frame_index = 2;
+                player.speed = 1;
+                player.direction.x = cosf(150 * DEG2RAD);
+                player.direction.y = sinf(150 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_60_LEFT:
             {
                 player.state = SkiObject::STATE_PLAYER_30_LEFT;
                 player.current_frame_index = 1;
+                player.speed = 1;
+                player.direction.x = cosf(120 * DEG2RAD);
+                player.direction.y = sinf(120 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_30_LEFT:
             {
                 player.state = SkiObject::STATE_PLAYER_DOWN;
                 player.current_frame_index = 0;
+                player.speed = 1;
+                player.direction.x = cosf(90 * DEG2RAD);
+                player.direction.y = sinf(90 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_DOWN:
             {
                 player.state = SkiObject::STATE_PLAYER_30_RIGHT;
                 player.current_frame_index = 4;
+                player.speed = 1;
+                player.direction.x = cosf(60 * DEG2RAD);
+                player.direction.y = sinf(60 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_30_RIGHT:
             {
                 player.state = SkiObject::STATE_PLAYER_60_RIGHT;
                 player.current_frame_index = 5;
+                player.speed = 1;
+                player.direction.x = cosf(30 * DEG2RAD);
+                player.direction.y = sinf(30 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_60_RIGHT:
             {
                 player.state = SkiObject::STATE_PLAYER_RIGHT;
                 player.current_frame_index = 6;
+                player.speed = 1;
+                player.direction = {1, 0};
                 break;
             }
             default:
@@ -204,42 +224,60 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 3;
                 }
+                player.speed = 1;
+                player.direction = {-1, 0};
                 break;
             }
             case SkiObject::STATE_PLAYER_RIGHT:
             {
                 player.state = SkiObject::STATE_PLAYER_60_RIGHT;
                 player.current_frame_index = 5;
+                player.speed = 1;
+                player.direction.x = cosf(30 * DEG2RAD);
+                player.direction.y = sinf(30 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_60_RIGHT:
             {
                 player.state = SkiObject::STATE_PLAYER_30_RIGHT;
                 player.current_frame_index = 4;
+                player.speed = 1;
+                player.direction.x = cosf(60 * DEG2RAD);
+                player.direction.y = sinf(60 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_30_RIGHT:
             {
                 player.state = SkiObject::STATE_PLAYER_DOWN;
                 player.current_frame_index = 0;
+                player.speed = 1;
+                player.direction = {0, 1};
                 break;
             }
             case SkiObject::STATE_PLAYER_DOWN:
             {
                 player.state = SkiObject::STATE_PLAYER_30_LEFT;
                 player.current_frame_index = 1;
+                player.speed = 1;
+                player.direction.x = cosf(120 * DEG2RAD);
+                player.direction.y = sinf(120 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_30_LEFT:
             {
                 player.state = SkiObject::STATE_PLAYER_60_LEFT;
                 player.current_frame_index = 2;
+                player.speed = 1;
+                player.direction.x = cosf(150 * DEG2RAD);
+                player.direction.y = sinf(150 * DEG2RAD);
                 break;
             }
             case SkiObject::STATE_PLAYER_60_LEFT:
             {
                 player.state = SkiObject::STATE_PLAYER_LEFT;
                 player.current_frame_index = 3;
+                player.speed = 1;
+                player.direction = {-1, 0};
                 break;
             }
             default:
@@ -250,26 +288,38 @@ void SkiFree::inputs()
     {
         player.state = SkiObject::STATE_PLAYER_RIGHT;
         player.current_frame_index = 6;
+        player.speed = 1;
+        player.direction = {1, 0};
     }
     if (IsKeyPressed(KEY_KP_7))
     {
         player.state = SkiObject::STATE_PLAYER_LEFT;
         player.current_frame_index = 3;
+        player.speed = 1;
+        player.direction = {-1, 0};
     }
     if (IsKeyPressed(KEY_KP_3))
     {
         player.state = SkiObject::STATE_PLAYER_30_RIGHT;
         player.current_frame_index = 4;
+        player.speed = 1;
+        player.direction.x = cosf(60 * DEG2RAD);
+        player.direction.y = sinf(60 * DEG2RAD);
     }
     if (IsKeyPressed(KEY_KP_1))
     {
         player.state = SkiObject::STATE_PLAYER_30_LEFT;
         player.current_frame_index = 1;
+        player.speed = 1;
+        player.direction.x = cosf(120 * DEG2RAD);
+        player.direction.y = sinf(120 * DEG2RAD);
     }
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
     {
         player.state = SkiObject::STATE_PLAYER_DOWN;
         player.current_frame_index = 0;
+        player.speed = 1;
+        player.direction = {0, 1};
     }
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
     {
@@ -289,6 +339,8 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 3;
                 }
+                player.speed = 1;
+                player.direction = {0, -1};
                 break;
             }
             case SkiObject::STATE_PLAYER_RIGHT:
@@ -306,10 +358,50 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 6;
                 }
+                player.speed = 1;
+                player.direction = {0, -1};
                 break;
             }
             default:
                 break;
         }
+    }
+}
+
+void SkiFree::update()
+{
+    for (auto long_live_object: long_live_objects)
+    {
+        long_live_object->update();
+    }
+    for (auto &short_live_object: short_live_objects)
+    {
+        short_live_object.update();
+    }
+    camera.offset = GetWorldToScreen2D(player.position, camera);
+    camera.target = player.position;
+    Vector2 delta = Vector2(GetScreenWidth() / 2.0, GetScreenHeight() / 2.0 - 150) -
+                    GetWorldToScreen2D(player.position, camera);
+    delta *= -1.0f / camera.zoom;
+    camera.target += delta;
+}
+
+void SkiObject::update()
+{
+    Vector2 velocity{};
+    if (direction.x != 0 || direction.y != 0)
+    {
+        velocity = direction * speed;
+    }
+    position += velocity;
+    switch (type)
+    {
+        case TYPE_SKIER:
+        {
+
+            break;
+        }
+        default:
+            break;
     }
 }

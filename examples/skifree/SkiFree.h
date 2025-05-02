@@ -10,6 +10,8 @@ public:
     SkiObject() = default;
     ~SkiObject() = default;
 
+    void update();
+
     enum object_type
     {
         TYPE_SKIER = 0,
@@ -87,6 +89,7 @@ public:
     size_t current_frame_index{};
     Rectangle current_frame_rectangle{};
     object_state state;
+    double speed;
 };
 
 class SkiFree
@@ -97,6 +100,7 @@ public:
     ~SkiFree();
 
     void inputs();
+    void update();
     void draw();
 
 private:
@@ -112,9 +116,10 @@ private:
         STATE_TREE_SLALOM
     };
 
-    std::list<SkiObject*> long_live_objects;
+    std::list<SkiObject *> long_live_objects;
     std::list<SkiObject> short_live_objects;
 
+    Camera2D camera{};
     SkiObject player;
 
     game_state_t current_state{};
