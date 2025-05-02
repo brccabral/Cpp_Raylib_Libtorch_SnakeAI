@@ -125,7 +125,7 @@ void SkiFree::draw()
 void SkiFree::inputs()
 {
     SkiObject *player = &long_live_objects.front();
-    if (IsKeyDown(KEY_RIGHT))
+    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
     {
         switch (player->state)
         {
@@ -186,7 +186,7 @@ void SkiFree::inputs()
                 break;
         }
     }
-    if (IsKeyDown(KEY_LEFT))
+    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_KP_4))
     {
         switch (player->state)
         {
@@ -241,6 +241,72 @@ void SkiFree::inputs()
             {
                 player->state = SkiObject::STATE_PLAYER_LEFT;
                 player->current_frame_index = 3;
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    if (IsKeyPressed(KEY_KP_9))
+    {
+        player->state = SkiObject::STATE_PLAYER_RIGHT;
+        player->current_frame_index = 6;
+    }
+    if (IsKeyPressed(KEY_KP_7))
+    {
+        player->state = SkiObject::STATE_PLAYER_LEFT;
+        player->current_frame_index = 3;
+    }
+    if (IsKeyPressed(KEY_KP_3))
+    {
+        player->state = SkiObject::STATE_PLAYER_30_RIGHT;
+        player->current_frame_index = 4;
+    }
+    if (IsKeyPressed(KEY_KP_1))
+    {
+        player->state = SkiObject::STATE_PLAYER_30_LEFT;
+        player->current_frame_index = 1;
+    }
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
+    {
+        player->state = SkiObject::STATE_PLAYER_DOWN;
+        player->current_frame_index = 0;
+    }
+    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
+    {
+        switch (player->state)
+        {
+            case SkiObject::STATE_PLAYER_LEFT:
+            {
+                if (player->current_frame_index == 3)
+                {
+                    player->current_frame_index = 7;
+                }
+                else if (player->current_frame_index == 7)
+                {
+                    player->current_frame_index = 9;
+                }
+                else if (player->current_frame_index == 9)
+                {
+                    player->current_frame_index = 3;
+                }
+                break;
+            }
+            case SkiObject::STATE_PLAYER_RIGHT:
+            {
+                // 6, 8, 10
+                if (player->current_frame_index == 6)
+                {
+                    player->current_frame_index = 8;
+                }
+                else if (player->current_frame_index == 8)
+                {
+                    player->current_frame_index = 10;
+                }
+                else if (player->current_frame_index == 10)
+                {
+                    player->current_frame_index = 6;
+                }
                 break;
             }
             default:
