@@ -15,12 +15,30 @@ public:
     enum object_type
     {
         TYPE_SKIER = 0,
+        // fixed positions
         TYPE_SLALOM_ARROW_LEFT,
         TYPE_SLALOM_ARROW_RIGHT,
-        TYPE_MOGUL_GROUP,
+        TYPE_START_LEFT,
+        TYPE_START_RIGHT,
+        TYPE_FINISH_LEFT,
+        TYPE_FINISH_RIGHT,
+        TYPE_SLALOM_SIGN,
+        TYPE_TREE_SLALOM_SIGN,
+        TYPE_FREESTYLE_SIGN,
+        TYPE_RESTART_PAUSE_SIGN,
+        // lift
+        TYPE_LIFT_POLE,
+        TYPE_LIFT_CHAIR,
+        // characters
+        TYPE_YETI,
         TYPE_NOVICE,
         TYPE_DOG,
         TYPE_SNOWBOARDER,
+        TYPE_TREE_WALK,
+        // special
+        TYPE_URINE,
+        // obstacles
+        TYPE_MOGUL_GROUP,
         TYPE_ROCK,
         TYPE_STUMP,
         TYPE_MOGUL_SMALL,
@@ -29,19 +47,6 @@ public:
         TYPE_TREE_DRIED,
         TYPE_TREE_LARGE,
         TYPE_RAINBOW,
-        TYPE_START_LEFT,
-        TYPE_START_RIGHT,
-        TYPE_FINISH_LEFT,
-        TYPE_FINISH_RIGHT,
-        TYPE_SLALOM_SIGN,
-        TYPE_TREE_SLALOM_SIGN,
-        TYPE_FREESTYLE_SIGN,
-        TYPE_LIFT_POLE,
-        TYPE_LIFT_CHAIR,
-        TYPE_YETI,
-        TYPE_URINE,
-        TYPE_TREE_WALK,
-        TYPE_RESTART_PAUSE_SIGN
     };
 
     enum object_state

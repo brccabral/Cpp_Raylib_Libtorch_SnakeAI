@@ -1,4 +1,7 @@
 #include "SkiFree.h"
+
+#include <cassert>
+#include <cstdio>
 #include <raymath.h>
 
 
@@ -535,9 +538,63 @@ void SkiFree::manage_objects()
     for (size_t i = 0; i < num_elements_in_area - current_num_objs; i++)
     {
         auto new_object = SkiObject();
-        new_object.type = SkiObject::TYPE_TREE_SMALL;
-        new_object.current_frame_index = 48;
-        new_object.current_frame_rectangle = frames[48];
+        const auto type = (SkiObject::object_type) GetRandomValue(
+                SkiObject::TYPE_MOGUL_GROUP, SkiObject::TYPE_RAINBOW);
+        new_object.type = type;
+        switch (type)
+        {
+            case SkiObject::TYPE_MOGUL_GROUP:
+            {
+                new_object.current_frame_index = 26;
+                break;
+            }
+            case SkiObject::TYPE_ROCK:
+            {
+                new_object.current_frame_index = 44;
+                break;
+            }
+            case SkiObject::TYPE_STUMP:
+            {
+                new_object.current_frame_index = 45;
+                break;
+            }
+            case SkiObject::TYPE_MOGUL_SMALL:
+            {
+                new_object.current_frame_index = 46;
+                break;
+            }
+            case SkiObject::TYPE_MOGUL_LARGE:
+            {
+                new_object.current_frame_index = 47;
+                break;
+            }
+            case SkiObject::TYPE_TREE_SMALL:
+            {
+                new_object.current_frame_index = 48;
+                break;
+            }
+            case SkiObject::TYPE_TREE_DRIED:
+            {
+                new_object.current_frame_index = 49;
+                break;
+            }
+            case SkiObject::TYPE_TREE_LARGE:
+            {
+                new_object.current_frame_index = 50;
+                break;
+            }
+            case SkiObject::TYPE_RAINBOW:
+            {
+                new_object.current_frame_index = 51;
+                break;
+            }
+            default:
+            {
+                (void) fprintf(stderr, "Invalid object type %d\n", type);
+                assert(0);
+            }
+        }
+        new_object.current_frame_rectangle = frames[new_object.current_frame_index];
         Vector2 position;
         do
         {
