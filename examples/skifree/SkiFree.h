@@ -101,7 +101,8 @@ public:
 
     void inputs();
     void update();
-    void draw();
+    void draw() const;
+    void reset();
 
 private:
 
@@ -126,4 +127,10 @@ private:
     SkiObject tree_slalom_sign;
 
     game_state_t current_state{};
+
+    Rectangle current_area{};
+    float area_size = 3000.0f;
+    size_t num_elements_in_area = 190;
+
+    void manage_objects();
 };

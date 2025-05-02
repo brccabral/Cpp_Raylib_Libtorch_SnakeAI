@@ -98,11 +98,6 @@ SkiFree::SkiFree()
 
     camera.zoom = 1.0f;
 
-    player.type = SkiObject::TYPE_SKIER;
-    player.position = Vector2(0, 0);
-    player.current_frame_index = 3;
-    player.current_frame_rectangle = frames[player.current_frame_index];
-
     slalom_sign.type = SkiObject::TYPE_SLALOM_SIGN;
     slalom_sign.position = Vector2(-180, 270);
     slalom_sign.current_frame_index = 60;
@@ -122,6 +117,8 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
     long_live_objects.emplace_back(&tree_slalom_sign);
+
+    reset();
 };
 
 SkiFree::~SkiFree()
@@ -129,7 +126,7 @@ SkiFree::~SkiFree()
     UnloadTexture(all_textures);
 }
 
-void SkiFree::draw()
+void SkiFree::draw() const
 {
     BeginMode2D(camera);
     for (const auto &long_live_object: long_live_objects)
@@ -137,6 +134,12 @@ void SkiFree::draw()
         DrawTextureRec(
                 all_textures, frames[long_live_object->current_frame_index],
                 long_live_object->position, WHITE);
+    }
+    for (const auto &short_live_obj: short_live_objects)
+    {
+        DrawTextureRec(
+                all_textures, frames[short_live_obj.current_frame_index], short_live_obj.position,
+                WHITE);
     }
     EndMode2D();
 }
@@ -388,7 +391,8 @@ void SkiFree::inputs()
 
 void SkiFree::update()
 {
-    for (auto long_live_object: long_live_objects)
+    manage_objects();
+    for (const auto long_live_object: long_live_objects)
     {
         long_live_object->update();
     }
@@ -447,4 +451,61 @@ void SkiObject::update()
         default:
             break;
     }
+}
+
+void SkiFree::manage_objects()
+{
+    auto new_area = Rectangle(
+            player.position.x - area_size / 2, player.position.y - area_size / 2, area_size,
+            area_size);
+
+    if (abs(new_area.x - current_area.x) < 250 && abs(new_area.y - current_area.y) < 250)
+    {
+        return;
+    }
+
+    short_live_objects.remove_if([&new_area](const SkiObject &object)
+                                 { return !CheckCollisionPointRec(object.position, new_area); });
+
+    auto get_new_position = [&new_area]()
+    {
+        return Vector2(
+                GetRandomValue(new_area.x, new_area.x + new_area.width),
+                GetRandomValue(new_area.y, new_area.y + new_area.height));
+    };
+
+    const size_t current_num_objs = short_live_objects.size();
+
+    for (size_t i = 0; i < num_elements_in_area - current_num_objs; i++)
+    {
+        auto new_object = SkiObject();
+        new_object.type = SkiObject::TYPE_TREE_SMALL;
+        new_object.current_frame_index = 48;
+        new_object.current_frame_rectangle = frames[48];
+        Vector2 position;
+        do
+        {
+            position = get_new_position();
+        }
+        while (CheckCollisionPointRec(position, current_area));
+        new_object.position = position;
+        short_live_objects.push_back(new_object);
+    }
+
+    current_area = new_area;
+}
+
+void SkiFree::reset()
+{
+    SetRandomSeed(0);
+    player.type = SkiObject::TYPE_SKIER;
+    player.position = Vector2(0, 0);
+    player.current_frame_index = 3;
+    player.current_frame_rectangle = frames[player.current_frame_index];
+
+    current_area = Rectangle(player.position.x - 100, player.position.y - 100, 100, 100);
+
+    short_live_objects.clear();
+
+    manage_objects();
 }
