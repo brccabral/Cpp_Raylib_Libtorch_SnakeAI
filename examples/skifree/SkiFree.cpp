@@ -398,7 +398,32 @@ void SkiObject::update()
     {
         case TYPE_SKIER:
         {
-
+            switch (state)
+            {
+                case STATE_PLAYER_30_LEFT:
+                case STATE_PLAYER_30_RIGHT:
+                {
+                    speed += 0.3;
+                    break;
+                }
+                case STATE_PLAYER_60_LEFT:
+                case STATE_PLAYER_60_RIGHT:
+                {
+                    speed += 0.6;
+                    break;
+                }
+                case STATE_PLAYER_DOWN:
+                {
+                    speed += 1;
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (speed > 25)
+            {
+                speed = 25;
+            }
             break;
         }
         default:
