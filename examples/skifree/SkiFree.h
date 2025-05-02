@@ -121,6 +121,9 @@ private:
 
     Camera2D camera{};
     SkiObject player;
+    SkiObject slalom_sign;
+    SkiObject freestyle_sign;
+    SkiObject tree_slalom_sign;
 
     game_state_t current_state{};
 };

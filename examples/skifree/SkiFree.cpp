@@ -103,7 +103,25 @@ SkiFree::SkiFree()
     player.current_frame_index = 3;
     player.current_frame_rectangle = frames[player.current_frame_index];
 
+    slalom_sign.type = SkiObject::TYPE_SLALOM_SIGN;
+    slalom_sign.position = Vector2(-180, 270);
+    slalom_sign.current_frame_index = 60;
+    slalom_sign.current_frame_rectangle = frames[60];
+
+    freestyle_sign.type = SkiObject::TYPE_FREESTYLE_SIGN;
+    freestyle_sign.position = Vector2(0, 270);
+    freestyle_sign.current_frame_index = 62;
+    freestyle_sign.current_frame_rectangle = frames[62];
+
+    tree_slalom_sign.type = SkiObject::TYPE_TREE_SLALOM_SIGN;
+    tree_slalom_sign.position = Vector2(180, 270);
+    tree_slalom_sign.current_frame_index = 61;
+    tree_slalom_sign.current_frame_rectangle = frames[61];
+
     long_live_objects.emplace_back(&player);
+    long_live_objects.emplace_back(&slalom_sign);
+    long_live_objects.emplace_back(&freestyle_sign);
+    long_live_objects.emplace_back(&tree_slalom_sign);
 };
 
 SkiFree::~SkiFree()
