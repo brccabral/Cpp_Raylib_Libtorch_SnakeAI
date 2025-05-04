@@ -7,12 +7,6 @@
 
 void SkiObject::update()
 {
-    Vector2 velocity{};
-    if (direction.x != 0 || direction.y != 0)
-    {
-        velocity = direction * speed;
-    }
-    position += velocity;
     switch (type)
     {
         case TYPE_SKIER:
@@ -36,6 +30,15 @@ void SkiObject::update()
                     speed += 1;
                     break;
                 }
+                case STATE_PLAYER_LEFT:
+                case STATE_PLAYER_RIGHT:
+                {
+                    if (speed > 0)
+                    {
+                        speed -= 5;
+                    }
+                    break;
+                }
                 default:
                     break;
             }
@@ -43,6 +46,11 @@ void SkiObject::update()
             {
                 speed = 25;
             }
+            if (std::abs(speed) < 0.001)
+            {
+                speed = 0;
+            }
+            speed = std::max(speed, 0.0);
             break;
         }
         default:
