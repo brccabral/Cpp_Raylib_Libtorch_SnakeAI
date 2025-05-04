@@ -258,7 +258,6 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 6;
                 }
-                player.speed = 1;
                 player.direction = {1, 0};
                 break;
             }
@@ -266,7 +265,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_60_LEFT;
                 player.current_frame_index = 2;
-                player.speed = 1;
                 player.direction.x = cosf(150 * DEG2RAD);
                 player.direction.y = sinf(150 * DEG2RAD);
                 break;
@@ -275,7 +273,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_30_LEFT;
                 player.current_frame_index = 1;
-                player.speed = 1;
                 player.direction.x = cosf(120 * DEG2RAD);
                 player.direction.y = sinf(120 * DEG2RAD);
                 break;
@@ -284,7 +281,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_DOWN;
                 player.current_frame_index = 0;
-                player.speed = 1;
                 player.direction.x = cosf(90 * DEG2RAD);
                 player.direction.y = sinf(90 * DEG2RAD);
                 break;
@@ -293,7 +289,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_30_RIGHT;
                 player.current_frame_index = 4;
-                player.speed = 1;
                 player.direction.x = cosf(60 * DEG2RAD);
                 player.direction.y = sinf(60 * DEG2RAD);
                 break;
@@ -302,7 +297,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_60_RIGHT;
                 player.current_frame_index = 5;
-                player.speed = 1;
                 player.direction.x = cosf(30 * DEG2RAD);
                 player.direction.y = sinf(30 * DEG2RAD);
                 break;
@@ -311,7 +305,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_RIGHT;
                 player.current_frame_index = 6;
-                player.speed = 1;
                 player.direction = {1, 0};
                 break;
             }
@@ -339,7 +332,6 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 3;
                 }
-                player.speed = 1;
                 player.direction = {-1, 0};
                 break;
             }
@@ -347,7 +339,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_60_RIGHT;
                 player.current_frame_index = 5;
-                player.speed = 1;
                 player.direction.x = cosf(30 * DEG2RAD);
                 player.direction.y = sinf(30 * DEG2RAD);
                 break;
@@ -356,7 +347,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_30_RIGHT;
                 player.current_frame_index = 4;
-                player.speed = 1;
                 player.direction.x = cosf(60 * DEG2RAD);
                 player.direction.y = sinf(60 * DEG2RAD);
                 break;
@@ -365,7 +355,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_DOWN;
                 player.current_frame_index = 0;
-                player.speed = 1;
                 player.direction = {0, 1};
                 break;
             }
@@ -373,7 +362,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_30_LEFT;
                 player.current_frame_index = 1;
-                player.speed = 1;
                 player.direction.x = cosf(120 * DEG2RAD);
                 player.direction.y = sinf(120 * DEG2RAD);
                 break;
@@ -382,7 +370,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_60_LEFT;
                 player.current_frame_index = 2;
-                player.speed = 1;
                 player.direction.x = cosf(150 * DEG2RAD);
                 player.direction.y = sinf(150 * DEG2RAD);
                 break;
@@ -391,7 +378,6 @@ void SkiFree::inputs()
             {
                 player.state = SkiObject::STATE_PLAYER_LEFT;
                 player.current_frame_index = 3;
-                player.speed = 1;
                 player.direction = {-1, 0};
                 break;
             }
@@ -404,7 +390,6 @@ void SkiFree::inputs()
         is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_RIGHT;
         player.current_frame_index = 6;
-        player.speed = 1;
         player.direction = {1, 0};
     }
     if (IsKeyPressed(KEY_KP_7))
@@ -412,7 +397,6 @@ void SkiFree::inputs()
         is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_LEFT;
         player.current_frame_index = 3;
-        player.speed = 1;
         player.direction = {-1, 0};
     }
     if (IsKeyPressed(KEY_KP_3))
@@ -420,7 +404,6 @@ void SkiFree::inputs()
         is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_30_RIGHT;
         player.current_frame_index = 4;
-        player.speed = 1;
         player.direction.x = cosf(60 * DEG2RAD);
         player.direction.y = sinf(60 * DEG2RAD);
     }
@@ -429,7 +412,6 @@ void SkiFree::inputs()
         is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_30_LEFT;
         player.current_frame_index = 1;
-        player.speed = 1;
         player.direction.x = cosf(120 * DEG2RAD);
         player.direction.y = sinf(120 * DEG2RAD);
     }
@@ -438,7 +420,6 @@ void SkiFree::inputs()
         is_waiting_action = false;
         player.state = SkiObject::STATE_PLAYER_DOWN;
         player.current_frame_index = 0;
-        player.speed = 1;
         player.direction = {0, 1};
     }
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
@@ -460,7 +441,6 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 3;
                 }
-                player.speed = 1;
                 player.direction = {0, -1};
                 break;
             }
@@ -479,7 +459,6 @@ void SkiFree::inputs()
                 {
                     player.current_frame_index = 6;
                 }
-                player.speed = 1;
                 player.direction = {0, -1};
                 break;
             }
