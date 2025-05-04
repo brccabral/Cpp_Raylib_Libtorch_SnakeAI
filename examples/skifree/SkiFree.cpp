@@ -280,6 +280,7 @@ void SkiFree::inputs()
                     player.current_frame_index = 6;
                 }
                 player.direction = {1, 0};
+                player.speed = 10;
                 break;
             }
             case SkiObject::STATE_PLAYER_LEFT:
@@ -354,6 +355,7 @@ void SkiFree::inputs()
                     player.current_frame_index = 3;
                 }
                 player.direction = {-1, 0};
+                player.speed = 10;
                 break;
             }
             case SkiObject::STATE_PLAYER_RIGHT:
