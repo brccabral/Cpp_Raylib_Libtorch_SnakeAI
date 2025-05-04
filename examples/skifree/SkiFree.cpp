@@ -631,5 +631,8 @@ void SkiFree::reset()
 
     short_live_objects.clear();
 
+    is_paused = false;
+    is_waiting_action = true;
+
     manage_objects();
 }
