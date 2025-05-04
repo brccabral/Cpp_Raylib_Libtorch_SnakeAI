@@ -48,6 +48,13 @@ void SkiObject::update()
         default:
             break;
     }
+
+    if (direction.x != 0 || direction.y != 0)
+    {
+        velocity = direction * speed;
+    }
+
+    position += velocity;
 }
 
 SkiFree::SkiFree()
@@ -210,6 +217,12 @@ void SkiFree::draw() const
     }
     const int width = MeasureText(text, 22);
     DrawText(text, (GetScreenWidth() - width) / 2, 5, 22, WHITE);
+
+    DrawRectangleLinesEx(Rectangle(650, 30, 150, 76), 2, BLACK);
+    DrawText("Time: 0:00:00.00", 655, 32, 14, BLACK);
+    DrawText("Dist: 00m", 655, 48, 14, BLACK);
+    DrawText(TextFormat("Speed: %.0fm/s", Vector2Length(player.velocity)), 655, 64, 14, BLACK);
+    DrawText("Style: 0", 655, 80, 14, BLACK);
 }
 
 void SkiFree::inputs()

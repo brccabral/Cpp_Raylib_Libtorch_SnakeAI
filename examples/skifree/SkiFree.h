@@ -92,6 +92,7 @@ public:
     object_type type{};
     Vector2 position{};
     Vector2 direction{};
+    Vector2 velocity{};
     size_t current_frame_index{};
     Rectangle current_frame_rectangle{};
     object_state state;
