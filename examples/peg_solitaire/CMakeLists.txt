@@ -4,7 +4,7 @@ project(PegSolitaireAI)
 find_package(raylib REQUIRED)
 
 file(GLOB CPP_FILES "*.cpp")
-add_executable(${PROJECT_NAME} ${CPP_FILES} ../skifree/main.cpp)
+add_executable(${PROJECT_NAME} ${CPP_FILES})
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib mlgames)
 
 if (MSVC)

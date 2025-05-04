@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <cstdio>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include "PegSolitaire.h"
@@ -73,8 +74,9 @@ void draw_board(const PegSolitaire *game, const float peg_size, const Vector2 pe
                 }
             }
             DrawRectangleLinesEx(
-                    (Rectangle) {(cursor % cols) * peg_size, (cursor / cols) * peg_size,
-                                 peg_dimension.y, peg_dimension.y},
+                    Rectangle(
+                            (cursor % cols) * peg_size, (cursor / cols) * peg_size, peg_dimension.y,
+                            peg_dimension.y),
                     3, YELLOW);
             if (selected == -1)
             {
@@ -187,7 +189,7 @@ int main(int argc, char *argv[])
 
     InitWindow(800, 600, "Peg Solitaire");
 
-    constexpr uint peg_size = 64;
+    constexpr uint32_t peg_size = 64;
     constexpr Vector2 peg_dimension = {peg_size, peg_size};
 
     bool is_manual = false;

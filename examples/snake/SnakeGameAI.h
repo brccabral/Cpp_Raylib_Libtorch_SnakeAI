@@ -14,7 +14,7 @@ public:
     [[nodiscard]] size_t get_action_count() const override;
     [[nodiscard]] int get_score() const override;
     StepResult get_step(int action) override;
-    [[nodiscard]] std::vector<double> get_state() const override;
+    [[nodiscard]] std::vector<float> get_state() const override;
     void reset() override;
 
     typedef enum Direction

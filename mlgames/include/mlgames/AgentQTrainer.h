@@ -64,10 +64,10 @@ public:
 
     size_t num_state;
     size_t num_action;
-    std::vector<double> state;
+    std::vector<float> state;
     std::vector<int> action;
     int reward;
-    std::vector<double> next_state;
+    std::vector<float> next_state;
     bool game_over;
 };
 
@@ -78,19 +78,19 @@ public:
 
     AgentQTrainer(
             LinearNN *model_, torch::optim::Optimizer *optimizer_, c10::DeviceType device_,
-            size_t batch_size_, double gamma_);
+            size_t batch_size_, float gamma_);
 
     [[nodiscard]] std::vector<int>
-    get_action(const std::vector<double> &state, size_t count_samples) const;
+    get_action(const std::vector<float> &state, size_t count_samples) const;
 
     void train_short_memory(
-            const std::vector<double> &state, const std::vector<int> &action, int reward,
-            const std::vector<double> &next_state, bool game_over);
+            const std::vector<float> &state, const std::vector<int> &action, int reward,
+            const std::vector<float> &next_state, bool game_over);
     void train_long_memory();
 
     void remember(
-            const std::vector<double> &state, const std::vector<int> &action, int reward,
-            const std::vector<double> &next_state, bool game_over);
+            const std::vector<float> &state, const std::vector<int> &action, int reward,
+            const std::vector<float> &next_state, bool game_over);
 
     int number_of_games = 0;
 
@@ -100,15 +100,15 @@ private:
     torch::optim::Optimizer *optimizer;
     torch::nn::MSELoss criterion{};
     c10::DeviceType device;
-    double gamma;
+    float gamma;
 
     LimitedDeque<MemoryData> memory_deque{MAX_MEMORY};
     size_t batch_size{};
 
     [[nodiscard]] std::vector<int>
-    get_play(const std::vector<double> &state, size_t count_samples) const;
+    get_play(const std::vector<float> &state, size_t count_samples) const;
     void train_step(
-            size_t count_samples, const std::vector<double> &old_states_,
+            size_t count_samples, const std::vector<float> &old_states_,
             const std::vector<int> &actions_, const std::vector<int> &rewards_,
-            const std::vector<double> &new_states_, const std::vector<bool> &dones_);
+            const std::vector<float> &new_states_, const std::vector<bool> &dones_);
 };

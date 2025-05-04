@@ -537,9 +537,9 @@ int PegSolitaire::can_move(int index_x, int index_y) const
            can_move_down(index_x, index_y) || can_move_up(index_x, index_y);
 }
 
-std::vector<double> PegSolitaire::get_state() const
+std::vector<float> PegSolitaire::get_state() const
 {
-    std::vector<double> result(get_state_size(), 0.0);
+    std::vector<float> result(get_state_size(), 0.0);
 
     if (selected >= 0)
     {

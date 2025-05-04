@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project(Plotter)
 
-find_package(imgui REQUIRED)
+# find_package(imgui REQUIRED)
 find_package(rlImGui REQUIRED)
 find_package(implot REQUIRED)
 

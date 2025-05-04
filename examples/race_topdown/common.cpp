@@ -96,7 +96,7 @@ void Distances::init(int width_, int height_)
 {
     width = width_;
     height = height_;
-    values = new int[width * height];
+    values = new int[width * height]{0};
 }
 
 Distances::~Distances()
@@ -109,6 +109,8 @@ int Distances::operator[](Vector2 pt) const
 {
     assert(pt.x < width);
     assert(pt.y < height);
+    assert(pt.x >= 0);
+    assert(pt.y >= 0);
     return values[int(pt.y) * width + int(pt.x)];
 }
 
@@ -116,6 +118,8 @@ int &Distances::operator[](Vector2 pt)
 {
     assert(pt.x < width);
     assert(pt.y < height);
+    assert(pt.x >= 0);
+    assert(pt.y >= 0);
     return values[int(pt.y) * width + int(pt.x)];
 }
 
@@ -123,12 +127,17 @@ int Distances::operator()(int y, int x) const
 {
     assert(x < width);
     assert(y < height);
+    assert(x >= 0);
+    assert(y >= 0);
     return values[y * width + x];
 }
+
 
 int &Distances::operator()(int y, int x)
 {
     assert(x < width);
     assert(y < height);
+    assert(x >= 0);
+    assert(y >= 0);
     return values[y * width + x];
 }

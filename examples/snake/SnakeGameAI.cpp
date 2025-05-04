@@ -105,7 +105,7 @@ void SnakeGameAI::update_field()
     }
 }
 
-std::vector<double> SnakeGameAI::get_state() const
+std::vector<float> SnakeGameAI::get_state() const
 {
     auto [head_x, head_y] = snake[0];
 
@@ -130,37 +130,37 @@ std::vector<double> SnakeGameAI::get_state() const
     const bool up_reaches_food = distance_field[index_from_location(point_up)] > 0;
     const bool down_reaches_food = distance_field[index_from_location(point_down)] > 0;
 
-    return std::vector<double>{
+    return std::vector<float>{
             // Danger straight (same direction)
-            (double) ((is_direction_right && is_collision(point_right)) ||
+            (float) ((is_direction_right && is_collision(point_right)) ||
                       (is_direction_left && is_collision(point_left)) ||
                       (is_direction_up && is_collision(point_up)) ||
                       (is_direction_down && is_collision(point_down))),
             // Danger right (danger is at the right of current direction)
-            (double) ((is_direction_right && is_collision(point_down)) ||
+            (float) ((is_direction_right && is_collision(point_down)) ||
                       (is_direction_left && is_collision(point_up)) ||
                       (is_direction_up && is_collision(point_right)) ||
                       (is_direction_down && is_collision(point_left))),
             // Danger left (danger is at the left of current direction)
-            (double) ((is_direction_right && is_collision(point_up)) ||
+            (float) ((is_direction_right && is_collision(point_up)) ||
                       (is_direction_left && is_collision(point_down)) ||
                       (is_direction_up && is_collision(point_left)) ||
                       (is_direction_down && is_collision(point_right))),
             // current direction
-            (double) is_direction_right,
-            (double) is_direction_left,
-            (double) is_direction_up,
-            (double) is_direction_down,
+            (float) is_direction_right,
+            (float) is_direction_left,
+            (float) is_direction_up,
+            (float) is_direction_down,
             // food location
-            (double) is_food_left,
-            (double) is_food_right,
-            (double) is_food_up,
-            (double) is_food_down,
+            (float) is_food_left,
+            (float) is_food_right,
+            (float) is_food_up,
+            (float) is_food_down,
             // point reaches food
-            (double) right_reaches_food,
-            (double) left_reaches_food,
-            (double) up_reaches_food,
-            (double) down_reaches_food,
+            (float) right_reaches_food,
+            (float) left_reaches_food,
+            (float) up_reaches_food,
+            (float) down_reaches_food,
     };
 }
 
