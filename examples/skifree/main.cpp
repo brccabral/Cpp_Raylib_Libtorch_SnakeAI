@@ -15,7 +15,7 @@ int main()
             game.update();
 
             BeginDrawing();
-            ClearBackground(BLACK);
+            ClearBackground(WHITE);
             game.draw();
             EndDrawing();
         }
