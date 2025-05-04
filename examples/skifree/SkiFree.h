@@ -26,6 +26,7 @@ public:
         TYPE_TREE_SLALOM_SIGN,
         TYPE_FREESTYLE_SIGN,
         TYPE_RESTART_PAUSE_SIGN,
+        TYPE_NUMPAD,
         // lift
         TYPE_LIFT_POLE,
         TYPE_LIFT_CHAIR,
@@ -133,6 +134,7 @@ private:
     SkiObject freestyle_sign;
     SkiObject tree_slalom_sign;
     SkiObject restart_pause_sign;
+    SkiObject numpad_sign;
 
     game_mode_t current_mode{};
 

@@ -178,15 +178,21 @@ SkiFree::SkiFree()
     tree_slalom_sign.current_frame_rectangle = frames[61];
 
     restart_pause_sign.type = SkiObject::TYPE_RESTART_PAUSE_SIGN;
-    restart_pause_sign.position = Vector2(180, 0);
+    restart_pause_sign.position = Vector2(90, 0);
     restart_pause_sign.current_frame_index = 55;
     restart_pause_sign.current_frame_rectangle = frames[55];
+
+    numpad_sign.type = SkiObject::TYPE_NUMPAD;
+    numpad_sign.position = Vector2(90, -45);
+    numpad_sign.current_frame_index = 54;
+    numpad_sign.current_frame_rectangle = frames[54];
 
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
     long_live_objects.emplace_back(&tree_slalom_sign);
     long_live_objects.emplace_back(&restart_pause_sign);
+    long_live_objects.emplace_back(&numpad_sign);
 
     reset();
 };
