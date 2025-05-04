@@ -113,7 +113,7 @@ public:
 private:
 
     Texture2D all_textures{};
-    std::vector<Rectangle> frames;
+    std::vector<Rectangle> frames{};
 
     enum game_mode_t
     {
@@ -123,8 +123,8 @@ private:
         MODE_TREE_SLALOM
     };
 
-    std::list<SkiObject *> long_live_objects;
-    std::list<SkiObject> short_live_objects;
+    std::list<SkiObject *> long_live_objects{};
+    std::list<SkiObject> short_live_objects{};
 
     Camera2D camera{};
     SkiObject player;

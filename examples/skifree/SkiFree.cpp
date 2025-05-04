@@ -234,7 +234,7 @@ void SkiFree::inputs()
     {
         is_waiting_action = true;
     }
-    if (!is_waiting_action)
+    if (is_paused && !is_waiting_action)
     {
         return;
     }
