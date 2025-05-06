@@ -11,6 +11,7 @@ public:
     ~SkiObject() = default;
 
     void update();
+    Rectangle get_location() const;
 
     enum object_type
     {
@@ -149,6 +150,7 @@ private:
     size_t num_elements_in_area = 190;
 
     void manage_objects();
+    bool CheckCollisionSkiObjects(SkiObject ski_object);
 
     bool is_paused{};
     bool is_waiting_action = true;

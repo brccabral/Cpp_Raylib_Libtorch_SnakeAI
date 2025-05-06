@@ -65,6 +65,12 @@ void SkiObject::update()
     position += velocity;
 }
 
+Rectangle SkiObject::get_location() const
+{
+    return Rectangle(
+            position.x, position.y, current_frame_rectangle.width, current_frame_rectangle.height);
+}
+
 SkiFree::SkiFree()
 {
     all_textures = LoadTexture("assets/images.bmp");
@@ -558,6 +564,25 @@ void SkiFree::update()
     camera.target += delta;
 }
 
+bool SkiFree::CheckCollisionSkiObjects(SkiObject ski_object)
+{
+    for (const auto *ll: long_live_objects)
+    {
+        if (CheckCollisionRecs(ski_object.get_location(), ll->get_location()))
+        {
+            return true;
+        }
+    }
+    for (const auto &sl: short_live_objects)
+    {
+        if (CheckCollisionRecs(ski_object.get_location(), sl.get_location()))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void SkiFree::manage_objects()
 {
     auto new_area = Rectangle(
@@ -641,13 +666,12 @@ void SkiFree::manage_objects()
             }
         }
         new_object.current_frame_rectangle = frames[new_object.current_frame_index];
-        Vector2 position;
         do
         {
-            position = get_new_position();
+            new_object.position = get_new_position();
         }
-        while (CheckCollisionPointRec(position, current_area));
-        new_object.position = position;
+        while (CheckCollisionPointRec(new_object.position, current_area) ||
+               CheckCollisionSkiObjects(new_object));
         short_live_objects.push_back(new_object);
     }
 
