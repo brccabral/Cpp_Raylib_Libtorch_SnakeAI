@@ -127,6 +127,7 @@ private:
     };
 
     std::list<SkiObject *> long_live_objects{};
+    std::list<SkiObject> lift_poles_objects{};
     std::list<SkiObject> short_live_objects{};
 
     Camera2D camera{};

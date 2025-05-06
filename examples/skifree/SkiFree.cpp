@@ -236,6 +236,19 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&start_left_tree_slalom_sign);
     long_live_objects.emplace_back(&start_right_tree_slalom_sign);
 
+    for (size_t i = 0; i < 13; i++)
+    {
+        lift_poles_objects.emplace_back();
+        auto *pole = &lift_poles_objects.back();
+
+        pole->type = SkiObject::TYPE_LIFT_POLE;
+        pole->position.x = -90;
+        pole->position.y = -65 * 20 + 128 * 20 * i;
+        pole->current_frame_index = 63;
+        pole->current_frame_rectangle = frames[63];
+    }
+
+
     reset();
 };
 
@@ -252,6 +265,12 @@ void SkiFree::draw() const
         DrawTextureRec(
                 all_textures, frames[long_live_object->current_frame_index],
                 long_live_object->position, WHITE);
+    }
+    for (const auto &lift_poles: lift_poles_objects)
+    {
+        DrawTextureRec(
+                all_textures, frames[lift_poles.current_frame_index],
+                lift_poles.position, WHITE);
     }
     for (const auto &short_live_obj: short_live_objects)
     {
