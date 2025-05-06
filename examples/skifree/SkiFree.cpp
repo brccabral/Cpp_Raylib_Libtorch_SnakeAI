@@ -73,7 +73,7 @@ Rectangle SkiObject::get_location() const
 
 SkiFree::SkiFree()
 {
-    all_textures = LoadTexture("assets/images.bmp");
+    all_textures = LoadTexture("assets/images.png");
     frames.resize(89);
     int prev_y = 0;
     frames[0] = Rectangle(0, prev_y += 0, 16, 32); // skier_down
