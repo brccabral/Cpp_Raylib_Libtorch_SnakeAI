@@ -234,7 +234,7 @@ void SkiFree::draw() const
 
     DrawRectangleLinesEx(Rectangle(650, 30, 150, 76), 2, BLACK);
     DrawText("Time: 0:00:00.00", 655, 32, 14, BLACK);
-    DrawText("Dist: 00m", 655, 48, 14, BLACK);
+    DrawText(TextFormat("Dist: %02dm", int(player.position.y/20)), 655, 48, 14, BLACK);
     DrawText(TextFormat("Speed: %.0fm/s", Vector2Length(player.velocity)), 655, 64, 14, BLACK);
     DrawText("Style: 0", 655, 80, 14, BLACK);
 }
