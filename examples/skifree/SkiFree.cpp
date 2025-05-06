@@ -566,16 +566,17 @@ void SkiFree::update()
 
 bool SkiFree::CheckCollisionSkiObjects(SkiObject ski_object)
 {
+    Rectangle ski_obj_loc = ski_object.get_location();
     for (const auto *ll: long_live_objects)
     {
-        if (CheckCollisionRecs(ski_object.get_location(), ll->get_location()))
+        if (CheckCollisionRecs(ski_obj_loc, ll->get_location()))
         {
             return true;
         }
     }
     for (const auto &sl: short_live_objects)
     {
-        if (CheckCollisionRecs(ski_object.get_location(), sl.get_location()))
+        if (CheckCollisionRecs(ski_obj_loc, sl.get_location()))
         {
             return true;
         }
