@@ -135,6 +135,12 @@ private:
     SkiObject tree_slalom_sign;
     SkiObject restart_pause_sign;
     SkiObject numpad_sign;
+    SkiObject start_left_freestyle_sign;
+    SkiObject start_right_freestyle_sign;
+    SkiObject start_left_slalom_sign;
+    SkiObject start_right_slalom_sign;
+    SkiObject start_left_tree_slalom_sign;
+    SkiObject start_right_tree_slalom_sign;
 
     game_mode_t current_mode{};
 

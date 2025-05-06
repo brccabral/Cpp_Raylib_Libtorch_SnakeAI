@@ -187,12 +187,48 @@ SkiFree::SkiFree()
     numpad_sign.current_frame_index = 54;
     numpad_sign.current_frame_rectangle = frames[54];
 
+    start_left_freestyle_sign.type = SkiObject::TYPE_START_LEFT;
+    start_left_freestyle_sign.position = Vector2(-160, 800);
+    start_left_freestyle_sign.current_frame_index = 56;
+    start_left_freestyle_sign.current_frame_rectangle = frames[56];
+
+    start_right_freestyle_sign.type = SkiObject::TYPE_START_RIGHT;
+    start_right_freestyle_sign.position = Vector2(180, 800);
+    start_right_freestyle_sign.current_frame_index = 57;
+    start_right_freestyle_sign.current_frame_rectangle = frames[57];
+
+    start_left_slalom_sign.type = SkiObject::TYPE_START_LEFT;
+    start_left_slalom_sign.position = Vector2(-540, 800);
+    start_left_slalom_sign.current_frame_index = 56;
+    start_left_slalom_sign.current_frame_rectangle = frames[56];
+
+    start_right_slalom_sign.type = SkiObject::TYPE_START_RIGHT;
+    start_right_slalom_sign.position = Vector2(-240, 800);
+    start_right_slalom_sign.current_frame_index = 57;
+    start_right_slalom_sign.current_frame_rectangle = frames[57];
+
+    start_left_tree_slalom_sign.type = SkiObject::TYPE_START_LEFT;
+    start_left_tree_slalom_sign.position = Vector2(260, 800);
+    start_left_tree_slalom_sign.current_frame_index = 56;
+    start_left_tree_slalom_sign.current_frame_rectangle = frames[56];
+
+    start_right_tree_slalom_sign.type = SkiObject::TYPE_START_RIGHT;
+    start_right_tree_slalom_sign.position = Vector2(640, 800);
+    start_right_tree_slalom_sign.current_frame_index = 57;
+    start_right_tree_slalom_sign.current_frame_rectangle = frames[57];
+
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
     long_live_objects.emplace_back(&tree_slalom_sign);
     long_live_objects.emplace_back(&restart_pause_sign);
     long_live_objects.emplace_back(&numpad_sign);
+    long_live_objects.emplace_back(&start_left_freestyle_sign);
+    long_live_objects.emplace_back(&start_right_freestyle_sign);
+    long_live_objects.emplace_back(&start_left_slalom_sign);
+    long_live_objects.emplace_back(&start_right_slalom_sign);
+    long_live_objects.emplace_back(&start_left_tree_slalom_sign);
+    long_live_objects.emplace_back(&start_right_tree_slalom_sign);
 
     reset();
 };
@@ -234,7 +270,7 @@ void SkiFree::draw() const
 
     DrawRectangleLinesEx(Rectangle(650, 30, 150, 76), 2, BLACK);
     DrawText("Time: 0:00:00.00", 655, 32, 14, BLACK);
-    DrawText(TextFormat("Dist: %02dm", int(player.position.y/20)), 655, 48, 14, BLACK);
+    DrawText(TextFormat("Dist: %02dm", int(player.position.y / 20)), 655, 48, 14, BLACK);
     DrawText(TextFormat("Speed: %.0fm/s", Vector2Length(player.velocity)), 655, 64, 14, BLACK);
     DrawText("Style: 0", 655, 80, 14, BLACK);
 }
