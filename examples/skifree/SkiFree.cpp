@@ -223,6 +223,16 @@ SkiFree::SkiFree()
     start_right_tree_slalom_sign.current_frame_index = 57;
     start_right_tree_slalom_sign.current_frame_rectangle = frames[57];
 
+    finish_left_slalom_sign.type = SkiObject::TYPE_FINISH_LEFT;
+    finish_left_slalom_sign.position = Vector2(-540, 800);
+    finish_left_slalom_sign.current_frame_index = 56;
+    finish_left_slalom_sign.current_frame_rectangle = frames[56];
+
+    finish_right_slalom_sign.type = SkiObject::TYPE_FINISH_RIGHT;
+    finish_right_slalom_sign.position = Vector2(-240, 800);
+    finish_right_slalom_sign.current_frame_index = 57;
+    finish_right_slalom_sign.current_frame_rectangle = frames[57];
+
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
@@ -235,8 +245,10 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&start_right_slalom_sign);
     long_live_objects.emplace_back(&start_left_tree_slalom_sign);
     long_live_objects.emplace_back(&start_right_tree_slalom_sign);
+    long_live_objects.emplace_back(&finish_left_slalom_sign);
+    long_live_objects.emplace_back(&finish_right_slalom_sign);
 
-    for (size_t i = 0; i < 13; i++)
+    for (size_t i = 0; i < 13; ++i)
     {
         lift_poles_objects.emplace_back();
         auto *pole = &lift_poles_objects.back();
@@ -248,6 +260,27 @@ SkiFree::SkiFree()
         pole->current_frame_rectangle = frames[63];
     }
 
+    for (size_t i = 0; i < 24; ++i)
+    {
+        auto flag = SkiObject();
+        if (i % 2 == 0)
+        {
+            flag.type = SkiObject::TYPE_SLALOM_ARROW_LEFT;
+            flag.position.x = -460;
+            flag.position.y = 60 * 20 + 20 * 20 * i;
+            flag.current_frame_index = 22;
+            flag.current_frame_rectangle = frames[22];
+        }
+        else
+        {
+            flag.type = SkiObject::TYPE_SLALOM_ARROW_RIGHT;
+            flag.position.x = -320;
+            flag.position.y = 60 * 20 + 20 * 20 * i;
+            flag.current_frame_index = 23;
+            flag.current_frame_rectangle = frames[23];
+        }
+        slalom_flags_objects.push_back(flag);
+    }
 
     reset();
 };
@@ -269,8 +302,13 @@ void SkiFree::draw() const
     for (const auto &lift_poles: lift_poles_objects)
     {
         DrawTextureRec(
-                all_textures, frames[lift_poles.current_frame_index],
-                lift_poles.position, WHITE);
+                all_textures, frames[lift_poles.current_frame_index], lift_poles.position, WHITE);
+    }
+    for (const auto &slalom_flags: slalom_flags_objects)
+    {
+        DrawTextureRec(
+                all_textures, frames[slalom_flags.current_frame_index], slalom_flags.position,
+                WHITE);
     }
     for (const auto &short_live_obj: short_live_objects)
     {
@@ -600,6 +638,18 @@ bool SkiFree::CheckCollisionSkiObjects(SkiObject ski_object)
             return true;
         }
     }
+
+    // Slalom area allows only TYPE_MOGUL_GROUP
+    if (ski_object.type == SkiObject::TYPE_MOGUL_GROUP)
+    {
+        return false;
+    }
+    static Rectangle slalom_area = Rectangle(-540, 800, 300, 10080);
+    if (CheckCollisionRecs(ski_obj_loc, slalom_area))
+    {
+        return true;
+    }
+
     return false;
 }
 

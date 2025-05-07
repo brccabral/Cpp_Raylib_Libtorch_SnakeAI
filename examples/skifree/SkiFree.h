@@ -97,8 +97,8 @@ public:
     Vector2 velocity{};
     size_t current_frame_index{};
     Rectangle current_frame_rectangle{};
-    object_state state;
-    double speed;
+    object_state state{};
+    double speed{};
 };
 
 class SkiFree
@@ -129,6 +129,7 @@ private:
     std::list<SkiObject *> long_live_objects{};
     std::list<SkiObject> lift_poles_objects{};
     std::list<SkiObject> short_live_objects{};
+    std::list<SkiObject> slalom_flags_objects{};
 
     Camera2D camera{};
     SkiObject player;
@@ -143,6 +144,8 @@ private:
     SkiObject start_right_slalom_sign;
     SkiObject start_left_tree_slalom_sign;
     SkiObject start_right_tree_slalom_sign;
+    SkiObject finish_left_slalom_sign;
+    SkiObject finish_right_slalom_sign;
 
     game_mode_t current_mode{};
 
