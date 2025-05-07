@@ -243,6 +243,17 @@ SkiFree::SkiFree()
     finish_right_tree_slalom_sign.current_frame_index = 59;
     finish_right_tree_slalom_sign.current_frame_rectangle = frames[59];
 
+    finish_left_freestyle_sign.type = SkiObject::TYPE_FINISH_LEFT;
+    finish_left_freestyle_sign.position = Vector2(-160, 20800);
+    finish_left_freestyle_sign.current_frame_index = 58;
+    finish_left_freestyle_sign.current_frame_rectangle = frames[58];
+
+    finish_right_freestyle_sign.type = SkiObject::TYPE_FINISH_RIGHT;
+    finish_right_freestyle_sign.position = Vector2(180, 20800);
+    finish_right_freestyle_sign.current_frame_index = 59;
+    finish_right_freestyle_sign.current_frame_rectangle = frames[59];
+
+
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
@@ -259,6 +270,8 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&finish_right_slalom_sign);
     long_live_objects.emplace_back(&finish_left_tree_slalom_sign);
     long_live_objects.emplace_back(&finish_right_tree_slalom_sign);
+    long_live_objects.emplace_back(&finish_left_freestyle_sign);
+    long_live_objects.emplace_back(&finish_right_freestyle_sign);
 
     for (size_t i = 0; i < 13; ++i)
     {

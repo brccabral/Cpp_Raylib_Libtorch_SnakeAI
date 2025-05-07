@@ -148,6 +148,8 @@ private:
     SkiObject finish_right_slalom_sign;
     SkiObject finish_left_tree_slalom_sign;
     SkiObject finish_right_tree_slalom_sign;
+    SkiObject finish_left_freestyle_sign;
+    SkiObject finish_right_freestyle_sign;
 
     game_mode_t current_mode{};
 
