@@ -53,6 +53,105 @@ void SkiObject::update()
             speed = std::max(speed, 0.0);
             break;
         }
+        case TYPE_YETI:
+        {
+            switch (state)
+            {
+                case STATE_YETI_HAPPY_1:
+                {
+                    --state_countdown;
+                    if (state_countdown <= 0)
+                    {
+                        state = STATE_YETI_HAPPY_2;
+                        current_frame_index = 68;
+                        state_countdown = 9;
+                        offset_y = 0;
+                    }
+                    break;
+                };
+                case STATE_YETI_HAPPY_2:
+                {
+                    --state_countdown;
+                    if (state_countdown == 9)
+                    {
+                        offset_y = 0;
+                    }
+                    else if (state_countdown == 8 | state_countdown == 1)
+                    {
+                        offset_y = -5;
+                    }
+                    else if (state_countdown == 7 | state_countdown == 2)
+                    {
+                        offset_y = -10;
+                    }
+                    else if (state_countdown == 6 | state_countdown == 3)
+                    {
+                        offset_y = -15;
+                    }
+                    else if (state_countdown == 5 | state_countdown == 4)
+                    {
+                        offset_y = -20;
+                    }
+                    else
+                    {
+                        state = STATE_YETI_HAPPY_1;
+                        current_frame_index = 67;
+                        state_countdown = GetRandomValue(1, 25);
+                        offset_y = 0;
+                    }
+                    break;
+                }
+                case STATE_YETI_LEFT:
+                {
+                    if (current_frame_index == 69)
+                    {
+                        current_frame_index = 70;
+                    }
+                    else
+                    {
+                        current_frame_index = 69;
+                    }
+                    break;
+                }
+                case STATE_YETI_RIGHT:
+                {
+                    if (current_frame_index == 71)
+                    {
+                        current_frame_index = 72;
+                    }
+                    else
+                    {
+                        current_frame_index = 71;
+                    }
+                    break;
+                }
+                case STATE_YETI_UP:
+                {
+                    if (current_frame_index == 73)
+                    {
+                        current_frame_index = 74;
+                    }
+                    else
+                    {
+                        current_frame_index = 73;
+                    }
+                    break;
+                }
+                case STATE_YETI_EATING:
+                {
+                    ++current_frame_index;
+                    if (current_frame_index == 80)
+                    {
+                        state = STATE_YETI_HAPPY_1;
+                        current_frame_index = 67;
+                        state_countdown = GetRandomValue(1, 25);
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
         default:
             break;
     }
@@ -149,8 +248,8 @@ SkiFree::SkiFree()
     frames[70] = Rectangle(0, prev_y += 48, 32, 48); // yeti_left_2
     frames[71] = Rectangle(0, prev_y += 48, 32, 48); // yeti_right_1
     frames[72] = Rectangle(0, prev_y += 48, 32, 48); // yeti_right_2
-    frames[73] = Rectangle(0, prev_y += 48, 32, 48); // yeti_right_up_1
-    frames[74] = Rectangle(0, prev_y += 48, 32, 48); // yeti_right_up_2
+    frames[73] = Rectangle(0, prev_y += 48, 32, 48); // yeti_up_1
+    frames[74] = Rectangle(0, prev_y += 48, 32, 48); // yeti_up_2
     frames[75] = Rectangle(0, prev_y += 48, 32, 48); // yeti_eating_1
     frames[76] = Rectangle(0, prev_y += 48, 32, 48); // yeti_eating_2
     frames[77] = Rectangle(0, prev_y += 48, 32, 48); // yeti_eating_3
@@ -253,6 +352,9 @@ SkiFree::SkiFree()
     finish_right_freestyle_sign.current_frame_index = 59;
     finish_right_freestyle_sign.current_frame_rectangle = frames[59];
 
+    yeti_1.type = SkiObject::TYPE_YETI;
+    yeti_2.type = SkiObject::TYPE_YETI;
+    yeti_3.type = SkiObject::TYPE_YETI;
 
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
@@ -272,6 +374,9 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&finish_right_tree_slalom_sign);
     long_live_objects.emplace_back(&finish_left_freestyle_sign);
     long_live_objects.emplace_back(&finish_right_freestyle_sign);
+    long_live_objects.emplace_back(&yeti_1);
+    long_live_objects.emplace_back(&yeti_2);
+    long_live_objects.emplace_back(&yeti_3);
 
     for (size_t i = 0; i < 13; ++i)
     {
@@ -344,7 +449,9 @@ void SkiFree::draw() const
     {
         DrawTextureRec(
                 all_textures, frames[long_live_object->current_frame_index],
-                long_live_object->position, WHITE);
+                Vector2(long_live_object->position.x,
+                        long_live_object->position.y + long_live_object->offset_y),
+                WHITE);
     }
     for (const auto &lift_poles: lift_poles_objects)
     {
@@ -836,6 +943,24 @@ void SkiFree::reset()
 
     is_paused = false;
     is_waiting_action = true;
+
+    yeti_1.state = SkiObject::STATE_YETI_HAPPY_1;
+    yeti_1.position = Vector2(0, -130 * 20);
+    yeti_1.current_frame_index = 67;
+    yeti_1.current_frame_rectangle = frames[67];
+    yeti_1.state_countdown = GetRandomValue(1, 25);
+    
+    yeti_2.state = SkiObject::STATE_YETI_HAPPY_1;
+    yeti_2.position = Vector2(100, 2000 * 20);
+    yeti_2.current_frame_index = 67;
+    yeti_2.current_frame_rectangle = frames[67];
+    yeti_2.state_countdown = GetRandomValue(1, 25);
+    
+    yeti_3.state = SkiObject::STATE_YETI_HAPPY_1;
+    yeti_3.position = Vector2(100, 2100 * 20);
+    yeti_3.current_frame_index = 67;
+    yeti_3.current_frame_rectangle = frames[67];
+    yeti_3.state_countdown = GetRandomValue(1, 25);
 
     manage_objects();
 }

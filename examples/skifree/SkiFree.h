@@ -83,9 +83,9 @@ public:
         STATE_LIFT_CHAIR_EMPTY,
         STATE_YETI_LEFT,
         STATE_YETI_RIGHT,
-        STATE_YETI_LEFT_UP,
-        STATE_YETI_RIGHT_UP,
-        STATE_YETI_HAPPY,
+        STATE_YETI_UP,
+        STATE_YETI_HAPPY_1,
+        STATE_YETI_HAPPY_2,
         STATE_YETI_EATING,
         STATE_TREE_WALK_LEFT,
         STATE_TREE_WALK_RIGHT,
@@ -93,11 +93,13 @@ public:
 
     object_type type{};
     Vector2 position{};
+    float offset_y{};
     Vector2 direction{};
     Vector2 velocity{};
     size_t current_frame_index{};
     Rectangle current_frame_rectangle{};
     object_state state{};
+    int state_countdown{};
     double speed{};
 };
 
@@ -150,6 +152,9 @@ private:
     SkiObject finish_right_tree_slalom_sign;
     SkiObject finish_left_freestyle_sign;
     SkiObject finish_right_freestyle_sign;
+    SkiObject yeti_1;
+    SkiObject yeti_2;
+    SkiObject yeti_3;
 
     game_mode_t current_mode{};
 
