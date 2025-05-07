@@ -798,7 +798,8 @@ void SkiFree::manage_objects()
             new_object.position = get_new_position();
         }
         while (CheckCollisionPointRec(new_object.position, current_area) ||
-               check_collision_skiobjects(new_object) || check_tree_slalom_area(new_object));
+               check_collision_skiobjects(new_object) || check_slalom_area(new_object) ||
+               check_tree_slalom_area(new_object));
         short_live_objects.push_back(new_object);
     }
 
