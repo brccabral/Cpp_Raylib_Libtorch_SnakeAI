@@ -224,12 +224,12 @@ SkiFree::SkiFree()
     start_right_tree_slalom_sign.current_frame_rectangle = frames[57];
 
     finish_left_slalom_sign.type = SkiObject::TYPE_FINISH_LEFT;
-    finish_left_slalom_sign.position = Vector2(-540, 800);
+    finish_left_slalom_sign.position = Vector2(-540, 10800);
     finish_left_slalom_sign.current_frame_index = 58;
     finish_left_slalom_sign.current_frame_rectangle = frames[58];
 
     finish_right_slalom_sign.type = SkiObject::TYPE_FINISH_RIGHT;
-    finish_right_slalom_sign.position = Vector2(-240, 800);
+    finish_right_slalom_sign.position = Vector2(-240, 10800);
     finish_right_slalom_sign.current_frame_index = 59;
     finish_right_slalom_sign.current_frame_rectangle = frames[59];
 
