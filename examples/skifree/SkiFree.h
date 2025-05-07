@@ -146,6 +146,8 @@ private:
     SkiObject start_right_tree_slalom_sign;
     SkiObject finish_left_slalom_sign;
     SkiObject finish_right_slalom_sign;
+    SkiObject finish_left_tree_slalom_sign;
+    SkiObject finish_right_tree_slalom_sign;
 
     game_mode_t current_mode{};
 
@@ -154,7 +156,6 @@ private:
     size_t num_elements_in_area = 190;
 
     void manage_objects();
-    bool CheckCollisionSkiObjects(SkiObject ski_object);
 
     bool is_paused{};
     bool is_waiting_action = true;

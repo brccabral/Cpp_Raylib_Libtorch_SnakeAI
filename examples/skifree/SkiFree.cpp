@@ -219,19 +219,29 @@ SkiFree::SkiFree()
     start_left_tree_slalom_sign.current_frame_rectangle = frames[56];
 
     start_right_tree_slalom_sign.type = SkiObject::TYPE_START_RIGHT;
-    start_right_tree_slalom_sign.position = Vector2(640, 800);
+    start_right_tree_slalom_sign.position = Vector2(560, 800);
     start_right_tree_slalom_sign.current_frame_index = 57;
     start_right_tree_slalom_sign.current_frame_rectangle = frames[57];
 
     finish_left_slalom_sign.type = SkiObject::TYPE_FINISH_LEFT;
     finish_left_slalom_sign.position = Vector2(-540, 800);
-    finish_left_slalom_sign.current_frame_index = 56;
-    finish_left_slalom_sign.current_frame_rectangle = frames[56];
+    finish_left_slalom_sign.current_frame_index = 58;
+    finish_left_slalom_sign.current_frame_rectangle = frames[58];
 
     finish_right_slalom_sign.type = SkiObject::TYPE_FINISH_RIGHT;
     finish_right_slalom_sign.position = Vector2(-240, 800);
-    finish_right_slalom_sign.current_frame_index = 57;
-    finish_right_slalom_sign.current_frame_rectangle = frames[57];
+    finish_right_slalom_sign.current_frame_index = 59;
+    finish_right_slalom_sign.current_frame_rectangle = frames[59];
+
+    finish_left_tree_slalom_sign.type = SkiObject::TYPE_FINISH_LEFT;
+    finish_left_tree_slalom_sign.position = Vector2(260, 20800);
+    finish_left_tree_slalom_sign.current_frame_index = 58;
+    finish_left_tree_slalom_sign.current_frame_rectangle = frames[58];
+
+    finish_right_tree_slalom_sign.type = SkiObject::TYPE_FINISH_RIGHT;
+    finish_right_tree_slalom_sign.position = Vector2(560, 20800);
+    finish_right_tree_slalom_sign.current_frame_index = 59;
+    finish_right_tree_slalom_sign.current_frame_rectangle = frames[59];
 
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
@@ -247,6 +257,8 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&start_right_tree_slalom_sign);
     long_live_objects.emplace_back(&finish_left_slalom_sign);
     long_live_objects.emplace_back(&finish_right_slalom_sign);
+    long_live_objects.emplace_back(&finish_left_tree_slalom_sign);
+    long_live_objects.emplace_back(&finish_right_tree_slalom_sign);
 
     for (size_t i = 0; i < 13; ++i)
     {
@@ -276,6 +288,28 @@ SkiFree::SkiFree()
             flag.type = SkiObject::TYPE_SLALOM_ARROW_RIGHT;
             flag.position.x = -320;
             flag.position.y = 60 * 20 + 20 * 20 * i;
+            flag.current_frame_index = 23;
+            flag.current_frame_rectangle = frames[23];
+        }
+        slalom_flags_objects.push_back(flag);
+    }
+
+    for (size_t i = 0; i < 39; ++i)
+    {
+        auto flag = SkiObject();
+        if (i % 2 == 0)
+        {
+            flag.type = SkiObject::TYPE_SLALOM_ARROW_LEFT;
+            flag.position.x = 340;
+            flag.position.y = 65 * 20 + 25 * 20 * i;
+            flag.current_frame_index = 22;
+            flag.current_frame_rectangle = frames[22];
+        }
+        else
+        {
+            flag.type = SkiObject::TYPE_SLALOM_ARROW_RIGHT;
+            flag.position.x = 480;
+            flag.position.y = 65 * 20 + 25 * 20 * i;
             flag.current_frame_index = 23;
             flag.current_frame_rectangle = frames[23];
         }
@@ -621,38 +655,6 @@ void SkiFree::update()
     camera.target += delta;
 }
 
-bool SkiFree::CheckCollisionSkiObjects(SkiObject ski_object)
-{
-    Rectangle ski_obj_loc = ski_object.get_location();
-    for (const auto *ll: long_live_objects)
-    {
-        if (CheckCollisionRecs(ski_obj_loc, ll->get_location()))
-        {
-            return true;
-        }
-    }
-    for (const auto &sl: short_live_objects)
-    {
-        if (CheckCollisionRecs(ski_obj_loc, sl.get_location()))
-        {
-            return true;
-        }
-    }
-
-    // Slalom area allows only TYPE_MOGUL_GROUP
-    if (ski_object.type == SkiObject::TYPE_MOGUL_GROUP)
-    {
-        return false;
-    }
-    static Rectangle slalom_area = Rectangle(-540, 800, 300, 10080);
-    if (CheckCollisionRecs(ski_obj_loc, slalom_area))
-    {
-        return true;
-    }
-
-    return false;
-}
-
 void SkiFree::manage_objects()
 {
     auto new_area = Rectangle(
@@ -672,6 +674,61 @@ void SkiFree::manage_objects()
         return Vector2(
                 GetRandomValue(new_area.x, new_area.x + new_area.width),
                 GetRandomValue(new_area.y, new_area.y + new_area.height));
+    };
+
+    auto check_collision_skiobjects = [&](SkiObject ski_object)
+    {
+        Rectangle ski_obj_loc = ski_object.get_location();
+        for (const auto *ll: long_live_objects)
+        {
+            if (CheckCollisionRecs(ski_obj_loc, ll->get_location()))
+            {
+                return true;
+            }
+        }
+        for (const auto &sl: short_live_objects)
+        {
+            if (CheckCollisionRecs(ski_obj_loc, sl.get_location()))
+            {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    auto check_slalom_area = [](SkiObject ski_object)
+    {
+        // Slalom area allows only TYPE_MOGUL_GROUP
+        if (ski_object.type == SkiObject::TYPE_MOGUL_GROUP)
+        {
+            return false;
+        }
+        Rectangle ski_obj_loc = ski_object.get_location();
+        static Rectangle slalom_area = Rectangle(-540, 800, 300, 10080);
+        if (CheckCollisionRecs(ski_obj_loc, slalom_area))
+        {
+            return true;
+        }
+        return false;
+    };
+
+    auto check_tree_slalom_area = [](SkiObject ski_object)
+    {
+        // Tree-Slalom area allows only tree types
+        if (ski_object.type == SkiObject::TYPE_TREE_DRIED ||
+            ski_object.type == SkiObject::TYPE_TREE_LARGE ||
+            ski_object.type == SkiObject::TYPE_TREE_SMALL ||
+            ski_object.type == SkiObject::TYPE_TREE_WALK)
+        {
+            return false;
+        }
+        Rectangle ski_obj_loc = ski_object.get_location();
+        static Rectangle slalom_area = Rectangle(260, 800, 300, 20080);
+        if (CheckCollisionRecs(ski_obj_loc, slalom_area))
+        {
+            return true;
+        }
+        return false;
     };
 
     const size_t current_num_objs = short_live_objects.size();
@@ -741,7 +798,7 @@ void SkiFree::manage_objects()
             new_object.position = get_new_position();
         }
         while (CheckCollisionPointRec(new_object.position, current_area) ||
-               CheckCollisionSkiObjects(new_object));
+               check_collision_skiobjects(new_object) || check_tree_slalom_area(new_object));
         short_live_objects.push_back(new_object);
     }
 
