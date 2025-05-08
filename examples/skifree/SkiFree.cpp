@@ -161,6 +161,145 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     break;
             }
         }
+        case TYPE_NOVICE:
+        {
+            switch (state)
+            {
+                case STATE_NOVICE_NORMAL:
+                {
+                    --state_countdown;
+                    if (state_countdown == 0)
+                    {
+                        int dir = GetRandomValue(-1, 1);
+                        if (dir == -1)
+                        {
+                            direction.x = cosf(120 * DEG2RAD);
+                            current_frame_index = 28;
+                        }
+                        else if (dir == 0)
+                        {
+                            direction.x = cosf(90 * DEG2RAD);
+                            current_frame_index = 27;
+                        }
+                        else
+                        {
+                            direction.x = cosf(60 * DEG2RAD);
+                            current_frame_index = 29;
+                        }
+                        current_frame_rectangle = frames[current_frame_index];
+                        state_countdown = 4;
+                    }
+                    break;
+                }
+
+                default:
+                    break;
+            }
+            break;
+        }
+        case TYPE_DOG:
+        {
+            switch (state)
+            {
+                case STATE_DOG_RIGHT:
+                {
+                    --state_countdown;
+                    if (state_countdown == 0)
+                    {
+                        direction.y *= -1;
+                        state_countdown = 2;
+                    }
+                    current_frame_index = 32 + (state_countdown % 2);
+                    current_frame_rectangle = frames[current_frame_index];
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            break;
+        }
+        case TYPE_SNOWBOARDER:
+        {
+            --state_countdown;
+            switch (state)
+            {
+                case STATE_SNOWBOARDER_360:
+                {
+                    current_frame_index = 44 - state_countdown;
+                    current_frame_rectangle = frames[current_frame_index];
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+
+            if (state_countdown == 0)
+            {
+                int new_state = GetRandomValue(0, 2);
+                if (new_state == 0)
+                {
+                    current_frame_index = 36;
+                    direction.x = -1;
+                    state = STATE_SNOWBOARDER_LEFT;
+                    state_countdown = 2;
+                }
+                else if (new_state == 1)
+                {
+                    current_frame_index = 37;
+                    direction.x = 1;
+                    state = STATE_SNOWBOARDER_RIGHT;
+                    state_countdown = 2;
+                }
+                else
+                {
+                    state = STATE_SNOWBOARDER_360;
+                    state_countdown = 6;
+                    current_frame_index = 44 - state_countdown;
+                }
+                current_frame_rectangle = frames[current_frame_index];
+            }
+            break;
+        }
+        case TYPE_TREE_WALK:
+        {
+            --state_countdown;
+            if (state_countdown == 0)
+            {
+                direction.x *= -1;
+                state_countdown = 36;
+                speed = 2;
+            }
+            else if (state_countdown < 18)
+            {
+                current_frame_index = 86;
+                current_frame_rectangle = frames[current_frame_index];
+                speed = 0;
+            }
+            else
+            {
+                if (state_countdown % 2 == 0)
+                {
+                    current_frame_index = 86;
+                }
+                else
+                {
+                    if (direction.x > 0)
+                    {
+                        current_frame_index = 87;
+                    }
+                    else
+                    {
+                        current_frame_index = 88;
+                    }
+                }
+                current_frame_rectangle = frames[current_frame_index];
+            }
+            break;
+        }
         default:
             break;
     }
@@ -968,6 +1107,57 @@ void SkiFree::manage_objects()
             case SkiObject::TYPE_RAINBOW:
             {
                 new_object.current_frame_index = 51;
+                break;
+            }
+            case SkiObject::TYPE_NOVICE:
+            {
+                new_object.current_frame_index = 27;
+                int dir = GetRandomValue(0, 1);
+                new_object.direction.x = cosf((60 + 60 * dir) * DEG2RAD);
+                new_object.direction.y = sinf((60 + 60 * dir) * DEG2RAD);
+                new_object.state = SkiObject::STATE_NOVICE_NORMAL;
+                new_object.state_countdown = 4;
+                new_object.speed = 2;
+                break;
+            }
+            case SkiObject::TYPE_DOG:
+            {
+                new_object.current_frame_index = 32;
+                new_object.direction.x = 1;
+                new_object.direction.y = -1;
+                new_object.state = SkiObject::STATE_DOG_RIGHT;
+                new_object.state_countdown = 2;
+                new_object.speed = 2;
+                break;
+            }
+            case SkiObject::TYPE_SNOWBOARDER:
+            {
+                int dir = GetRandomValue(0, 1) * 2 - 1;
+                new_object.direction.x = dir;
+                if (dir < 0)
+                {
+                    new_object.state = SkiObject::STATE_SNOWBOARDER_LEFT;
+                    new_object.current_frame_index = 36;
+                }
+                else
+                {
+                    new_object.state = SkiObject::STATE_SNOWBOARDER_RIGHT;
+                    new_object.current_frame_index = 37;
+                }
+                new_object.direction.y = 1;
+                new_object.state_countdown = 2;
+                new_object.speed = 10;
+                break;
+            }
+            case SkiObject::TYPE_TREE_WALK:
+            {
+                new_object.current_frame_index = 86;
+                int dir = GetRandomValue(0, 1);
+                new_object.direction.x = dir * 2 - 1;
+                new_object.direction.y = 0;
+                new_object.state = SkiObject::object_state(SkiObject::STATE_TREE_WALK_LEFT + dir);
+                new_object.state_countdown = 36;
+                new_object.speed = 2;
                 break;
             }
             default:

@@ -15,7 +15,9 @@ public:
 
     enum object_type
     {
+        // characters
         TYPE_SKIER = 0,
+        TYPE_YETI,
         // fixed positions
         TYPE_SLALOM_ARROW_LEFT,
         TYPE_SLALOM_ARROW_RIGHT,
@@ -31,16 +33,14 @@ public:
         // lift
         TYPE_LIFT_POLE,
         TYPE_LIFT_CHAIR,
-        // characters
-        TYPE_YETI,
-        TYPE_NOVICE,
-        TYPE_DOG,
-        TYPE_SNOWBOARDER,
-        TYPE_TREE_WALK,
         // special
         TYPE_URINE,
         // obstacles
         TYPE_MOGUL_GROUP,
+        TYPE_NOVICE,
+        TYPE_DOG,
+        TYPE_SNOWBOARDER,
+        TYPE_TREE_WALK,
         TYPE_ROCK,
         TYPE_STUMP,
         TYPE_MOGUL_SMALL,
@@ -70,7 +70,6 @@ public:
         STATE_NOVICE_NORMAL,
         STATE_NOVICE_SIT,
         STATE_NOVICE_GROUND,
-        STATE_DOG_LEFT,
         STATE_DOG_RIGHT,
         STATE_DOG_HIT,
         STATE_SNOWBOARDER_LEFT,
