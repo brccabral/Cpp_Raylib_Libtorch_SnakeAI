@@ -354,7 +354,6 @@ SkiFree::SkiFree()
 
     yeti_1.type = SkiObject::TYPE_YETI;
     yeti_2.type = SkiObject::TYPE_YETI;
-    yeti_3.type = SkiObject::TYPE_YETI;
 
     long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
@@ -376,7 +375,6 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&finish_right_freestyle_sign);
     long_live_objects.emplace_back(&yeti_1);
     long_live_objects.emplace_back(&yeti_2);
-    long_live_objects.emplace_back(&yeti_3);
 
     for (size_t i = 0; i < 13; ++i)
     {
@@ -949,18 +947,12 @@ void SkiFree::reset()
     yeti_1.current_frame_index = 67;
     yeti_1.current_frame_rectangle = frames[67];
     yeti_1.state_countdown = GetRandomValue(1, 25);
-    
+
     yeti_2.state = SkiObject::STATE_YETI_HAPPY_1;
     yeti_2.position = Vector2(100, 2000 * 20);
     yeti_2.current_frame_index = 67;
     yeti_2.current_frame_rectangle = frames[67];
     yeti_2.state_countdown = GetRandomValue(1, 25);
-    
-    yeti_3.state = SkiObject::STATE_YETI_HAPPY_1;
-    yeti_3.position = Vector2(100, 2100 * 20);
-    yeti_3.current_frame_index = 67;
-    yeti_3.current_frame_rectangle = frames[67];
-    yeti_3.state_countdown = GetRandomValue(1, 25);
 
     manage_objects();
 }

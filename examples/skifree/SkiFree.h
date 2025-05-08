@@ -154,7 +154,6 @@ private:
     SkiObject finish_right_freestyle_sign;
     SkiObject yeti_1;
     SkiObject yeti_2;
-    SkiObject yeti_3;
 
     game_mode_t current_mode{};
 
