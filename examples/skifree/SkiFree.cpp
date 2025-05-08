@@ -275,11 +275,12 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
             }
             else if (state_countdown < 18)
             {
-                current_frame_index = 86;
+                current_frame_index = 48;
                 current_frame_rectangle = frames[current_frame_index];
                 speed = 0;
             }
-            else
+
+            if (speed > 0)
             {
                 if (state_countdown % 2 == 0)
                 {
