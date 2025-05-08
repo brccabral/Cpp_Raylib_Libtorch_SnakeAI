@@ -533,9 +533,35 @@ SkiFree::SkiFree()
 
         pole->type = SkiObject::TYPE_LIFT_POLE;
         pole->position.x = -90;
-        pole->position.y = -65 * 20 + 128 * 20 * i;
+        int y = -65 * 20 + 128 * 20 * i;
+        pole->position.y = y;
         pole->current_frame_index = 63;
         pole->current_frame_rectangle = frames[63];
+
+        if (i < 12)
+        {
+            lift_poles_objects.emplace_back();
+            auto *chair_empty = &lift_poles_objects.back();
+
+            chair_empty->type = SkiObject::TYPE_LIFT_CHAIR;
+            chair_empty->state = SkiObject::STATE_LIFT_CHAIR_EMPTY;
+            chair_empty->position.x = -107;
+            chair_empty->position.y = y;
+            chair_empty->current_frame_index = 66;
+            chair_empty->current_frame_rectangle = frames[66];
+        }
+        if (i > 0)
+        {
+            lift_poles_objects.emplace_back();
+            auto *chair_full = &lift_poles_objects.back();
+
+            chair_full->type = SkiObject::TYPE_LIFT_CHAIR;
+            chair_full->state = SkiObject::STATE_LIFT_CHAIR_FULL;
+            chair_full->position.x = -73;
+            chair_full->position.y = y;
+            chair_full->current_frame_index = 64;
+            chair_full->current_frame_rectangle = frames[64];
+        }
     }
 
     for (size_t i = 0; i < 24; ++i)
