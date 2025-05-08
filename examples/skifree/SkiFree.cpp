@@ -355,7 +355,6 @@ SkiFree::SkiFree()
     yeti_1.type = SkiObject::TYPE_YETI;
     yeti_2.type = SkiObject::TYPE_YETI;
 
-    long_live_objects.emplace_back(&player);
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
     long_live_objects.emplace_back(&tree_slalom_sign);
@@ -373,8 +372,10 @@ SkiFree::SkiFree()
     long_live_objects.emplace_back(&finish_right_tree_slalom_sign);
     long_live_objects.emplace_back(&finish_left_freestyle_sign);
     long_live_objects.emplace_back(&finish_right_freestyle_sign);
-    long_live_objects.emplace_back(&yeti_1);
-    long_live_objects.emplace_back(&yeti_2);
+
+    characters_objects.emplace_back(&player);
+    characters_objects.emplace_back(&yeti_1);
+    characters_objects.emplace_back(&yeti_2);
 
     for (size_t i = 0; i < 13; ++i)
     {
@@ -449,6 +450,13 @@ void SkiFree::draw() const
                 all_textures, frames[long_live_object->current_frame_index],
                 Vector2(long_live_object->position.x,
                         long_live_object->position.y + long_live_object->offset_y),
+                WHITE);
+    }
+    for (const auto &characters: characters_objects)
+    {
+        DrawTextureRec(
+                all_textures, frames[characters->current_frame_index],
+                Vector2(characters->position.x, characters->position.y + characters->offset_y),
                 WHITE);
     }
     for (const auto &lift_poles: lift_poles_objects)
@@ -756,6 +764,48 @@ void SkiFree::update()
     {
         return;
     }
+    Vector2 pos_before = player.position;
+    for (const auto characters: characters_objects)
+    {
+        characters->update();
+    }
+
+    // teleport yeti_1 based on player position thresholds
+    if (player.position.y >= 2000 * 20 && pos_before.y < 2000 * 20)
+    {
+        yeti_1.position.y = 2100 * 20;
+    }
+    if (player.position.y < 0 && pos_before.y >= 0)
+    {
+        yeti_1.position.y = -130 * 20;
+    }
+
+    // teleport objects at 2050 for game continuity
+    if (player.position.y >= 2050 * 20 && pos_before.y < 2050 * 20)
+    {
+        // teleport objects up mountain
+        for (auto &obj: short_live_objects)
+        {
+            obj.position.y -= 2050 * 20 * 2;
+        }
+        for (auto &obj: characters_objects)
+        {
+            obj->position.y -= 2050 * 20 * 2;
+        }
+    }
+    if (player.position.y <= -2050 * 20 && pos_before.y > -2050 * 20)
+    {
+        // teleport objects down mountain
+        for (auto &obj: short_live_objects)
+        {
+            obj.position.y += 2050 * 20 * 2;
+        }
+        for (auto &obj: characters_objects)
+        {
+            obj->position.y += 2050 * 20 * 2;
+        }
+    }
+
     manage_objects();
     for (const auto long_live_object: long_live_objects)
     {
