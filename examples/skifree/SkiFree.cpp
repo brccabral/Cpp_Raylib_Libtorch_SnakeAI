@@ -245,14 +245,14 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     current_frame_index = 36;
                     direction.x = -1;
                     state = STATE_SNOWBOARDER_LEFT;
-                    state_countdown = 2;
+                    state_countdown = 10;
                 }
                 else if (new_state == 1)
                 {
                     current_frame_index = 37;
                     direction.x = 1;
                     state = STATE_SNOWBOARDER_RIGHT;
-                    state_countdown = 2;
+                    state_countdown = 10;
                 }
                 else
                 {
@@ -1145,7 +1145,7 @@ void SkiFree::manage_objects()
                     new_object.current_frame_index = 37;
                 }
                 new_object.direction.y = 1;
-                new_object.state_countdown = 2;
+                new_object.state_countdown = 10;
                 new_object.speed = 10;
                 break;
             }
