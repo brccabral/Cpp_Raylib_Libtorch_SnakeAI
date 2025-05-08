@@ -113,6 +113,7 @@ public:
     void update();
     void draw() const;
     void reset();
+    SkiObject create_snowboarder();
 
 private:
 
@@ -128,7 +129,7 @@ private:
     };
 
     std::list<SkiObject *> long_live_objects{};
-    std::list<SkiObject> lift_poles_objects{};
+    std::list<SkiObject> lift_objects{};
     std::list<SkiObject> slalom_flags_objects{};
 
     // teleported at 2050

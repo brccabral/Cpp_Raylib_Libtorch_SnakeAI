@@ -319,6 +319,11 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                 current_frame_rectangle = frames[64];
                 direction.y = -1;
             }
+            if (state_countdown > 0)
+            {
+                --state_countdown;
+            }
+
             break;
         }
         default:
@@ -548,8 +553,8 @@ SkiFree::SkiFree()
 
     for (size_t i = 0; i < 13; ++i)
     {
-        lift_poles_objects.emplace_back();
-        auto *pole = &lift_poles_objects.back();
+        lift_objects.emplace_back();
+        auto *pole = &lift_objects.back();
 
         pole->type = SkiObject::TYPE_LIFT_POLE;
         pole->position.x = -90;
@@ -560,8 +565,8 @@ SkiFree::SkiFree()
 
         if (i < 12)
         {
-            lift_poles_objects.emplace_back();
-            auto *chair_empty = &lift_poles_objects.back();
+            lift_objects.emplace_back();
+            auto *chair_empty = &lift_objects.back();
 
             chair_empty->type = SkiObject::TYPE_LIFT_CHAIR;
             chair_empty->state = SkiObject::STATE_LIFT_CHAIR_EMPTY;
@@ -569,13 +574,13 @@ SkiFree::SkiFree()
             chair_empty->position.y = y;
             chair_empty->current_frame_index = 66;
             chair_empty->current_frame_rectangle = frames[66];
-            chair_empty->speed = 1;
+            chair_empty->speed = 3;
             chair_empty->direction.y = 1;
         }
         if (i > 0)
         {
-            lift_poles_objects.emplace_back();
-            auto *chair_full = &lift_poles_objects.back();
+            lift_objects.emplace_back();
+            auto *chair_full = &lift_objects.back();
 
             chair_full->type = SkiObject::TYPE_LIFT_CHAIR;
             chair_full->state = SkiObject::STATE_LIFT_CHAIR_FULL;
@@ -583,7 +588,7 @@ SkiFree::SkiFree()
             chair_full->position.y = y;
             chair_full->current_frame_index = 64;
             chair_full->current_frame_rectangle = frames[64];
-            chair_full->speed = 1;
+            chair_full->speed = 3;
             chair_full->direction.y = -1;
         }
     }
@@ -655,13 +660,11 @@ void SkiFree::draw() const
     {
         DrawTextureRec(
                 all_textures, character->current_frame_rectangle,
-                Vector2(character->position.x, character->position.y + character->offset_y),
-                WHITE);
+                Vector2(character->position.x, character->position.y + character->offset_y), WHITE);
     }
-    for (const auto &lift_poles: lift_poles_objects)
+    for (const auto &lift_obj: lift_objects)
     {
-        DrawTextureRec(
-                all_textures, lift_poles.current_frame_rectangle, lift_poles.position, WHITE);
+        DrawTextureRec(all_textures, lift_obj.current_frame_rectangle, lift_obj.position, WHITE);
     }
     for (const auto &slalom_flags: slalom_flags_objects)
     {
@@ -1017,9 +1020,26 @@ void SkiFree::update()
     {
         long_live_object->update(frames);
     }
-    for (auto &lift_pole: lift_poles_objects)
+    for (auto &lift_obj: lift_objects)
     {
-        lift_pole.update(frames);
+        lift_obj.update(frames);
+        if (lift_obj.state == SkiObject::STATE_LIFT_CHAIR_FULL)
+        {
+            if (lift_obj.state_countdown == 0 &&
+                std::abs(lift_obj.position.y - player.position.y) < 128)
+            {
+                lift_obj.state_countdown = GetRandomValue(100, 256);
+            }
+            if (lift_obj.state_countdown == 1)
+            {
+                auto new_snowboarder = create_snowboarder();
+                new_snowboarder.position = lift_obj.position;
+                short_live_objects.push_back(new_snowboarder);
+                lift_obj.state = SkiObject::STATE_LIFT_CHAIR_NOVICE;
+                lift_obj.current_frame_index = 65;
+                lift_obj.current_frame_rectangle = frames[65];
+            }
+        }
     }
     for (auto &short_live_object: short_live_objects)
     {
@@ -1031,6 +1051,30 @@ void SkiFree::update()
                     GetWorldToScreen2D(player.position, camera);
     delta *= -1.0f / camera.zoom;
     camera.target += delta;
+}
+
+SkiObject SkiFree::create_snowboarder()
+{
+    auto snowboarder = SkiObject();
+    snowboarder.type = SkiObject::TYPE_SNOWBOARDER;
+    int dir = GetRandomValue(0, 1) * 2 - 1;
+    snowboarder.direction.x = dir;
+    if (dir < 0)
+    {
+        snowboarder.state = SkiObject::STATE_SNOWBOARDER_LEFT;
+        snowboarder.current_frame_index = 36;
+    }
+    else
+    {
+        snowboarder.state = SkiObject::STATE_SNOWBOARDER_RIGHT;
+        snowboarder.current_frame_index = 37;
+    }
+    snowboarder.direction.y = 1;
+    snowboarder.state_countdown = 10;
+    snowboarder.speed = 10;
+    snowboarder.current_frame_rectangle = frames[snowboarder.current_frame_index];
+
+    return snowboarder;
 }
 
 void SkiFree::manage_objects()
@@ -1187,21 +1231,7 @@ void SkiFree::manage_objects()
             }
             case SkiObject::TYPE_SNOWBOARDER:
             {
-                int dir = GetRandomValue(0, 1) * 2 - 1;
-                new_object.direction.x = dir;
-                if (dir < 0)
-                {
-                    new_object.state = SkiObject::STATE_SNOWBOARDER_LEFT;
-                    new_object.current_frame_index = 36;
-                }
-                else
-                {
-                    new_object.state = SkiObject::STATE_SNOWBOARDER_RIGHT;
-                    new_object.current_frame_index = 37;
-                }
-                new_object.direction.y = 1;
-                new_object.state_countdown = 10;
-                new_object.speed = 10;
+                new_object = create_snowboarder();
                 break;
             }
             case SkiObject::TYPE_TREE_WALK:
