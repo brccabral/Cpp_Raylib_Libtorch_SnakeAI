@@ -10,7 +10,7 @@ public:
     SkiObject() = default;
     ~SkiObject() = default;
 
-    void update();
+    void update(const std::vector<Rectangle> &frames);
     Rectangle get_location() const;
 
     enum object_type

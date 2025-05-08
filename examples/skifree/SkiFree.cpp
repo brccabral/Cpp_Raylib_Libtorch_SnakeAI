@@ -5,7 +5,7 @@
 #include <raymath.h>
 
 
-void SkiObject::update()
+void SkiObject::update(const std::vector<Rectangle> &frames)
 {
     switch (type)
     {
@@ -64,6 +64,7 @@ void SkiObject::update()
                     {
                         state = STATE_YETI_HAPPY_2;
                         current_frame_index = 68;
+                        current_frame_rectangle = frames[current_frame_index];
                         state_countdown = 9;
                         offset_y = 0;
                     }
@@ -96,6 +97,7 @@ void SkiObject::update()
                     {
                         state = STATE_YETI_HAPPY_1;
                         current_frame_index = 67;
+                        current_frame_rectangle = frames[current_frame_index];
                         state_countdown = GetRandomValue(1, 25);
                         offset_y = 0;
                     }
@@ -106,10 +108,12 @@ void SkiObject::update()
                     if (current_frame_index == 69)
                     {
                         current_frame_index = 70;
+                        current_frame_rectangle = frames[current_frame_index];
                     }
                     else
                     {
                         current_frame_index = 69;
+                        current_frame_rectangle = frames[current_frame_index];
                     }
                     break;
                 }
@@ -118,10 +122,12 @@ void SkiObject::update()
                     if (current_frame_index == 71)
                     {
                         current_frame_index = 72;
+                        current_frame_rectangle = frames[current_frame_index];
                     }
                     else
                     {
                         current_frame_index = 71;
+                        current_frame_rectangle = frames[current_frame_index];
                     }
                     break;
                 }
@@ -130,10 +136,12 @@ void SkiObject::update()
                     if (current_frame_index == 73)
                     {
                         current_frame_index = 74;
+                        current_frame_rectangle = frames[current_frame_index];
                     }
                     else
                     {
                         current_frame_index = 73;
+                        current_frame_rectangle = frames[current_frame_index];
                     }
                     break;
                 }
@@ -144,6 +152,7 @@ void SkiObject::update()
                     {
                         state = STATE_YETI_HAPPY_1;
                         current_frame_index = 67;
+                        current_frame_rectangle = frames[current_frame_index];
                         state_countdown = GetRandomValue(1, 25);
                     }
                     break;
@@ -447,7 +456,7 @@ void SkiFree::draw() const
     for (const auto &long_live_object: long_live_objects)
     {
         DrawTextureRec(
-                all_textures, frames[long_live_object->current_frame_index],
+                all_textures, long_live_object->current_frame_rectangle,
                 Vector2(long_live_object->position.x,
                         long_live_object->position.y + long_live_object->offset_y),
                 WHITE);
@@ -455,25 +464,24 @@ void SkiFree::draw() const
     for (const auto &characters: characters_objects)
     {
         DrawTextureRec(
-                all_textures, frames[characters->current_frame_index],
+                all_textures, characters->current_frame_rectangle,
                 Vector2(characters->position.x, characters->position.y + characters->offset_y),
                 WHITE);
     }
     for (const auto &lift_poles: lift_poles_objects)
     {
         DrawTextureRec(
-                all_textures, frames[lift_poles.current_frame_index], lift_poles.position, WHITE);
+                all_textures, lift_poles.current_frame_rectangle, lift_poles.position, WHITE);
     }
     for (const auto &slalom_flags: slalom_flags_objects)
     {
         DrawTextureRec(
-                all_textures, frames[slalom_flags.current_frame_index], slalom_flags.position,
-                WHITE);
+                all_textures, slalom_flags.current_frame_rectangle, slalom_flags.position, WHITE);
     }
     for (const auto &short_live_obj: short_live_objects)
     {
         DrawTextureRec(
-                all_textures, frames[short_live_obj.current_frame_index], short_live_obj.position,
+                all_textures, short_live_obj.current_frame_rectangle, short_live_obj.position,
                 WHITE);
     }
     EndMode2D();
@@ -598,6 +606,7 @@ void SkiFree::inputs()
             default:
                 break;
         }
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_KP_4))
     {
@@ -672,6 +681,7 @@ void SkiFree::inputs()
             default:
                 break;
         }
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyPressed(KEY_KP_9))
     {
@@ -679,6 +689,7 @@ void SkiFree::inputs()
         player.state = SkiObject::STATE_PLAYER_RIGHT;
         player.current_frame_index = 6;
         player.direction = {1, 0};
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyPressed(KEY_KP_7))
     {
@@ -686,6 +697,7 @@ void SkiFree::inputs()
         player.state = SkiObject::STATE_PLAYER_LEFT;
         player.current_frame_index = 3;
         player.direction = {-1, 0};
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyPressed(KEY_KP_3))
     {
@@ -694,6 +706,7 @@ void SkiFree::inputs()
         player.current_frame_index = 4;
         player.direction.x = cosf(60 * DEG2RAD);
         player.direction.y = sinf(60 * DEG2RAD);
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyPressed(KEY_KP_1))
     {
@@ -702,6 +715,7 @@ void SkiFree::inputs()
         player.current_frame_index = 1;
         player.direction.x = cosf(120 * DEG2RAD);
         player.direction.y = sinf(120 * DEG2RAD);
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
     {
@@ -709,6 +723,7 @@ void SkiFree::inputs()
         player.state = SkiObject::STATE_PLAYER_DOWN;
         player.current_frame_index = 0;
         player.direction = {0, 1};
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
     {
@@ -755,6 +770,7 @@ void SkiFree::inputs()
             default:
                 break;
         }
+        player.current_frame_rectangle = frames[player.current_frame_index];
     }
 }
 
@@ -767,7 +783,7 @@ void SkiFree::update()
     Vector2 pos_before = player.position;
     for (const auto characters: characters_objects)
     {
-        characters->update();
+        characters->update(frames);
     }
 
     // teleport yeti_1 based on player position thresholds
@@ -809,11 +825,11 @@ void SkiFree::update()
     manage_objects();
     for (const auto long_live_object: long_live_objects)
     {
-        long_live_object->update();
+        long_live_object->update(frames);
     }
     for (auto &short_live_object: short_live_objects)
     {
-        short_live_object.update();
+        short_live_object.update(frames);
     }
     camera.offset = GetWorldToScreen2D(player.position, camera);
     camera.target = player.position;
