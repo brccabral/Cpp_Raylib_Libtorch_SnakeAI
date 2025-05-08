@@ -301,6 +301,26 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
             }
             break;
         }
+        case TYPE_LIFT_CHAIR:
+        {
+            if (position.y < -65 * 20)
+            {
+                state = STATE_LIFT_CHAIR_EMPTY;
+                position.x = -107;
+                current_frame_index = 66;
+                current_frame_rectangle = frames[66];
+                direction.y = 1;
+            }
+            else if (position.y > 1471 * 20)
+            {
+                state = STATE_LIFT_CHAIR_FULL;
+                position.x = -73;
+                current_frame_index = 64;
+                current_frame_rectangle = frames[64];
+                direction.y = -1;
+            }
+            break;
+        }
         default:
             break;
     }
@@ -549,6 +569,8 @@ SkiFree::SkiFree()
             chair_empty->position.y = y;
             chair_empty->current_frame_index = 66;
             chair_empty->current_frame_rectangle = frames[66];
+            chair_empty->speed = 1;
+            chair_empty->direction.y = 1;
         }
         if (i > 0)
         {
@@ -561,6 +583,8 @@ SkiFree::SkiFree()
             chair_full->position.y = y;
             chair_full->current_frame_index = 64;
             chair_full->current_frame_rectangle = frames[64];
+            chair_full->speed = 1;
+            chair_full->direction.y = -1;
         }
     }
 
@@ -627,11 +651,11 @@ void SkiFree::draw() const
                         long_live_object->position.y + long_live_object->offset_y),
                 WHITE);
     }
-    for (const auto &characters: characters_objects)
+    for (const auto &character: characters_objects)
     {
         DrawTextureRec(
-                all_textures, characters->current_frame_rectangle,
-                Vector2(characters->position.x, characters->position.y + characters->offset_y),
+                all_textures, character->current_frame_rectangle,
+                Vector2(character->position.x, character->position.y + character->offset_y),
                 WHITE);
     }
     for (const auto &lift_poles: lift_poles_objects)
@@ -947,9 +971,9 @@ void SkiFree::update()
         return;
     }
     Vector2 pos_before = player.position;
-    for (const auto characters: characters_objects)
+    for (const auto character: characters_objects)
     {
-        characters->update(frames);
+        character->update(frames);
     }
 
     // teleport yeti_1 based on player position thresholds
@@ -992,6 +1016,10 @@ void SkiFree::update()
     for (const auto long_live_object: long_live_objects)
     {
         long_live_object->update(frames);
+    }
+    for (auto &lift_pole: lift_poles_objects)
+    {
+        lift_pole.update(frames);
     }
     for (auto &short_live_object: short_live_objects)
     {
