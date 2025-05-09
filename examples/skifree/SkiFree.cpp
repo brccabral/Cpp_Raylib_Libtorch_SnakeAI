@@ -1682,7 +1682,13 @@ void SkiFree::collisions_manager()
 
                 if (player.speed > 10)
                 {
-                    // TODO spawn urine
+                    auto urine = SkiObject();
+                    urine.type = SkiObject::TYPE_URINE;
+                    urine.current_frame_index = 81;
+                    urine.current_frame_rectangle = frames[81];
+                    urine.position.x = obj.position.x;
+                    urine.position.y = obj.position.y + 8;
+                    short_live_objects.push_back(urine);
                 }
 
                 player.speed *= 0.6;
