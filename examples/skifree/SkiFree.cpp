@@ -403,7 +403,7 @@ BoundingBox SkiObject::get_collision_box() const
                     result.min.y = z;
                     result.min.z = position.y + 23;
                     result.max.x = result.min.x + 24;
-                    result.max.y = result.min.y + 4;
+                    result.max.y = result.min.y + 28;
                     result.max.z = result.min.z + 28 - 23;
                     break;
                 }
@@ -1623,6 +1623,8 @@ void SkiFree::collisions_manager()
     }
 
     auto p_box = player.get_collision_box();
+    auto p_box_large = p_box;
+    p_box_large.min.z = player.position.y;
     for (auto &character: characters_objects)
     {
         if (character->type == SkiObject::TYPE_SKIER)
@@ -1631,7 +1633,7 @@ void SkiFree::collisions_manager()
         }
         auto c_box = character->get_collision_box();
 
-        if (CheckCollisionBoxes(p_box, c_box))
+        if (CheckCollisionBoxes(p_box_large, c_box))
         {
             if (character->type == SkiObject::TYPE_YETI)
             {
