@@ -77,8 +77,10 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     {
                         --offset_y;
                     }
-                    if (offset_y == 0)
+                    if (offset_y < 0.001)
                     {
+                        offset_y = 0;
+                        jump = 0;
                         // TODO check landing
                         if (current_frame_index == 13)
                         {
@@ -1758,11 +1760,13 @@ void SkiFree::collisions_manager()
             else if (obj.type == SkiObject::TYPE_URINE)
             {
                 player.speed *= 0.6;
+                player.speed = std::max(player.speed, 2.0);
                 return;
             }
             else if (obj.type == SkiObject::TYPE_MOGUL_GROUP)
             {
                 player.speed *= 0.6;
+                player.speed = std::max(player.speed, 2.0);
                 player.state = SkiObject::STATE_PLAYER_JUMP;
                 player.current_frame_index = 13;
                 player.current_frame_rectangle = frames[13];

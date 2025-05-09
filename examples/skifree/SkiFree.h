@@ -103,7 +103,7 @@ public:
     object_state state{};
     int state_countdown{};
     double speed{};
-    float jump{};
+    int jump{};
 };
 
 class SkiFree
