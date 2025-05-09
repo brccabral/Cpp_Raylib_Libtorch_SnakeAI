@@ -240,6 +240,19 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     current_frame_rectangle = frames[current_frame_index];
                     break;
                 }
+                case STATE_DOG_HIT:
+                {
+                    --state_countdown;
+                    current_frame_index = 34 + (state_countdown % 2);
+                    current_frame_rectangle = frames[current_frame_index];
+                    if (state_countdown == 0)
+                    {
+                        state = STATE_DOG_RIGHT;
+                        state_countdown = 2;
+                        speed = 2;
+                    }
+                    break;
+                }
                 default:
                 {
                     break;
@@ -1647,6 +1660,7 @@ void SkiFree::collisions_manager()
                 obj.current_frame_index = 34;
                 obj.current_frame_rectangle = frames[34];
                 obj.state_countdown = 20;
+                obj.speed = 0;
 
                 if (player.speed > 10)
                 {
