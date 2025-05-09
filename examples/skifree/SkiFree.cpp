@@ -1691,6 +1691,7 @@ void SkiFree::collisions_manager()
                 obj.state = SkiObject::STATE_NOVICE_SIT;
                 obj.current_frame_index = 30;
                 obj.current_frame_rectangle = frames[30];
+                obj.speed = 0;
 
                 player_hit(c_box);
                 return;
