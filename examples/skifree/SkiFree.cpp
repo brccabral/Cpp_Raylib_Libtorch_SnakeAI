@@ -1671,7 +1671,8 @@ void SkiFree::collisions_manager()
         if (CheckCollisionBoxes(p_box, c_box))
         {
 
-            if (obj.type == SkiObject::TYPE_DOG)
+            if (obj.type == SkiObject::TYPE_DOG && obj.state != SkiObject::STATE_DOG_HIT &&
+                player.speed != 0)
             {
                 obj.state = SkiObject::STATE_DOG_HIT;
                 obj.current_frame_index = 34;
