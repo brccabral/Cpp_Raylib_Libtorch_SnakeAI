@@ -344,6 +344,250 @@ Rectangle SkiObject::get_location() const
             position.x, position.y, current_frame_rectangle.width, current_frame_rectangle.height);
 }
 
+BoundingBox SkiObject::get_collision_box() const
+{
+    BoundingBox result{};
+
+    switch (type)
+    {
+        case TYPE_SKIER:
+        {
+            switch (state)
+            {
+                case STATE_PLAYER_LEFT:
+                case STATE_PLAYER_RIGHT:
+                {
+                    result.min.x = position.x;
+                    result.min.y = z;
+                    result.min.z = position.y + 23;
+                    result.max.x = result.min.x + 24;
+                    result.max.y = result.min.y + 4;
+                    result.max.z = result.min.z + 28 - 23;
+                    break;
+                }
+                case STATE_PLAYER_60_LEFT:
+                case STATE_PLAYER_60_RIGHT:
+                {
+                    result.min.x = position.x;
+                    result.min.y = z;
+                    result.min.z = position.y + 16;
+                    result.max.x = result.min.x + 24;
+                    result.max.y = result.min.y + 4;
+                    result.max.z = result.min.z + 28 - 16;
+                    break;
+                }
+                case STATE_PLAYER_30_LEFT:
+                case STATE_PLAYER_30_RIGHT:
+                {
+                    result.min.x = position.x;
+                    result.min.y = z;
+                    result.min.z = position.y + 15;
+                    result.max.x = result.min.x + 16;
+                    result.max.y = result.min.y + 4;
+                    result.max.z = result.min.z + 32 - 15;
+                    break;
+                }
+                case STATE_PLAYER_DOWN:
+                {
+                    result.min.x = position.x;
+                    result.min.y = z;
+                    result.min.z = position.y + 15;
+                    result.max.x = result.min.x + 16;
+                    result.max.y = result.min.y + 4;
+                    result.max.z = result.min.z + 32 - 15;
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            break;
+        }
+        case TYPE_YETI:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 32;
+            result.max.y = result.min.y + 48;
+            result.max.z = result.min.z + 32;
+            break;
+        }
+        case TYPE_LIFT_POLE:
+        {
+            result.min.x = position.x + 7;
+            result.min.y = z;
+            result.min.z = position.y + 56;
+            result.max.x = result.min.x + 9;
+            result.max.y = result.min.y + 64;
+            result.max.z = result.min.z + 9;
+            break;
+        }
+            BoundingBox;
+        case TYPE_LIFT_CHAIR:
+        {
+            result.min.x = position.x;
+            result.min.y = 32;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 26;
+            result.max.y = result.min.y + 32;
+            result.max.z = result.min.z + 26;
+            break;
+        }
+        case TYPE_URINE:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 16;
+            result.max.y = result.min.y + 1;
+            result.max.z = result.min.z + 8;
+            break;
+        }
+        case TYPE_MOGUL_GROUP:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 64;
+            result.max.y = result.min.y + 6;
+            result.max.z = result.min.z + 32;
+            break;
+        }
+        case TYPE_NOVICE:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y + 16;
+            result.max.x = result.min.x + 24;
+            result.max.y = result.min.y + 30;
+            result.max.z = result.min.z + 30 - 16;
+            break;
+        }
+        case TYPE_DOG:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y + 10;
+            result.max.x = result.min.x + 20;
+            result.max.y = result.min.y + 10;
+            result.max.z = result.min.z + 15;
+            break;
+        }
+        case TYPE_SNOWBOARDER:
+        {
+            switch (state)
+            {
+                case STATE_SNOWBOARDER_LEFT:
+                case STATE_SNOWBOARDER_RIGHT:
+                {
+                    result.min.x = position.x + 5;
+                    result.min.y = z;
+                    result.min.z = position.y + 5;
+                    result.max.x = result.min.x + 15;
+                    result.max.y = result.min.y + 30;
+                    result.max.z = result.min.z + 15;
+                    break;
+                }
+                case STATE_SNOWBOARDER_360:
+                {
+                    result.min.x = position.x;
+                    result.min.y = z;
+                    result.min.z = position.y;
+                    result.max.x = result.min.x + 20;
+                    result.max.y = result.min.y + 30;
+                    result.max.z = result.min.z + 20;
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            break;
+        }
+        case TYPE_TREE_WALK:
+        case TYPE_TREE_SMALL:
+        case TYPE_TREE_DRIED:
+        {
+            result.min.x = position.x + 7;
+            result.min.y = z;
+            result.min.z = position.y + 25;
+            result.max.x = result.min.x + 7;
+            result.max.y = result.min.y + 32;
+            result.max.z = result.min.z + 7;
+            break;
+        }
+        case TYPE_ROCK:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 23;
+            result.max.y = result.min.y + 11;
+            result.max.z = result.min.z + 11;
+            break;
+        }
+        case TYPE_STUMP:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 16;
+            result.max.y = result.min.y + 11;
+            result.max.z = result.min.z + 11;
+            break;
+        }
+        case TYPE_MOGUL_SMALL:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 16;
+            result.max.y = result.min.y + 4;
+            result.max.z = result.min.z + 4;
+            break;
+        }
+        case TYPE_MOGUL_LARGE:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 24;
+            result.max.y = result.min.y + 8;
+            result.max.z = result.min.z + 8;
+            break;
+        }
+        case TYPE_TREE_LARGE:
+        {
+            result.min.x = position.x + 10;
+            result.min.y = z;
+            result.min.z = position.y + 55;
+            result.max.x = result.min.x + 22;
+            result.max.y = result.min.y + 64;
+            result.max.z = result.min.z + 22;
+            break;
+        }
+        case TYPE_RAINBOW:
+        {
+            result.min.x = position.x;
+            result.min.y = z;
+            result.min.z = position.y;
+            result.max.x = result.min.x + 32;
+            result.max.y = result.min.y + 8;
+            result.max.z = result.min.z + 8;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+
+    return result;
+}
+
 SkiFree::SkiFree()
 {
     all_textures = LoadTexture("assets/images.png");
@@ -526,9 +770,6 @@ SkiFree::SkiFree()
     finish_right_freestyle_sign.current_frame_index = 59;
     finish_right_freestyle_sign.current_frame_rectangle = frames[59];
 
-    yeti_1.type = SkiObject::TYPE_YETI;
-    yeti_2.type = SkiObject::TYPE_YETI;
-
     long_live_objects.emplace_back(&slalom_sign);
     long_live_objects.emplace_back(&freestyle_sign);
     long_live_objects.emplace_back(&tree_slalom_sign);
@@ -599,6 +840,7 @@ SkiFree::SkiFree()
         if (i % 2 == 0)
         {
             flag.type = SkiObject::TYPE_SLALOM_ARROW_LEFT;
+            flag.state = SkiObject::STATE_SLALOM_LEFT;
             flag.position.x = -460;
             flag.position.y = 60 * 20 + 20 * 20 * i;
             flag.current_frame_index = 22;
@@ -607,6 +849,7 @@ SkiFree::SkiFree()
         else
         {
             flag.type = SkiObject::TYPE_SLALOM_ARROW_RIGHT;
+            flag.state = SkiObject::STATE_SLALOM_RIGHT;
             flag.position.x = -320;
             flag.position.y = 60 * 20 + 20 * 20 * i;
             flag.current_frame_index = 23;
@@ -1045,6 +1288,9 @@ void SkiFree::update()
     {
         short_live_object.update(frames);
     }
+
+    collisions_manager();
+
     camera.offset = GetWorldToScreen2D(player.position, camera);
     camera.target = player.position;
     Vector2 delta = Vector2(GetScreenWidth() / 2.0, GetScreenHeight() / 2.0 - 150) -
@@ -1196,6 +1442,7 @@ void SkiFree::manage_objects()
             case SkiObject::TYPE_TREE_DRIED:
             {
                 new_object.current_frame_index = 49;
+                new_object.state = SkiObject::STATE_TREE_DRIED_NORMAL;
                 break;
             }
             case SkiObject::TYPE_TREE_LARGE:
@@ -1283,12 +1530,14 @@ void SkiFree::reset()
     is_paused = false;
     is_waiting_action = true;
 
+    yeti_1.type = SkiObject::TYPE_YETI;
     yeti_1.state = SkiObject::STATE_YETI_HAPPY_1;
     yeti_1.position = Vector2(0, -130 * 20);
     yeti_1.current_frame_index = 67;
     yeti_1.current_frame_rectangle = frames[67];
     yeti_1.state_countdown = GetRandomValue(1, 25);
 
+    yeti_2.type = SkiObject::TYPE_YETI;
     yeti_2.state = SkiObject::STATE_YETI_HAPPY_1;
     yeti_2.position = Vector2(100, 2000 * 20);
     yeti_2.current_frame_index = 67;
@@ -1296,4 +1545,157 @@ void SkiFree::reset()
     yeti_2.state_countdown = GetRandomValue(1, 25);
 
     manage_objects();
+}
+
+void SkiFree::collisions_manager()
+{
+    auto p_box = player.get_collision_box();
+    for (auto &character: characters_objects)
+    {
+        if (character->type == SkiObject::TYPE_SKIER)
+        {
+            continue;
+        }
+        auto c_box = character->get_collision_box();
+
+        if (CheckCollisionBoxes(p_box, c_box))
+        {
+            if (character->type == SkiObject::TYPE_YETI)
+            {
+                character->state = SkiObject::STATE_YETI_EATING;
+                character->current_frame_index = 75;
+                character->state_countdown = 6;
+
+                player.current_frame_rectangle = {};
+                return;
+            }
+        }
+    }
+
+    for (auto &lift_obj: lift_objects)
+    {
+        auto c_box = lift_obj.get_collision_box();
+        if (CheckCollisionBoxes(p_box, c_box))
+        {
+            player.state = SkiObject::STATE_PLAYER_HIT;
+            player.current_frame_index = 17;
+            player.current_frame_rectangle = frames[17];
+            return;
+        }
+    }
+
+    for (auto &obj: short_live_objects)
+    {
+        auto c_box = obj.get_collision_box();
+        if (c_box.max.x == 0)
+        {
+            continue;
+        }
+        if (CheckCollisionBoxes(p_box, c_box))
+        {
+
+            if (obj.type == SkiObject::TYPE_DOG)
+            {
+                obj.state = SkiObject::STATE_DOG_HIT;
+                obj.current_frame_index = 34;
+                obj.current_frame_rectangle = frames[34];
+                obj.state_countdown = 20;
+
+                if (player.speed > 10)
+                {
+                    // TODO spawn urine
+                }
+
+                player.speed *= 0.6;
+                return;
+            }
+            else if (obj.type == SkiObject::TYPE_URINE)
+            {
+                player.speed *= 0.6;
+                return;
+            }
+            else if (obj.type == SkiObject::TYPE_MOGUL_GROUP)
+            {
+                player.speed *= 0.6;
+                player.state = SkiObject::STATE_PLAYER_JUMP;
+                player.current_frame_index = 13;
+                player.current_frame_rectangle = frames[13];
+
+                // TODO jump
+
+                return;
+            }
+            else if (obj.type == SkiObject::TYPE_NOVICE)
+            {
+                obj.state = SkiObject::STATE_NOVICE_SIT;
+                obj.current_frame_index = 30;
+                obj.current_frame_rectangle = frames[30];
+
+                player.state = SkiObject::STATE_PLAYER_HIT;
+                player.current_frame_index = 17;
+                player.current_frame_rectangle = frames[17];
+                return;
+            }
+            else if (
+                    obj.type == SkiObject::TYPE_SNOWBOARDER ||
+                    obj.type == SkiObject::TYPE_TREE_WALK ||
+                    obj.type == SkiObject::TYPE_TREE_SMALL ||
+                    obj.type == SkiObject::TYPE_TREE_LARGE)
+            {
+                player.state = SkiObject::STATE_PLAYER_HIT;
+                player.current_frame_index = 17;
+                player.current_frame_rectangle = frames[17];
+                return;
+            }
+            else if (obj.type == SkiObject::TYPE_ROCK)
+            {
+                if (player.z > c_box.max.y)
+                {
+                    player.state = SkiObject::STATE_PLAYER_JUMP;
+                    player.current_frame_index = 13;
+                    player.current_frame_rectangle = frames[13];
+
+                    // TODO jump
+                }
+            }
+            else if (obj.type == SkiObject::TYPE_STUMP)
+            {
+                if (player.z > c_box.max.y)
+                {
+                    player.state = SkiObject::STATE_PLAYER_JUMP;
+                    player.current_frame_index = 13;
+                    player.current_frame_rectangle = frames[13];
+
+                    // TODO jump
+
+                    return;
+                }
+
+                if (player.direction.y < 0)
+                {
+                    obj.current_frame_index = 85;
+                    obj.current_frame_rectangle = frames[85];
+                }
+
+                player.state = SkiObject::STATE_PLAYER_HIT;
+                player.current_frame_index = 17;
+                player.current_frame_rectangle = frames[17];
+                return;
+            }
+            else if (obj.type == SkiObject::TYPE_TREE_DRIED)
+            {
+                player.state = SkiObject::STATE_PLAYER_HIT;
+                player.current_frame_index = 17;
+                player.current_frame_rectangle = frames[17];
+
+                if (player.z > 0 && player.speed > 10)
+                {
+                    obj.state = SkiObject::STATE_TREE_DRIED_FIRE;
+                    obj.current_frame_index = 82;
+                    obj.current_frame_rectangle = frames[82];
+                }
+                return;
+            }
+        }
+    }
 }

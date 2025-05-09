@@ -12,6 +12,7 @@ public:
 
     void update(const std::vector<Rectangle> &frames);
     Rectangle get_location() const;
+    BoundingBox get_collision_box() const;
 
     enum object_type
     {
@@ -92,6 +93,7 @@ public:
 
     object_type type{};
     Vector2 position{};
+    float z{};
     float offset_y{};
     Vector2 direction{};
     Vector2 velocity{};
@@ -114,6 +116,7 @@ public:
     void draw() const;
     void reset();
     SkiObject create_snowboarder();
+    void collisions_manager();
 
 private:
 
