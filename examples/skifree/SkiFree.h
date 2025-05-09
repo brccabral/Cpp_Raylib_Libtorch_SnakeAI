@@ -60,6 +60,7 @@ public:
         STATE_PLAYER_30_RIGHT,
         STATE_PLAYER_60_LEFT,
         STATE_PLAYER_60_RIGHT,
+        STATE_PLAYER_OUCH,
         STATE_PLAYER_SIT,
         STATE_PLAYER_JUMP,
         STATE_PLAYER_HIT,
@@ -168,6 +169,7 @@ private:
     size_t num_elements_in_area = 190;
 
     void manage_objects();
+    void player_hit(const BoundingBox &other_box);
 
     bool is_paused{};
     bool is_waiting_action = true;
