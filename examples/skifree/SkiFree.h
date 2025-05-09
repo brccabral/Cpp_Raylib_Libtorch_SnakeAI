@@ -95,7 +95,6 @@ public:
 
     object_type type{};
     Vector2 position{};
-    float z{};
     float offset_y{};
     Vector2 direction{};
     Vector2 velocity{};
@@ -104,6 +103,7 @@ public:
     object_state state{};
     int state_countdown{};
     double speed{};
+    float jump{};
 };
 
 class SkiFree

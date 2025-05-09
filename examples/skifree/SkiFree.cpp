@@ -41,7 +41,7 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                 }
                 case STATE_PLAYER_HIT:
                 {
-                    if (z == 0)
+                    if (offset_y == 0)
                     {
                         speed = 0;
                         state = STATE_PLAYER_OUCH;
@@ -51,7 +51,7 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     }
                     else
                     {
-                        z -= 1;
+                        offset_y -= 1;
                     }
                     break;
                 }
@@ -66,6 +66,38 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     }
                     break;
                 }
+                case STATE_PLAYER_JUMP:
+                {
+                    if (jump > 0)
+                    {
+                        ++offset_y;
+                        --jump;
+                    }
+                    else
+                    {
+                        --offset_y;
+                    }
+                    if (offset_y == 0)
+                    {
+                        // TODO check landing
+                        if (current_frame_index == 13)
+                        {
+                            state = STATE_PLAYER_DOWN;
+                            current_frame_index = 0;
+                            current_frame_rectangle = frames[0];
+                        }
+                        else
+                        {
+                            speed = 0;
+                            state = STATE_PLAYER_OUCH;
+                            current_frame_index = 11;
+                            current_frame_rectangle = frames[11];
+                            state_countdown = 10;
+                        }
+                    }
+
+                    break;
+                }
                 default:
                     break;
             }
@@ -73,6 +105,11 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
             {
                 speed = 25;
             }
+            if (offset_y > 0)
+            {
+                speed += 2;
+            }
+
             if (std::abs(speed) < 0.001)
             {
                 speed = 0;
@@ -400,7 +437,7 @@ BoundingBox SkiObject::get_collision_box() const
                 case STATE_PLAYER_RIGHT:
                 {
                     result.min.x = position.x;
-                    result.min.y = z;
+                    result.min.y = offset_y;
                     result.min.z = position.y + 23;
                     result.max.x = result.min.x + 24;
                     result.max.y = result.min.y + 28;
@@ -411,7 +448,7 @@ BoundingBox SkiObject::get_collision_box() const
                 case STATE_PLAYER_60_RIGHT:
                 {
                     result.min.x = position.x;
-                    result.min.y = z;
+                    result.min.y = offset_y;
                     result.min.z = position.y + 16;
                     result.max.x = result.min.x + 24;
                     result.max.y = result.min.y + 4;
@@ -422,7 +459,7 @@ BoundingBox SkiObject::get_collision_box() const
                 case STATE_PLAYER_30_RIGHT:
                 {
                     result.min.x = position.x;
-                    result.min.y = z;
+                    result.min.y = offset_y;
                     result.min.z = position.y + 15;
                     result.max.x = result.min.x + 16;
                     result.max.y = result.min.y + 4;
@@ -432,7 +469,7 @@ BoundingBox SkiObject::get_collision_box() const
                 case STATE_PLAYER_DOWN:
                 {
                     result.min.x = position.x;
-                    result.min.y = z;
+                    result.min.y = offset_y;
                     result.min.z = position.y + 15;
                     result.max.x = result.min.x + 16;
                     result.max.y = result.min.y + 4;
@@ -449,7 +486,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_YETI:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 32;
             result.max.y = result.min.y + 48;
@@ -459,7 +496,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_LIFT_POLE:
         {
             result.min.x = position.x + 7;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y + 56;
             result.max.x = result.min.x + 9;
             result.max.y = result.min.y + 64;
@@ -480,7 +517,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_URINE:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 16;
             result.max.y = result.min.y + 1;
@@ -490,7 +527,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_MOGUL_GROUP:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 64;
             result.max.y = result.min.y + 6;
@@ -500,7 +537,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_NOVICE:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y + 16;
             result.max.x = result.min.x + 24;
             result.max.y = result.min.y + 30;
@@ -510,7 +547,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_DOG:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y + 10;
             result.max.x = result.min.x + 20;
             result.max.y = result.min.y + 10;
@@ -525,7 +562,7 @@ BoundingBox SkiObject::get_collision_box() const
                 case STATE_SNOWBOARDER_RIGHT:
                 {
                     result.min.x = position.x + 5;
-                    result.min.y = z;
+                    result.min.y = offset_y;
                     result.min.z = position.y + 5;
                     result.max.x = result.min.x + 15;
                     result.max.y = result.min.y + 30;
@@ -535,7 +572,7 @@ BoundingBox SkiObject::get_collision_box() const
                 case STATE_SNOWBOARDER_360:
                 {
                     result.min.x = position.x;
-                    result.min.y = z;
+                    result.min.y = offset_y;
                     result.min.z = position.y;
                     result.max.x = result.min.x + 20;
                     result.max.y = result.min.y + 30;
@@ -554,7 +591,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_TREE_DRIED:
         {
             result.min.x = position.x + 7;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y + 25;
             result.max.x = result.min.x + 7;
             result.max.y = result.min.y + 32;
@@ -564,7 +601,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_ROCK:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 23;
             result.max.y = result.min.y + 11;
@@ -574,7 +611,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_STUMP:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 16;
             result.max.y = result.min.y + 11;
@@ -584,7 +621,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_MOGUL_SMALL:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 16;
             result.max.y = result.min.y + 4;
@@ -594,7 +631,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_MOGUL_LARGE:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 24;
             result.max.y = result.min.y + 8;
@@ -604,7 +641,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_TREE_LARGE:
         {
             result.min.x = position.x + 10;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y + 55;
             result.max.x = result.min.x + 22;
             result.max.y = result.min.y + 64;
@@ -614,7 +651,7 @@ BoundingBox SkiObject::get_collision_box() const
         case TYPE_RAINBOW:
         {
             result.min.x = position.x;
-            result.min.y = z;
+            result.min.y = offset_y;
             result.min.z = position.y;
             result.max.x = result.min.x + 32;
             result.max.y = result.min.y + 8;
@@ -945,7 +982,7 @@ void SkiFree::draw() const
     {
         DrawTextureRec(
                 all_textures, character->current_frame_rectangle,
-                Vector2(character->position.x, character->position.y + character->offset_y), WHITE);
+                Vector2(character->position.x, character->position.y - character->offset_y), WHITE);
     }
     for (const auto &lift_obj: lift_objects)
     {
@@ -1275,6 +1312,30 @@ void SkiFree::inputs()
                 break;
         }
         player.current_frame_rectangle = frames[player.current_frame_index];
+    }
+    if (IsKeyPressed(KEY_SPACE) && player.offset_y == 0)
+    {
+        player.jump = 15;
+        player.state = SkiObject::STATE_PLAYER_JUMP;
+        player.current_frame_index = 13;
+        player.current_frame_rectangle = frames[13];
+        player.direction = Vector2(0, 1);
+        player.offset_y = 1;
+    }
+    else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 13)
+    {
+        player.current_frame_index = 18;
+        player.current_frame_rectangle = frames[18];
+    }
+    else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 18)
+    {
+        player.current_frame_index = 19;
+        player.current_frame_rectangle = frames[19];
+    }
+    else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 19)
+    {
+        player.current_frame_index = 13;
+        player.current_frame_rectangle = frames[13];
     }
 }
 
@@ -1731,7 +1792,7 @@ void SkiFree::collisions_manager()
             }
             else if (obj.type == SkiObject::TYPE_ROCK)
             {
-                if (player.z > c_box.max.y)
+                if (player.offset_y > c_box.max.y)
                 {
                     player.state = SkiObject::STATE_PLAYER_JUMP;
                     player.current_frame_index = 13;
@@ -1747,7 +1808,7 @@ void SkiFree::collisions_manager()
             }
             else if (obj.type == SkiObject::TYPE_STUMP)
             {
-                if (player.z > c_box.max.y)
+                if (player.offset_y > c_box.max.y)
                 {
                     player.state = SkiObject::STATE_PLAYER_JUMP;
                     player.current_frame_index = 13;
@@ -1771,7 +1832,7 @@ void SkiFree::collisions_manager()
             {
                 player_hit(c_box);
 
-                if (player.z > 0 && player.speed > 10)
+                if (player.offset_y > 0 && player.speed > 10)
                 {
                     obj.state = SkiObject::STATE_TREE_DRIED_FIRE;
                     obj.current_frame_index = 82;
