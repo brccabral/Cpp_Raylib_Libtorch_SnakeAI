@@ -174,8 +174,10 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                 }
                 case STATE_YETI_EATING:
                 {
-                    ++current_frame_index;
-                    if (current_frame_index == 80)
+                    --state_countdown;
+                    current_frame_index = 81 - state_countdown;
+                    current_frame_rectangle = frames[current_frame_index];
+                    if (state_countdown == 0)
                     {
                         state = STATE_YETI_HAPPY_1;
                         current_frame_index = 67;
@@ -1008,6 +1010,11 @@ void SkiFree::inputs()
     {
         return;
     }
+    if (player.state == SkiObject::STATE_PLAYER_EATING)
+    {
+        return;
+    }
+
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
     {
         is_waiting_action = false;
@@ -1610,6 +1617,11 @@ void SkiFree::reset()
 
 void SkiFree::collisions_manager()
 {
+    if (player.state == SkiObject::STATE_PLAYER_EATING)
+    {
+        return;
+    }
+
     auto p_box = player.get_collision_box();
     for (auto &character: characters_objects)
     {
@@ -1625,9 +1637,12 @@ void SkiFree::collisions_manager()
             {
                 character->state = SkiObject::STATE_YETI_EATING;
                 character->current_frame_index = 75;
+                character->current_frame_rectangle = frames[75];
                 character->state_countdown = 6;
 
                 player.current_frame_rectangle = {};
+                player.state = SkiObject::STATE_PLAYER_EATING;
+                player.speed = 0;
                 return;
             }
         }
