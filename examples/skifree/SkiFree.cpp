@@ -1512,7 +1512,7 @@ void SkiFree::update()
         yeti_1.state != SkiObject::STATE_YETI_EATING &&
         player.state != SkiObject::STATE_PLAYER_EATING)
     {
-        yeti_chase(&yeti_1, 30);
+        yeti_chase(&yeti_1, 29.0f);
     }
     else if (yeti_1.speed > 0 && yeti_1.state != SkiObject::STATE_YETI_EATING)
     {

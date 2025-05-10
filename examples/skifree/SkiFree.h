@@ -167,7 +167,7 @@ private:
 
     Rectangle current_area{};
     float area_size = 3000.0f;
-    size_t num_elements_in_area = 190;
+    size_t num_elements_in_area = 140;
 
     void manage_objects();
     void player_hit(const BoundingBox &other_box);
