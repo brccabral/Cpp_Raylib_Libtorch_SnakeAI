@@ -407,6 +407,16 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
 
             break;
         }
+        case TYPE_TREE_DRIED:
+        {
+            if (state == STATE_TREE_DRIED_FIRE)
+            {
+                state_countdown = (state_countdown + 1) % 3;
+                current_frame_index = 82 + state_countdown;
+                current_frame_rectangle = frames[current_frame_index];
+            }
+            break;
+        }
         default:
             break;
     }
