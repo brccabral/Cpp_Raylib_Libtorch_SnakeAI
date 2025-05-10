@@ -1855,6 +1855,12 @@ void SkiFree::collisions_manager()
                 player_jump(2);
                 return;
             }
+            else if (obj.type == SkiObject::TYPE_RAINBOW && player.direction.y > 0)
+            {
+                int jump = Clamp(player.speed, 2.0, 10.0);
+                player_jump(jump);
+                return;
+            }
         }
     }
 }
@@ -1879,7 +1885,7 @@ void SkiFree::player_jump(const int jump_height)
     player.state = SkiObject::STATE_PLAYER_JUMP;
     player.current_frame_index = 13;
     player.current_frame_rectangle = frames[13];
-    player.jump += jump_height;
+    player.jump += jump_height + 0.5 * player.speed;
     player.speed = std::max(player.speed, 2.0);
     player.direction = Vector2(0, 1);
     player.offset_y += 1;
