@@ -171,6 +171,7 @@ private:
 
     void manage_objects();
     void player_hit(const BoundingBox &other_box);
+    void player_jump(const int jump_height);
 
     bool is_paused{};
     bool is_waiting_action = true;

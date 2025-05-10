@@ -106,10 +106,10 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
             if (speed > 25)
             {
                 speed = 25;
-            }
-            if (offset_y > 0)
-            {
-                speed += 2;
+                if (offset_y > 0)
+                {
+                    speed += 2;
+                }
             }
 
             if (std::abs(speed) < 0.001)
@@ -1336,12 +1336,7 @@ void SkiFree::inputs()
     }
     if (IsKeyPressed(KEY_SPACE) && player.offset_y == 0)
     {
-        player.jump = 5;
-        player.state = SkiObject::STATE_PLAYER_JUMP;
-        player.current_frame_index = 13;
-        player.current_frame_rectangle = frames[13];
-        player.direction = Vector2(0, 1);
-        player.offset_y = 1;
+        player_jump(5);
     }
     else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 13)
     {
@@ -1785,14 +1780,7 @@ void SkiFree::collisions_manager()
             else if (obj.type == SkiObject::TYPE_MOGUL_GROUP && player.direction.y > 0)
             {
                 player.speed *= 0.6;
-                player.speed = std::max(player.speed, 2.0);
-                player.state = SkiObject::STATE_PLAYER_JUMP;
-                player.current_frame_index = 13;
-                player.current_frame_rectangle = frames[13];
-                player.direction = Vector2(0, 1);
-
-                player.jump += 2;
-
+                player_jump(2);
                 return;
             }
             else if (obj.type == SkiObject::TYPE_NOVICE)
@@ -1818,12 +1806,7 @@ void SkiFree::collisions_manager()
             {
                 if (player.offset_y > 0)
                 {
-                    player.state = SkiObject::STATE_PLAYER_JUMP;
-                    player.current_frame_index = 13;
-                    player.current_frame_rectangle = frames[13];
-
-                    player.jump += 2;
-
+                    player_jump(2);
                     return;
                 }
 
@@ -1834,12 +1817,7 @@ void SkiFree::collisions_manager()
             {
                 if (player.offset_y > 0)
                 {
-                    player.state = SkiObject::STATE_PLAYER_JUMP;
-                    player.current_frame_index = 13;
-                    player.current_frame_rectangle = frames[13];
-
-                    player.jump += 2;
-
+                    player_jump(2);
                     return;
                 }
 
@@ -1864,6 +1842,16 @@ void SkiFree::collisions_manager()
                 }
                 return;
             }
+            else if (obj.type == SkiObject::TYPE_MOGUL_SMALL)
+            {
+                player_jump(2);
+                return;
+            }
+            else if (obj.type == SkiObject::TYPE_MOGUL_LARGE)
+            {
+                player_jump(2);
+                return;
+            }
         }
     }
 }
@@ -1881,4 +1869,15 @@ void SkiFree::player_hit(const BoundingBox &other_box)
     player.state = SkiObject::STATE_PLAYER_HIT;
     player.current_frame_index = 17;
     player.current_frame_rectangle = frames[17];
+}
+
+void SkiFree::player_jump(const int jump_height)
+{
+    player.state = SkiObject::STATE_PLAYER_JUMP;
+    player.current_frame_index = 13;
+    player.current_frame_rectangle = frames[13];
+    player.jump += jump_height;
+    player.speed = std::max(player.speed, 2.0);
+    player.direction = Vector2(0, 1);
+    player.offset_y += 1;
 }
