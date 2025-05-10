@@ -1073,270 +1073,273 @@ void SkiFree::inputs()
         return;
     }
 
-    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
+    if (std::abs(player.offset_y) < 0.001)
     {
-        is_waiting_action = false;
-        switch (player.state)
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
         {
-            case SkiObject::STATE_PLAYER_SIT:
+            is_waiting_action = false;
+            switch (player.state)
             {
-                player.state = SkiObject::STATE_PLAYER_RIGHT;
-                player.current_frame_index = 6;
-                player.direction = {1, 0};
-                break;
-            }
-            case SkiObject::STATE_PLAYER_RIGHT:
-            {
-                // 6, 8, 10
-                if (player.current_frame_index == 6)
+                case SkiObject::STATE_PLAYER_SIT:
                 {
-                    player.current_frame_index = 8;
-                }
-                else if (player.current_frame_index == 8)
-                {
-                    player.current_frame_index = 10;
-                }
-                else if (player.current_frame_index == 10)
-                {
+                    player.state = SkiObject::STATE_PLAYER_RIGHT;
                     player.current_frame_index = 6;
+                    player.direction = {1, 0};
+                    break;
                 }
-                player.direction = {1, 0};
-                player.speed = 10;
-                break;
-            }
-            case SkiObject::STATE_PLAYER_LEFT:
-            {
-                player.state = SkiObject::STATE_PLAYER_60_LEFT;
-                player.current_frame_index = 2;
-                player.direction.x = cosf(150 * DEG2RAD);
-                player.direction.y = sinf(150 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_60_LEFT:
-            {
-                player.state = SkiObject::STATE_PLAYER_30_LEFT;
-                player.current_frame_index = 1;
-                player.direction.x = cosf(120 * DEG2RAD);
-                player.direction.y = sinf(120 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_30_LEFT:
-            {
-                player.state = SkiObject::STATE_PLAYER_DOWN;
-                player.current_frame_index = 0;
-                player.direction.x = cosf(90 * DEG2RAD);
-                player.direction.y = sinf(90 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_DOWN:
-            {
-                player.state = SkiObject::STATE_PLAYER_30_RIGHT;
-                player.current_frame_index = 4;
-                player.direction.x = cosf(60 * DEG2RAD);
-                player.direction.y = sinf(60 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_30_RIGHT:
-            {
-                player.state = SkiObject::STATE_PLAYER_60_RIGHT;
-                player.current_frame_index = 5;
-                player.direction.x = cosf(30 * DEG2RAD);
-                player.direction.y = sinf(30 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_60_RIGHT:
-            {
-                player.state = SkiObject::STATE_PLAYER_RIGHT;
-                player.current_frame_index = 6;
-                player.direction = {1, 0};
-                break;
-            }
-            default:
-                break;
-        }
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_KP_4))
-    {
-        is_waiting_action = false;
-        switch (player.state)
-        {
-            case SkiObject::STATE_PLAYER_SIT:
-            {
-                player.state = SkiObject::STATE_PLAYER_LEFT;
-                player.current_frame_index = 3;
-                player.direction = {-1, 0};
-                break;
-            }
-            case SkiObject::STATE_PLAYER_LEFT:
-            {
-                // 3, 7, 9
-                if (player.current_frame_index == 3)
+                case SkiObject::STATE_PLAYER_RIGHT:
                 {
-                    player.current_frame_index = 7;
+                    // 6, 8, 10
+                    if (player.current_frame_index == 6)
+                    {
+                        player.current_frame_index = 8;
+                    }
+                    else if (player.current_frame_index == 8)
+                    {
+                        player.current_frame_index = 10;
+                    }
+                    else if (player.current_frame_index == 10)
+                    {
+                        player.current_frame_index = 6;
+                    }
+                    player.direction = {1, 0};
+                    player.speed = 10;
+                    break;
                 }
-                else if (player.current_frame_index == 7)
+                case SkiObject::STATE_PLAYER_LEFT:
                 {
-                    player.current_frame_index = 9;
+                    player.state = SkiObject::STATE_PLAYER_60_LEFT;
+                    player.current_frame_index = 2;
+                    player.direction.x = cosf(150 * DEG2RAD);
+                    player.direction.y = sinf(150 * DEG2RAD);
+                    break;
                 }
-                else if (player.current_frame_index == 9)
+                case SkiObject::STATE_PLAYER_60_LEFT:
                 {
-                    player.current_frame_index = 3;
+                    player.state = SkiObject::STATE_PLAYER_30_LEFT;
+                    player.current_frame_index = 1;
+                    player.direction.x = cosf(120 * DEG2RAD);
+                    player.direction.y = sinf(120 * DEG2RAD);
+                    break;
                 }
-                player.direction = {-1, 0};
-                player.speed = 10;
-                break;
-            }
-            case SkiObject::STATE_PLAYER_RIGHT:
-            {
-                player.state = SkiObject::STATE_PLAYER_60_RIGHT;
-                player.current_frame_index = 5;
-                player.direction.x = cosf(30 * DEG2RAD);
-                player.direction.y = sinf(30 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_60_RIGHT:
-            {
-                player.state = SkiObject::STATE_PLAYER_30_RIGHT;
-                player.current_frame_index = 4;
-                player.direction.x = cosf(60 * DEG2RAD);
-                player.direction.y = sinf(60 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_30_RIGHT:
-            {
-                player.state = SkiObject::STATE_PLAYER_DOWN;
-                player.current_frame_index = 0;
-                player.direction = {0, 1};
-                break;
-            }
-            case SkiObject::STATE_PLAYER_DOWN:
-            {
-                player.state = SkiObject::STATE_PLAYER_30_LEFT;
-                player.current_frame_index = 1;
-                player.direction.x = cosf(120 * DEG2RAD);
-                player.direction.y = sinf(120 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_30_LEFT:
-            {
-                player.state = SkiObject::STATE_PLAYER_60_LEFT;
-                player.current_frame_index = 2;
-                player.direction.x = cosf(150 * DEG2RAD);
-                player.direction.y = sinf(150 * DEG2RAD);
-                break;
-            }
-            case SkiObject::STATE_PLAYER_60_LEFT:
-            {
-                player.state = SkiObject::STATE_PLAYER_LEFT;
-                player.current_frame_index = 3;
-                player.direction = {-1, 0};
-                break;
-            }
-            default:
-                break;
-        }
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyPressed(KEY_KP_9))
-    {
-        is_waiting_action = false;
-        player.state = SkiObject::STATE_PLAYER_RIGHT;
-        player.current_frame_index = 6;
-        player.direction = {1, 0};
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyPressed(KEY_KP_7))
-    {
-        is_waiting_action = false;
-        player.state = SkiObject::STATE_PLAYER_LEFT;
-        player.current_frame_index = 3;
-        player.direction = {-1, 0};
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyPressed(KEY_KP_3))
-    {
-        is_waiting_action = false;
-        player.state = SkiObject::STATE_PLAYER_30_RIGHT;
-        player.current_frame_index = 4;
-        player.direction.x = cosf(60 * DEG2RAD);
-        player.direction.y = sinf(60 * DEG2RAD);
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyPressed(KEY_KP_1))
-    {
-        is_waiting_action = false;
-        player.state = SkiObject::STATE_PLAYER_30_LEFT;
-        player.current_frame_index = 1;
-        player.direction.x = cosf(120 * DEG2RAD);
-        player.direction.y = sinf(120 * DEG2RAD);
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
-    {
-        is_waiting_action = false;
-        player.state = SkiObject::STATE_PLAYER_DOWN;
-        player.current_frame_index = 0;
-        player.direction = {0, 1};
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
-    {
-        is_waiting_action = false;
-        switch (player.state)
-        {
-            case SkiObject::STATE_PLAYER_SIT:
-            {
-                player.state = SkiObject::STATE_PLAYER_RIGHT;
-                player.current_frame_index = 6;
-                player.direction = {1, 0};
-                break;
-            }
-            case SkiObject::STATE_PLAYER_LEFT:
-            {
-                if (player.current_frame_index == 3)
+                case SkiObject::STATE_PLAYER_30_LEFT:
                 {
-                    player.current_frame_index = 7;
+                    player.state = SkiObject::STATE_PLAYER_DOWN;
+                    player.current_frame_index = 0;
+                    player.direction.x = cosf(90 * DEG2RAD);
+                    player.direction.y = sinf(90 * DEG2RAD);
+                    break;
                 }
-                else if (player.current_frame_index == 7)
+                case SkiObject::STATE_PLAYER_DOWN:
                 {
-                    player.current_frame_index = 9;
+                    player.state = SkiObject::STATE_PLAYER_30_RIGHT;
+                    player.current_frame_index = 4;
+                    player.direction.x = cosf(60 * DEG2RAD);
+                    player.direction.y = sinf(60 * DEG2RAD);
+                    break;
                 }
-                else if (player.current_frame_index == 9)
+                case SkiObject::STATE_PLAYER_30_RIGHT:
                 {
-                    player.current_frame_index = 3;
+                    player.state = SkiObject::STATE_PLAYER_60_RIGHT;
+                    player.current_frame_index = 5;
+                    player.direction.x = cosf(30 * DEG2RAD);
+                    player.direction.y = sinf(30 * DEG2RAD);
+                    break;
                 }
-                player.direction = {0, -1};
-                player.speed = 10;
-                break;
-            }
-            case SkiObject::STATE_PLAYER_RIGHT:
-            {
-                // 6, 8, 10
-                if (player.current_frame_index == 6)
+                case SkiObject::STATE_PLAYER_60_RIGHT:
                 {
-                    player.current_frame_index = 8;
-                }
-                else if (player.current_frame_index == 8)
-                {
-                    player.current_frame_index = 10;
-                }
-                else if (player.current_frame_index == 10)
-                {
+                    player.state = SkiObject::STATE_PLAYER_RIGHT;
                     player.current_frame_index = 6;
+                    player.direction = {1, 0};
+                    break;
                 }
-                player.direction = {0, -1};
-                player.speed = 10;
-                break;
+                default:
+                    break;
             }
-            default:
-                break;
+            player.current_frame_rectangle = frames[player.current_frame_index];
         }
-        player.current_frame_rectangle = frames[player.current_frame_index];
-    }
-    if (IsKeyPressed(KEY_SPACE) && player.offset_y == 0)
-    {
-        player_jump(5);
+        if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_KP_4))
+        {
+            is_waiting_action = false;
+            switch (player.state)
+            {
+                case SkiObject::STATE_PLAYER_SIT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_LEFT;
+                    player.current_frame_index = 3;
+                    player.direction = {-1, 0};
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_LEFT:
+                {
+                    // 3, 7, 9
+                    if (player.current_frame_index == 3)
+                    {
+                        player.current_frame_index = 7;
+                    }
+                    else if (player.current_frame_index == 7)
+                    {
+                        player.current_frame_index = 9;
+                    }
+                    else if (player.current_frame_index == 9)
+                    {
+                        player.current_frame_index = 3;
+                    }
+                    player.direction = {-1, 0};
+                    player.speed = 10;
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_RIGHT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_60_RIGHT;
+                    player.current_frame_index = 5;
+                    player.direction.x = cosf(30 * DEG2RAD);
+                    player.direction.y = sinf(30 * DEG2RAD);
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_60_RIGHT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_30_RIGHT;
+                    player.current_frame_index = 4;
+                    player.direction.x = cosf(60 * DEG2RAD);
+                    player.direction.y = sinf(60 * DEG2RAD);
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_30_RIGHT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_DOWN;
+                    player.current_frame_index = 0;
+                    player.direction = {0, 1};
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_DOWN:
+                {
+                    player.state = SkiObject::STATE_PLAYER_30_LEFT;
+                    player.current_frame_index = 1;
+                    player.direction.x = cosf(120 * DEG2RAD);
+                    player.direction.y = sinf(120 * DEG2RAD);
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_30_LEFT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_60_LEFT;
+                    player.current_frame_index = 2;
+                    player.direction.x = cosf(150 * DEG2RAD);
+                    player.direction.y = sinf(150 * DEG2RAD);
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_60_LEFT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_LEFT;
+                    player.current_frame_index = 3;
+                    player.direction = {-1, 0};
+                    break;
+                }
+                default:
+                    break;
+            }
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyPressed(KEY_KP_9))
+        {
+            is_waiting_action = false;
+            player.state = SkiObject::STATE_PLAYER_RIGHT;
+            player.current_frame_index = 6;
+            player.direction = {1, 0};
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyPressed(KEY_KP_7))
+        {
+            is_waiting_action = false;
+            player.state = SkiObject::STATE_PLAYER_LEFT;
+            player.current_frame_index = 3;
+            player.direction = {-1, 0};
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyPressed(KEY_KP_3))
+        {
+            is_waiting_action = false;
+            player.state = SkiObject::STATE_PLAYER_30_RIGHT;
+            player.current_frame_index = 4;
+            player.direction.x = cosf(60 * DEG2RAD);
+            player.direction.y = sinf(60 * DEG2RAD);
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyPressed(KEY_KP_1))
+        {
+            is_waiting_action = false;
+            player.state = SkiObject::STATE_PLAYER_30_LEFT;
+            player.current_frame_index = 1;
+            player.direction.x = cosf(120 * DEG2RAD);
+            player.direction.y = sinf(120 * DEG2RAD);
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
+        {
+            is_waiting_action = false;
+            player.state = SkiObject::STATE_PLAYER_DOWN;
+            player.current_frame_index = 0;
+            player.direction = {0, 1};
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_KP_8))
+        {
+            is_waiting_action = false;
+            switch (player.state)
+            {
+                case SkiObject::STATE_PLAYER_SIT:
+                {
+                    player.state = SkiObject::STATE_PLAYER_RIGHT;
+                    player.current_frame_index = 6;
+                    player.direction = {1, 0};
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_LEFT:
+                {
+                    if (player.current_frame_index == 3)
+                    {
+                        player.current_frame_index = 7;
+                    }
+                    else if (player.current_frame_index == 7)
+                    {
+                        player.current_frame_index = 9;
+                    }
+                    else if (player.current_frame_index == 9)
+                    {
+                        player.current_frame_index = 3;
+                    }
+                    player.direction = {0, -1};
+                    player.speed = 10;
+                    break;
+                }
+                case SkiObject::STATE_PLAYER_RIGHT:
+                {
+                    // 6, 8, 10
+                    if (player.current_frame_index == 6)
+                    {
+                        player.current_frame_index = 8;
+                    }
+                    else if (player.current_frame_index == 8)
+                    {
+                        player.current_frame_index = 10;
+                    }
+                    else if (player.current_frame_index == 10)
+                    {
+                        player.current_frame_index = 6;
+                    }
+                    player.direction = {0, -1};
+                    player.speed = 10;
+                    break;
+                }
+                default:
+                    break;
+            }
+            player.current_frame_rectangle = frames[player.current_frame_index];
+        }
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            player_jump(5);
+        }
     }
     else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 13)
     {
