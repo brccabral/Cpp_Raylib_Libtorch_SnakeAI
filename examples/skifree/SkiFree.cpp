@@ -5,7 +5,7 @@
 #include <raymath.h>
 
 
-void SkiObject::update(const std::vector<Rectangle> &frames)
+void SkiObject::update(const std::vector<Rectangle> &frames, const float speed_limit)
 {
     switch (type)
     {
@@ -114,9 +114,9 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                 default:
                     break;
             }
-            if (speed > 25)
+            if (speed > speed_limit)
             {
-                speed = 25;
+                speed = speed_limit;
                 if (offset_y > 0)
                 {
                     speed += 2;
@@ -1084,6 +1084,18 @@ void SkiFree::inputs()
         return;
     }
 
+    if (IsKeyPressed(KEY_F))
+    {
+        if (speed_limit > 25)
+        {
+            speed_limit = 25;
+        }
+        else
+        {
+            speed_limit = 31;
+        }
+    }
+
     if (std::abs(player.offset_y) < 0.001)
     {
         if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
@@ -1429,7 +1441,7 @@ void SkiFree::update()
     Vector2 pos_before = player.position;
     for (const auto character: characters_objects)
     {
-        character->update(frames);
+        character->update(frames, speed_limit);
     }
 
     // teleport yeti_1 based on player position thresholds
@@ -1471,11 +1483,11 @@ void SkiFree::update()
     manage_objects();
     for (const auto long_live_object: long_live_objects)
     {
-        long_live_object->update(frames);
+        long_live_object->update(frames, speed_limit);
     }
     for (auto &lift_obj: lift_objects)
     {
-        lift_obj.update(frames);
+        lift_obj.update(frames, speed_limit);
         if (lift_obj.state == SkiObject::STATE_LIFT_CHAIR_FULL)
         {
             if (lift_obj.state_countdown == 0 &&
@@ -1496,7 +1508,7 @@ void SkiFree::update()
     }
     for (auto &short_live_object: short_live_objects)
     {
-        short_live_object.update(frames);
+        short_live_object.update(frames, speed_limit);
     }
 
     collisions_manager();
@@ -1982,4 +1994,8 @@ void SkiFree::player_jump(const int jump_height)
     player.speed = std::max(player.speed, 2.0);
     player.direction = Vector2(0, 1);
     player.offset_y += 1;
+    if (player.offset_y > 0)
+    {
+        player.speed += 2;
+    }
 }

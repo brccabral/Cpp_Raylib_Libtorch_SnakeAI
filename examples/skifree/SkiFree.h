@@ -10,7 +10,7 @@ public:
     SkiObject() = default;
     ~SkiObject() = default;
 
-    void update(const std::vector<Rectangle> &frames);
+    void update(const std::vector<Rectangle> &frames, float speed_limit);
     Rectangle get_location() const;
     BoundingBox get_collision_box() const;
 
@@ -175,4 +175,6 @@ private:
 
     bool is_paused{};
     bool is_waiting_action = true;
+
+    float speed_limit = 25;
 };
