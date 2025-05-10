@@ -156,19 +156,19 @@ void SkiObject::update(const std::vector<Rectangle> &frames, const float speed_l
                     }
                     else if (state_countdown == 8 | state_countdown == 1)
                     {
-                        offset_y = -5;
+                        offset_y = 5;
                     }
                     else if (state_countdown == 7 | state_countdown == 2)
                     {
-                        offset_y = -10;
+                        offset_y = 10;
                     }
                     else if (state_countdown == 6 | state_countdown == 3)
                     {
-                        offset_y = -15;
+                        offset_y = 15;
                     }
                     else if (state_countdown == 5 | state_countdown == 4)
                     {
-                        offset_y = -20;
+                        offset_y = 20;
                     }
                     else
                     {
@@ -185,13 +185,12 @@ void SkiObject::update(const std::vector<Rectangle> &frames, const float speed_l
                     if (current_frame_index == 69)
                     {
                         current_frame_index = 70;
-                        current_frame_rectangle = frames[current_frame_index];
                     }
                     else
                     {
                         current_frame_index = 69;
-                        current_frame_rectangle = frames[current_frame_index];
                     }
+                    current_frame_rectangle = frames[current_frame_index];
                     break;
                 }
                 case STATE_YETI_RIGHT:
@@ -199,13 +198,12 @@ void SkiObject::update(const std::vector<Rectangle> &frames, const float speed_l
                     if (current_frame_index == 71)
                     {
                         current_frame_index = 72;
-                        current_frame_rectangle = frames[current_frame_index];
                     }
                     else
                     {
                         current_frame_index = 71;
-                        current_frame_rectangle = frames[current_frame_index];
                     }
+                    current_frame_rectangle = frames[current_frame_index];
                     break;
                 }
                 case STATE_YETI_UP:
@@ -213,13 +211,12 @@ void SkiObject::update(const std::vector<Rectangle> &frames, const float speed_l
                     if (current_frame_index == 73)
                     {
                         current_frame_index = 74;
-                        current_frame_rectangle = frames[current_frame_index];
                     }
                     else
                     {
                         current_frame_index = 73;
-                        current_frame_rectangle = frames[current_frame_index];
                     }
+                    current_frame_rectangle = frames[current_frame_index];
                     break;
                 }
                 case STATE_YETI_EATING:
@@ -509,6 +506,36 @@ BoundingBox SkiObject::get_collision_box() const
                     result.max.z = result.min.z + 32 - 20;
                     break;
                 }
+                case STATE_PLAYER_HIT:
+                {
+                    result.min.x = position.x;
+                    result.min.y = offset_y;
+                    result.min.z = position.y;
+                    result.max.x = result.min.x + 26;
+                    result.max.y = result.min.y + 32;
+                    result.max.z = result.min.z + 32;
+                    break;
+                }
+                case STATE_PLAYER_SIT:
+                {
+                    result.min.x = position.x;
+                    result.min.y = offset_y;
+                    result.min.z = position.y;
+                    result.max.x = result.min.x + 24;
+                    result.max.y = result.min.y + 32;
+                    result.max.z = result.min.z + 32;
+                    break;
+                }
+                case STATE_PLAYER_OUCH:
+                {
+                    result.min.x = position.x;
+                    result.min.y = offset_y;
+                    result.min.z = position.y;
+                    result.max.x = result.min.x + 32;
+                    result.max.y = result.min.y + 32;
+                    result.max.z = result.min.z + 32;
+                    break;
+                }
                 default:
                 {
                     break;
@@ -675,9 +702,9 @@ BoundingBox SkiObject::get_collision_box() const
             result.min.x = position.x + 10;
             result.min.y = offset_y;
             result.min.z = position.y + 55;
-            result.max.x = result.min.x + 22;
+            result.max.x = result.min.x + 12;
             result.max.y = result.min.y + 64;
-            result.max.z = result.min.z + 22;
+            result.max.z = result.min.z + 9;
             break;
         }
         case TYPE_RAINBOW:
@@ -1096,7 +1123,8 @@ void SkiFree::inputs()
         }
     }
 
-    if (std::abs(player.offset_y) < 0.001)
+    if (std::abs(player.offset_y) < 0.001 && player.state != SkiObject::STATE_PLAYER_OUCH &&
+        player.state != SkiObject::STATE_PLAYER_HIT)
     {
         if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_KP_6))
         {
@@ -1480,6 +1508,30 @@ void SkiFree::update()
         }
     }
 
+    if (player.position.y > -2050 * 20 && player.position.y < -125 * 20 &&
+        yeti_1.state != SkiObject::STATE_YETI_EATING &&
+        player.state != SkiObject::STATE_PLAYER_EATING)
+    {
+        yeti_chase(&yeti_1, 30);
+    }
+    else if (yeti_1.speed > 0 && yeti_1.state != SkiObject::STATE_YETI_EATING)
+    {
+        yeti_stop(&yeti_1);
+    }
+
+    if (player.position.y > 2000 * 20 && player.position.y < 2050 * 20 &&
+        yeti_2.state != SkiObject::STATE_YETI_EATING &&
+        player.state != SkiObject::STATE_PLAYER_EATING)
+    {
+        yeti_chase(&yeti_2, 27.0f);
+    }
+    else if (
+            yeti_2.speed > 0 && yeti_1.state != SkiObject::STATE_YETI_EATING &&
+            player.state != SkiObject::STATE_PLAYER_EATING)
+    {
+        yeti_stop(&yeti_2);
+    }
+
     manage_objects();
     for (const auto long_live_object: long_live_objects)
     {
@@ -1795,6 +1847,8 @@ void SkiFree::collisions_manager()
                 character->current_frame_index = 75;
                 character->current_frame_rectangle = frames[75];
                 character->state_countdown = 6;
+                character->speed = 0;
+                character->offset_y = 0;
 
                 player.current_frame_rectangle = {};
                 player.state = SkiObject::STATE_PLAYER_EATING;
@@ -1978,7 +2032,7 @@ void SkiFree::player_hit(const BoundingBox &other_box)
     }
     else
     {
-        player.position.y = other_box.max.z - 2;
+        player.position.y = other_box.max.z + 1;
     }
     player.state = SkiObject::STATE_PLAYER_HIT;
     player.current_frame_index = 17;
@@ -1998,4 +2052,31 @@ void SkiFree::player_jump(const int jump_height)
     {
         player.speed += 2;
     }
+}
+
+void SkiFree::yeti_chase(SkiObject *yeti, float speed)
+{
+    yeti->direction = Vector2Normalize(player.position - yeti->position);
+    if (yeti->direction.y < 0)
+    {
+        yeti->state = SkiObject::STATE_YETI_UP;
+    }
+    else if (yeti->direction.x > 0)
+    {
+        yeti->state = SkiObject::STATE_YETI_RIGHT;
+    }
+    else
+    {
+        yeti->state = SkiObject::STATE_YETI_LEFT;
+    }
+    yeti->speed = speed;
+    yeti->offset_y = 0;
+}
+
+void SkiFree::yeti_stop(SkiObject *yeti)
+{
+    yeti->speed = 0;
+    yeti->offset_y = 0;
+    yeti->state = SkiObject::STATE_YETI_HAPPY_1;
+    yeti->state_countdown = GetRandomValue(1, 25);
 }

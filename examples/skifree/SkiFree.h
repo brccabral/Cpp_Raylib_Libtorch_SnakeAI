@@ -172,6 +172,8 @@ private:
     void manage_objects();
     void player_hit(const BoundingBox &other_box);
     void player_jump(const int jump_height);
+    void yeti_chase(SkiObject *yeti, float speed);
+    void yeti_stop(SkiObject *yeti);
 
     bool is_paused{};
     bool is_waiting_action = true;
