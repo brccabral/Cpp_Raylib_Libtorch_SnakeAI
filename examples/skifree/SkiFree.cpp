@@ -266,7 +266,7 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                             current_frame_index = 29;
                         }
                         current_frame_rectangle = frames[current_frame_index];
-                        state_countdown = 4;
+                        state_countdown = GetRandomValue(4, 30);
                     }
                     break;
                 }
@@ -1922,6 +1922,37 @@ void SkiFree::collisions_manager()
                 int jump = Clamp(player.speed, 2.0, 10.0);
                 player_jump(jump);
                 return;
+            }
+        }
+
+        if (obj.type == SkiObject::TYPE_NOVICE)
+        {
+            for (auto &other: short_live_objects)
+            {
+                if (&other == &obj)
+                {
+                    continue;
+                }
+
+                switch (other.type)
+                {
+                    case SkiObject::TYPE_DOG:
+                    case SkiObject::TYPE_RAINBOW:
+                    {
+                        break;
+                    }
+                    default:
+                    {
+                        if (CheckCollisionRecs(obj.get_location(), other.get_location()))
+                        {
+                            obj.state = SkiObject::STATE_NOVICE_SIT;
+                            obj.current_frame_index = 30;
+                            obj.current_frame_rectangle = frames[30];
+                            obj.speed = 0;
+                        }
+                        break;
+                    }
+                }
             }
         }
     }
