@@ -81,12 +81,23 @@ void SkiObject::update(const std::vector<Rectangle> &frames)
                     {
                         offset_y = 0;
                         jump = 0;
-                        // TODO check landing
                         if (current_frame_index == 13)
                         {
                             state = STATE_PLAYER_DOWN;
                             current_frame_index = 0;
                             current_frame_rectangle = frames[0];
+                        }
+                        else if (current_frame_index == 14)
+                        {
+                            state = STATE_PLAYER_LEFT;
+                            current_frame_index = 3;
+                            current_frame_rectangle = frames[3];
+                        }
+                        else if (current_frame_index == 15)
+                        {
+                            state = STATE_PLAYER_RIGHT;
+                            current_frame_index = 6;
+                            current_frame_rectangle = frames[6];
                         }
                         else
                         {
@@ -1338,23 +1349,74 @@ void SkiFree::inputs()
         }
         if (IsKeyPressed(KEY_SPACE))
         {
+            is_waiting_action = false;
             player_jump(5);
         }
     }
     else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 13)
     {
+        is_waiting_action = false;
         player.current_frame_index = 18;
         player.current_frame_rectangle = frames[18];
     }
     else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 18)
     {
+        is_waiting_action = false;
         player.current_frame_index = 19;
         player.current_frame_rectangle = frames[19];
     }
-    else if (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 19)
+    else if (
+            (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 19) ||
+            (IsKeyPressed(KEY_RIGHT) &&
+             (player.current_frame_index == 14 || player.current_frame_index == 20)) ||
+            (IsKeyPressed(KEY_LEFT) &&
+             (player.current_frame_index == 15 || player.current_frame_index == 21)))
     {
+        is_waiting_action = false;
         player.current_frame_index = 13;
         player.current_frame_rectangle = frames[13];
+    }
+    else if (
+            (IsKeyPressed(KEY_LEFT) && player.current_frame_index == 13) ||
+            (IsKeyPressed(KEY_RIGHT) && player.current_frame_index == 16))
+    {
+        is_waiting_action = false;
+        player.current_frame_index = 14;
+        player.current_frame_rectangle = frames[14];
+    }
+    else if (
+            (IsKeyPressed(KEY_RIGHT) && player.current_frame_index == 13) ||
+            (IsKeyPressed(KEY_LEFT) && player.current_frame_index == 16))
+    {
+        is_waiting_action = false;
+        player.current_frame_index = 15;
+        player.current_frame_rectangle = frames[15];
+    }
+    else if (
+            (IsKeyPressed(KEY_LEFT) &&
+             (player.current_frame_index == 14 || player.current_frame_index == 20)) ||
+            (IsKeyPressed(KEY_RIGHT) &&
+             (player.current_frame_index == 15 || player.current_frame_index == 21)))
+    {
+        is_waiting_action = false;
+        player.current_frame_index = 16;
+        player.current_frame_rectangle = frames[16];
+    }
+    else if (
+            (IsKeyPressed(KEY_LEFT) && player.current_frame_index == 18) ||
+            (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 14))
+    {
+        is_waiting_action = false;
+        player.current_frame_index = 20;
+        player.current_frame_rectangle = frames[20];
+    }
+    else if (
+            (IsKeyPressed(KEY_RIGHT) && player.current_frame_index == 18) ||
+            (IsKeyPressed(KEY_SPACE) && player.current_frame_index == 15))
+    {
+        is_waiting_action = false;
+        player.current_frame_index = 21;
+        player.current_frame_rectangle = frames[21];
     }
 }
 
