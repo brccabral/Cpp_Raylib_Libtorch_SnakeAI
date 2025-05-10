@@ -453,7 +453,7 @@ BoundingBox SkiObject::get_collision_box() const
                     result.min.y = offset_y;
                     result.min.z = position.y + 16;
                     result.max.x = result.min.x + 24;
-                    result.max.y = result.min.y + 4;
+                    result.max.y = result.min.y + 28;
                     result.max.z = result.min.z + 28 - 16;
                     break;
                 }
@@ -464,7 +464,7 @@ BoundingBox SkiObject::get_collision_box() const
                     result.min.y = offset_y;
                     result.min.z = position.y + 15;
                     result.max.x = result.min.x + 16;
-                    result.max.y = result.min.y + 4;
+                    result.max.y = result.min.y + 28;
                     result.max.z = result.min.z + 32 - 15;
                     break;
                 }
@@ -476,6 +476,16 @@ BoundingBox SkiObject::get_collision_box() const
                     result.max.x = result.min.x + 16;
                     result.max.y = result.min.y + 4;
                     result.max.z = result.min.z + 32 - 15;
+                    break;
+                }
+                case STATE_PLAYER_JUMP:
+                {
+                    result.min.x = position.x;
+                    result.min.y = offset_y;
+                    result.min.z = position.y + 20;
+                    result.max.x = result.min.x + 30;
+                    result.max.y = result.min.y + 32;
+                    result.max.z = result.min.z + 32 - 20;
                     break;
                 }
                 default:
